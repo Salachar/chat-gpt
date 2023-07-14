@@ -1,19 +1,21 @@
-import { app, shell, ipcMain, BrowserWindow } from 'electron'
+require('dotenv').config();
+
+import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import contextMenu from 'electron-context-menu';
 
+console.log(process.env.OPENAI);
+
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
+  apiKey: process.env.OPENAI
 });
 const openai = new OpenAIApi(configuration);
 
 import AIManager from './ai-manager';
 new AIManager(openai);
-
-// const response = await openai.listModels();
-// console.log(response);
 
 contextMenu({
 	showSaveImageAs: true
