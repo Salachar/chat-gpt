@@ -6,7 +6,6 @@ import contextMenu from 'electron-context-menu';
 
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
-  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
