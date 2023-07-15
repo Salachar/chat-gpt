@@ -86,11 +86,26 @@ export const Chat = () => {
                         </For>
                       )}
                       {sub_message.type === "code" && (
-                        <StyledPre>
-                          <code class="language-javascript" innerHTML={
-                            Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
-                          }></code>
-                        </StyledPre>
+                        <StyledMessageContainer>
+                          <StyledMessageActions>
+                            <StyledIcon class="icss-files" onClick={() => {
+                              // Copy code snippet to navigator clipboard
+                              navigator.clipboard.writeText(sub_message.code_snippet);
+                            }} />
+                            <StyledIcon class="icss-expand" onClick={() => {
+                              // TODO: Open new tab with code snippet
+                            }} />
+                            <StyledIcon class="icss-quotation-l" onClick={() => {
+                              // Copy code snippet to code section
+                              store.setCode(sub_message.code_snippet);
+                            }} />
+                          </StyledMessageActions>
+                          <StyledPre>
+                            <code class="language-javascript" innerHTML={
+                              Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
+                            }></code>
+                          </StyledPre>
+                        </StyledMessageContainer>
                       )}
                     </>
                   )}
@@ -103,21 +118,25 @@ export const Chat = () => {
 
       <StyledChatActions>
         <StyledTokenData>
-          {store.tokenData() && (
-            <>
-              <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
-              <StyledTokenPiece>Completion: {JSON.stringify(store.tokenData().completion_tokens)}</StyledTokenPiece>
-              <StyledTokenPiece>Prompt: {JSON.stringify(store.tokenData().prompt_tokens)}</StyledTokenPiece>
-              <StyledTokenPiece>Remaining: {JSON.stringify(store.tokenData().tokens_left)}</StyledTokenPiece>
-              <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
-            </>
-          )}
+          <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
+          <StyledTokenPiece>Completion: {JSON.stringify(store.tokenData().completion_tokens)}</StyledTokenPiece>
+          <StyledTokenPiece>Prompt: {JSON.stringify(store.tokenData().prompt_tokens)}</StyledTokenPiece>
+          <StyledTokenPiece>Remaining: {JSON.stringify(store.tokenData().tokens_left)}</StyledTokenPiece>
+          <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
         </StyledTokenData>
         <Button
           label="Clear"
           onClick={() => {
-            store.clearMessages();
             IPC.send('clear');
+            store.clearMessages();
+            store.addMessage({
+              role: "generator",
+              content: "Clearing chat history...",
+            });
+            store.addMessage({
+              role: "assistant",
+              content: "Chat history has been cleared.",
+            });
           }}
         />
 
@@ -273,6 +292,21 @@ const StyledPrompt = styled(TextArea)`
   overflow: hidden;
 `;
 
+const StyledMessageContainer = styled.div`
+  position: relative;
+`;
+
+const StyledMessageActions = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const StyledMessage = styled.span`
   display: block;
   padding: 0.25em 0.5em;
@@ -299,4 +333,13 @@ const StyledMessage = styled.span`
 const StyledPre = styled.pre`
   font-size: 0.9em !important;
   padding: 0 0.5em;
+`;
+
+const StyledIcon = styled.i`
+  font-size: 1rem;
+  color: var(--color-orange-spice);
+  cursor: pointer;
+  &:not(:last-child) {
+    margin-right: 1rem;
+  }
 `;
