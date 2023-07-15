@@ -44,12 +44,12 @@ class MainChat extends ChatBase {
   }
 
 
-  addCodeRules (message_array = [], prompt) {
+  addCodeRules (message_array = [], code) {
     // Join code rules, message array, and prompt together into one openai message content
     const message_content = message_array.join(" ");
     let prompt_content = "";
-    if (prompt) {
-      prompt_content = `${CODE_OUTPUT_RULES} ${message_content} Code: \`\`\`${prompt}\`\`\``;
+    if (code) {
+      prompt_content = `${CODE_OUTPUT_RULES} ${message_content} Code: \`\`\`${code}\`\`\``;
     } else {
       prompt_content = `${CODE_OUTPUT_RULES} ${message_content}`;
     }
@@ -79,81 +79,81 @@ class MainChat extends ChatBase {
       this.sendChat(event);
     });
 
-    ipcMain.on('analyze', async (event, prompt) => {
+    ipcMain.on('analyze', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Analyze the following code snippet, look for any errors and potential improvements.",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('javascript', async (event, prompt) => {
+    ipcMain.on('javascript', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Convert the code or description in the following message to JavaScript.",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('stack', async (event, prompt) => {
+    ipcMain.on('stack', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
           ...CHAKRA_OUTPUT_RULES,
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('react-native', async (event, prompt) => {
+    ipcMain.on('react-native', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Using the following code or description, write React Native code for a mobile application to satisfy it.",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('chakratize', async (event, prompt) => {
+    ipcMain.on('chakratize', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Convert all following possible code into using inline ChakraUI components.",
           ...CHAKRA_OUTPUT_RULES,
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('utils', async (event, prompt) => {
+    ipcMain.on('utils', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
           "Return a new component implementing the suggestions as best as possible with comments.",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('unit-tests', async (event, prompt) => {
+    ipcMain.on('unit-tests', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
           "Do your best to create a full Jest unit test suite for the following code snippet.",
           "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
 
-    ipcMain.on('cypress-tests', async (event, prompt) => {
+    ipcMain.on('cypress-tests', async (event, code) => {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
@@ -165,7 +165,7 @@ class MainChat extends ChatBase {
           "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
           "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
           "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
-        ], prompt),
+        ], code),
       });
       this.sendChat(event);
     });
