@@ -18,6 +18,7 @@ export const Chat = () => {
     console.log(message);
     window.last_message = message;
     store.addMessage(message);
+    store.setTokenData(message.token_data);
   };
 
   onMount(() => {
@@ -92,10 +93,21 @@ export const Chat = () => {
       </StyledDisplay>
 
       <StyledChatActions>
+        <StyledTokenData>
+          {store.tokenData() && (
+            <>
+              <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
+              <StyledTokenPiece>Completion: {JSON.stringify(store.tokenData().completion_tokens)}</StyledTokenPiece>
+              <StyledTokenPiece>Prompt: {JSON.stringify(store.tokenData().prompt_tokens)}</StyledTokenPiece>
+              <StyledTokenPiece>Remaining: {JSON.stringify(store.tokenData().tokens_left)}</StyledTokenPiece>
+              <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
+            </>
+          )}
+        </StyledTokenData>
         <Button
           label="Clear"
           onClick={() => {
-            store.setMessages([]);
+            store.clearMessages();
             IPC.send('clear');
           }}
         />
@@ -151,6 +163,12 @@ export const Chat = () => {
           label="Cypress Tests"
           onClick={() => {
             IPC.send('cypress-tests', store.code());
+          }}
+        />
+        <Button
+          label="Storybook"
+          onClick={() => {
+            IPC.send('storybook', store.code());
           }}
         />
       </StyledChatActions>
@@ -231,6 +249,19 @@ const StyledCodeSection = styled(TextArea)`
 const StyledChatActions = styled.div`
   grid-area: chatactions;
   margin: 1rem 0;
+`;
+
+const StyledTokenData = styled.div`
+  margin-bottom: 2rem;
+`;
+
+const StyledTokenPiece = styled.div`
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  &:not(:last-child) {
+    margin-bottom: 0.25rem;
+  }
 `;
 
 const StyledPrompt = styled(TextArea)`

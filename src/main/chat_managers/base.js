@@ -207,12 +207,12 @@ export default class ChatBase {
         tokens_left
       };
 
-      console.log(JSON.stringify(token_data, null, 2));
       const message = choices[0].message;
+      const parsed_message = this.parseMessage(message);
+      parsed_message.token_data = token_data;
       onReply({
         original: message,
-        parsed: this.parseMessage(message),
-        token_data,
+        parsed: parsed_message,
       });
     } catch (e) {
       console.log("ERROR", e);
