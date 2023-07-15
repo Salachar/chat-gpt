@@ -189,12 +189,24 @@ export const Chat = () => {
         </For>
       </StyledChatActions>
 
-      <StyledCodeSection
-        value={store.code()}
-        onChange={(value) => {
-          store.setCode(value);
-        }}
-      />
+      <StyledCodeSection>
+        <StyledMessageActions>
+          <StyledIcon class="icss-files" onClick={() => {
+            // Copy code to navigator clipboard
+            navigator.clipboard.writeText(store.code());
+          }} />
+          <StyledIcon class="icss-x" onClick={() => {
+            // Clear the code section
+            store.setCode("");
+          }} />
+        </StyledMessageActions>
+        <StyledCodeTextArea
+          value={store.code()}
+          onChange={(value) => {
+            store.setCode(value);
+          }}
+        />
+      </StyledCodeSection>
 
       <StyledPrompt
         value={getPrompt()}
@@ -257,10 +269,17 @@ const StyledDisplay = styled.div`
   }
 `;
 
-const StyledCodeSection = styled(TextArea)`
+const StyledCodeSection = styled.div`
+  position: relative;
   grid-area: codesection;
   margin: 1rem 1rem 0 1rem;
+`;
+
+const StyledCodeTextArea = styled(TextArea)`
   white-space: nowrap;
+  width: 100%;
+  height: 100%;
+  resize: none;
 `;
 
 const StyledChatActions = styled.div`
