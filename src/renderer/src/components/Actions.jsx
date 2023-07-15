@@ -17,13 +17,16 @@ const StyledActions = styled.div`
   padding: 0.5rem;
 `;
 
-const StyledIcon = styled.i`
-  font-size: 1rem;
-  color: var(--color-orange-spice);
+const StyledIconWrapper = styled.div`
   cursor: pointer;
   &:not(:last-child) {
     margin-right: 1.25rem;
   }
+`;
+
+const StyledIcon = styled.i`
+  font-size: 1rem;
+  color: var(--color-orange-spice);
 `;
 
 const StyledContent = styled.div`
@@ -42,7 +45,9 @@ export const ActionsContainer = (props) => {
       <StyledActions>
         <For each={Object.entries(props.actions)}>
           {([icon, handler]) => (
-            <StyledIcon class={`icss-${icon}`} onClick={handler} />
+            <StyledIconWrapper onClick={handler}>
+              <StyledIcon class={`icss-${icon}`} />
+            </StyledIconWrapper>
           )}
         </For>
       </StyledActions>

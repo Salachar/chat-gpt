@@ -17,6 +17,10 @@ const StyledTextArea = styled.textarea`
     color: #4f5886;
   }
 
+  ${({ wordwrap }) => wordwrap && `
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  `}
 `;
 
 export const TextArea = (props) => {
@@ -24,7 +28,7 @@ export const TextArea = (props) => {
     <StyledTextArea
       value={props.value || ""}
       class={props.class}
-      hasDescription={Boolean(props.description)}
+      wordwrap={props.wordwrap}
       placeholder={props.placeholder}
       onKeyDown={(e) => {
         if (props.onKeyDown) {

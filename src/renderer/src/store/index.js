@@ -3,6 +3,9 @@ import { createSignal } from 'solid-js';
 export const createAppStore = () => {
   const [isWaiting, setIsWaiting] = createSignal(false);
 
+  const [wordwrap, setWordwrap] = createSignal(false);
+  const toggleWordwrap = () => setWordwrap(!wordwrap());
+
   const [messages, setMessages] = createSignal([]);
   const [code, setCode] = createSignal('');
   const [tokenData, setTokenData] = createSignal({
@@ -29,6 +32,9 @@ export const createAppStore = () => {
   return {
     isWaiting,
     setIsWaiting,
+
+    wordwrap,
+    toggleWordwrap,
 
     tokenData,
     setTokenData,

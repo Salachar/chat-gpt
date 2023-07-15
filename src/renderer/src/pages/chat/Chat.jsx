@@ -236,6 +236,10 @@ export const Chat = () => {
       </StyledChatActions>
 
       <StyledCodeSection actions={{
+        "text-justify": () => {
+          // Controls word wrap of the code section
+          store.toggleWordwrap();
+        },
         "files": () => {
           // Copy code to navigator clipboard
           navigator.clipboard.writeText(store.code());
@@ -246,6 +250,7 @@ export const Chat = () => {
         }
       }}>
         <StyledCodeTextArea
+          wordwrap={store.wordwrap()}
           value={store.code()}
           onChange={(value) => {
             store.setCode(value);
