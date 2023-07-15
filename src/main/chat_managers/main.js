@@ -4,6 +4,12 @@ import ChatBase from './base';
 
 const CODE_OUTPUT_RULES = [
   "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```."
+].join(" ");
+
+const CHAKRA_OUTPUT_RULES = [
+  "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
+  "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
+  "All styling should be done using ChakraUI components.",
 ];
 
 class MainChat extends ChatBase {
@@ -34,13 +40,12 @@ class MainChat extends ChatBase {
 
   addCodeRules (message_array = [], prompt) {
     // Join code rules, message array, and prompt together into one openai message content
-    const code_rules = CODE_OUTPUT_RULES.join(" ");
     const message_content = message_array.join(" ");
     let prompt_content = "";
     if (prompt) {
-      prompt_content = `${code_rules} ${message_content} Code: \`\`\`${prompt}\`\`\``;
+      prompt_content = `${CODE_OUTPUT_RULES} ${message_content} Code: \`\`\`${prompt}\`\`\``;
     } else {
-      prompt_content = `${code_rules} ${message_content}`;
+      prompt_content = `${CODE_OUTPUT_RULES} ${message_content}`;
     }
     return prompt_content;
   };
@@ -72,7 +77,7 @@ class MainChat extends ChatBase {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
-          "Do your best to analyze the following code snippet, look for any errors and potential improvements.",
+          "Analyze the following code snippet, look for any errors and potential improvements.",
         ], prompt),
       });
       this.sendChat(event);
@@ -82,7 +87,7 @@ class MainChat extends ChatBase {
       this.messages.push({
         role: "user",
         content: this.addCodeRules([
-          "Do your best to convert the code or description in the following message to JavaScript.",
+          "Convert the code or description in the following message to JavaScript.",
         ], prompt),
       });
       this.sendChat(event);
@@ -93,6 +98,7 @@ class MainChat extends ChatBase {
         role: "user",
         content: this.addCodeRules([
           "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
+          ...CHAKRA_OUTPUT_RULES,
         ], prompt),
       });
       this.sendChat(event);
@@ -113,9 +119,7 @@ class MainChat extends ChatBase {
         role: "user",
         content: this.addCodeRules([
           "Convert all following possible code into using inline ChakraUI components.",
-          "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
-          "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
-          "All styling should be done using ChakraUI components.",
+          ...CHAKRA_OUTPUT_RULES,
         ], prompt),
       });
       this.sendChat(event);
@@ -137,7 +141,7 @@ class MainChat extends ChatBase {
         role: "user",
         content: this.addCodeRules([
           "Do your best to create a full Jest unit test suite for the following code snippet.",
-          "If an element does not have a data-testid, suggest one and use it in the test.",
+          "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
         ], prompt),
       });
       this.sendChat(event);
