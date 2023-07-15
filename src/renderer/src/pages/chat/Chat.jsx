@@ -16,17 +16,26 @@ export const Chat = () => {
 
   const onChatEvent = (event, message = {}) => {
     console.log(message);
+    store.setIsWaiting(false);
     window.last_message = message;
     store.addMessage(message);
     store.setTokenData(message.token_data);
   };
 
+  const onErrorMessage = (event, error) => {
+    console.log(error);
+    store.setIsWaiting(false);
+    store.clearMessages();
+  }
+
   onMount(() => {
     IPC.on('chat', onChatEvent);
+    IPC.on('error', onErrorMessage);
   });
 
   onCleanup(() => {
     IPC.removeListener('chat', onChatEvent);
+    IPC.removeListener('error', onErrorMessage);
   });
 
   // Use createEffect to scroll down whenever data changes
@@ -145,12 +154,15 @@ export const Chat = () => {
         }]}>
           {(button_data) => (
             <Button
+              disabled={store.isWaiting()}
               label={button_data.label}
               onClick={() => {
+                if (store.isWaiting()) return;
                 store.addMessage({
                   role: "generator",
                   content: `Running ${button_data.label}...`,
                 });
+                store.setIsWaiting(true);
                 IPC.send(button_data.ipc, store.code());
               }}
             />
@@ -229,6 +241,7 @@ const StyledDisplay = styled.div`
 const StyledCodeSection = styled(TextArea)`
   grid-area: codesection;
   margin: 1rem 1rem 0 1rem;
+  white-space: nowrap;
 `;
 
 const StyledChatActions = styled.div`

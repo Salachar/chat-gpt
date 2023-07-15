@@ -17,6 +17,8 @@ class MainChat extends ChatBase {
     super(openai, parent, opts);
 
     this.__messages = [];
+
+    this.setIPCEvents();
   }
 
   get messages () {
@@ -30,9 +32,13 @@ class MainChat extends ChatBase {
   sendChat (event, event_type = 'chat') {
     this.send({
       messages: this.messages,
-      onReply: (message) => {
-        this.messages.push(message.original);
-        event.reply(event_type, message.parsed);
+      onReply: (data) => {
+        if (data.error) {
+          event.reply('error', data.error);
+          return;
+        }
+        this.messages.push(data.original);
+        event.reply(event_type, data.parsed);
       },
     });
   }

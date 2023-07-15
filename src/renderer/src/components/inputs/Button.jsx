@@ -7,7 +7,6 @@ const StyledButton = styled.button`
   background-color: var(--color-orange-spice);
   color: var(--color-blue);
   font-weight: bold;
-  /* height: 100%; */
   min-height: 2rem;
   width: 100%;
   border: 0;
@@ -38,6 +37,7 @@ export const Button = (props) => {
     <StyledButton
       class={props.class}
       onClick={props.onClick}
+      disabled={props.disabled}
     >
       {props.label}
     </StyledButton>

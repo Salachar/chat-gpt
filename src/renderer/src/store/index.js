@@ -3,6 +3,8 @@ import { createStore } from 'solid-js/store';
 import { uuid, copy } from '@utils';
 
 export const createAppStore = () => {
+  const [isWaiting, setIsWaiting] = createSignal(false);
+
   const [messages, setMessages] = createSignal([]);
   const [code, setCode] = createSignal('');
   const [tokenData, setTokenData] = createSignal({
@@ -27,6 +29,9 @@ export const createAppStore = () => {
   };
 
   return {
+    isWaiting,
+    setIsWaiting,
+
     tokenData,
     setTokenData,
     clearMessages,
