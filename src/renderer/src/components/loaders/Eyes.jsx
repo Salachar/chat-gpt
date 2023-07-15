@@ -46,7 +46,7 @@ const eyeMove = keyframes`
   }
 `;
 
-const StyledStonerEyesLoader = styled.div`
+const StyledEyesLoader = styled.div`
   position: relative;
   width: var(--eyes-size);
   height: var(--eyes-size);
@@ -93,11 +93,11 @@ const StyledStonerEyesLoader = styled.div`
   }
 `;
 
-export const StonerEyes = (props) => {
+export const Eyes = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <StyledStonerEyesLoader />
-      <StyledStonerEyesLoader />
+      <StyledEyesLoader />
+      <StyledEyesLoader />
     </StyledContainer>
   );
 }

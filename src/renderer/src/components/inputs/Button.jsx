@@ -1,4 +1,3 @@
-import { createEffect, createSignal, onMount } from 'solid-js'
 import { styled } from 'solid-styled-components';
 
 const StyledButton = styled.button`

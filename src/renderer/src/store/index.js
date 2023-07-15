@@ -1,6 +1,4 @@
-import { createEffect, createSignal } from 'solid-js';
-import { createStore } from 'solid-js/store';
-import { uuid, copy } from '@utils';
+import { createSignal } from 'solid-js';
 
 export const createAppStore = () => {
   const [isWaiting, setIsWaiting] = createSignal(false);

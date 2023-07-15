@@ -27,9 +27,6 @@
 }
 
 * {
-  /* -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none; */
   box-sizing: border-box;
 }
 
@@ -49,7 +46,6 @@ html, body, #root {
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-	/* background: #2d2d2d; */
   background: #262433 !important;
 }
 
@@ -57,7 +53,6 @@ pre[class*="language-"] {
 .token.class-name,
 .token.constant,
 .token.symbol {
-	/* color: var(--color-orange-spice); */
   color: #f8c555;
 }
 
@@ -66,6 +61,5 @@ pre[class*="language-"] {
 .token.attr-value,
 .token.regex,
 .token.variable {
-	/* color: var(--color-green); */
   color: #7ec699;
 };

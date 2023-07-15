@@ -1,4 +1,3 @@
-import { createEffect, createSignal, onMount } from 'solid-js'
 import { styled } from 'solid-styled-components';
 
 const StyledDescription = styled.p`
@@ -19,7 +18,6 @@ const StyledTextArea = styled.textarea`
   background-color: var(--color-dark-blue-70);
   padding: 0.5rem;
   border-radius: 0.5rem;
-  /* width: 100%; */
   box-sizing: border-box;
   outline: 0;
   resize: vertical;
@@ -31,13 +29,6 @@ const StyledTextArea = styled.textarea`
   &::placeholder {
     color: #4f5886;
   }
-
-  /* &::-webkit-resizer {
-    border: 2px solid black;
-    background: red;
-    box-shadow: 0 0 5px 5px blue;
-    outline: 2px solid yellow;
-  } */
 
   ${({ hasDescription }) => hasDescription && `
     border-top-right-radius: 0;

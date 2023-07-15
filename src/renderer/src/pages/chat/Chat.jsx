@@ -4,7 +4,7 @@ import Prism from 'prismjs';
 import { store } from '@store';
 
 import { TextArea, Button } from '@inputs';
-import { StonerEyes } from '@components/loaders/StonerEyes';
+import { Eyes } from '@components/loaders/Eyes';
 
 import { parseMessagesForChat } from './utils';
 
@@ -50,7 +50,7 @@ export const Chat = () => {
 
   return (
     <StyledContainer>
-      <StyledStonerEyes />
+      <StyledEyes />
 
       <StyledTabs />
 
@@ -210,13 +210,13 @@ const StyledContainer = styled.div`
   grid-template-columns: 1fr 0.85fr 10rem;
   grid-template-rows: 4rem 1fr 5rem;
   grid-template-areas:
-    "stonereyes tabs tabs"
+    "eyes tabs tabs"
     "chathistory codesection chatactions"
     "prompt codesection chatactions";
 `;
 
-const StyledStonerEyes = styled(StonerEyes)`
-  grid-area: stonereyes;
+const StyledEyes = styled(Eyes)`
+  grid-area: eyes;
 `;
 
 const StyledTabs = styled.div`

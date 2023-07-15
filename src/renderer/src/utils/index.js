@@ -1,7 +1,2 @@
 import { alphaTrim, uuid, copy } from "./general";
-
-export {
-  alphaTrim,
-  uuid,
-  copy,
-};
+export { alphaTrim, uuid, copy };
