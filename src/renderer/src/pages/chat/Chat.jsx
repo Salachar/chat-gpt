@@ -13,6 +13,11 @@ export const Chat = () => {
 
   const [getPrompt, setPrompt] = createSignal("");
 
+  const onLoadEvent = (event, events = []) => {
+    if (!Array.isArray(events)) events = [];
+    store.setEvents(events);
+  };
+
   const onChatEvent = (event, message = {}) => {
     console.log(message);
     store.setIsWaiting(false);
@@ -25,14 +30,17 @@ export const Chat = () => {
     console.log(error);
     store.setIsWaiting(false);
     store.clearMessages();
-  }
+  };
 
   onMount(() => {
+    IPC.on('onload', onLoadEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
+    IPC.send('onload');
   });
 
   onCleanup(() => {
+    IPC.removeListener('onload', onLoadEvent);
     IPC.removeListener('chat', onChatEvent);
     IPC.removeListener('error', onErrorMessage);
   });
@@ -49,7 +57,6 @@ export const Chat = () => {
 
   const onClear = () => {
     // Clear the chat history
-    // store.clearMessages();
     IPC.send('clear');
     store.clearMessages();
     store.addMessage({
@@ -73,7 +80,6 @@ export const Chat = () => {
 
         <StyledChatHistoryWrapper actions={{
             "x": () => {
-              // Clear the chat history
               onClear();
             }
           }}>
@@ -169,37 +175,7 @@ export const Chat = () => {
           <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
         </StyledTokenData>
 
-        <For each={[{
-          label: "Random Code",
-          ipc: "random",
-        }, {
-          label: "Analyze",
-          ipc: "analyze",
-        }, {
-          label: "To Javascript",
-          ipc: "javascript",
-        }, {
-          label: "To React/Chakra",
-          ipc: "stack",
-        }, {
-          label: "To React Native",
-          ipc: "react-native",
-        }, {
-          label: "Chakratize",
-          ipc: "chakratize",
-        }, {
-          label: "Utils Check",
-          ipc: "utils",
-        }, {
-          label: "Unit Tests",
-          ipc: "unit-tests",
-        }, {
-          label: "Cypress Tests",
-          ipc: "cypress-tests",
-        }, {
-          label: "Storybook",
-          ipc: "storybook",
-        }]}>
+        <For each={store.events()}>
           {(button_data) => (
             <StyledButtonWrapper>
               <StyledButton
@@ -212,7 +188,7 @@ export const Chat = () => {
                     content: `Running ${button_data.label}...`,
                   });
                   store.setIsWaiting(true);
-                  IPC.send(button_data.ipc, store.code());
+                  IPC.send(button_data.event, store.code());
                 }}
               />
               <StyledRefreshButton
@@ -225,7 +201,7 @@ export const Chat = () => {
                     content: `Running ${button_data.label}...`,
                   });
                   store.setIsWaiting(true);
-                  IPC.send(button_data.ipc, store.code());
+                  IPC.send(button_data.event, store.code());
                 }}
               >
                 <StyledRefreshIcon class="icss-synchronize" />

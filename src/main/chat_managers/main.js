@@ -82,6 +82,122 @@ class MainChat extends ChatBase {
   }
 
   setIPCEvents () {
+    // A list that represents the buttons that will be displayed in the chat
+    // and the IPC event that will be triggered when the button is clicked.
+    const events = [{
+      event: 'random',
+      label: 'Random Code',
+      handler: (event) => {
+        this.addUserMessage(this.addCodeRules([
+          "Please send me a random Javascript code snippet.",
+        ]));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'analyze',
+      label: 'Analyze',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Analyze the following code snippet, look for any errors and potential improvements.",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'javascript',
+      label: 'To Javascript',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Convert the code or description in the following message to JavaScript.",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'stack',
+      label: 'To React/Chakra',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
+          ...CHAKRA_OUTPUT_RULES,
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'react-native',
+      label: 'To React Native',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Using the following code or description, write React Native code for a mobile application to satisfy it.",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'chakratize',
+      label: 'Chakratize',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Convert all following possible code using inline ChakraUI components.",
+          ...CHAKRA_OUTPUT_RULES,
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'utils',
+      label: 'Utils Check',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
+          "Return a new component implementing the suggestions as best as possible with comments.",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'unit-tests',
+      label: 'Unit Tests',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Do your best to create a full Jest unit test suite for the following code snippet.",
+          "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'cypress-tests',
+      label: 'Cypress Tests',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
+          "You can assume the following helper functions exist:",
+          "  - cy.login(username, password) to login before each test",
+          "  - cy.getById() as a helper function to get an element by id that does more than cy.get()",
+          "  - cy.checkLocal() as a helper function to check local storage for a value",
+          "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
+          "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
+          "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
+        ], code));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'storybook',
+      label: 'Storybook',
+      handler: (event, code) => {
+        this.addUserMessage(this.addCodeRules([
+          "Do your best to create a full Storybook (React UI Component Library) story for the following code snippet.",
+        ], code));
+        this.sendChat(event);
+      }
+    }];
+
+    // setup onload event that will send a JSON list of buttons to the chat
+    // using the events array above.
+    ipcMain.on('onload', async (event) => {
+      event.reply('onload', events.map((event) => {
+        return {
+          label: event.label,
+          event: event.event,
+        };
+      }));
+    });
+
     ipcMain.on('clear', async (event) => {
       this.messages = [];
     });
@@ -94,78 +210,9 @@ class MainChat extends ChatBase {
       this.sendChat(event);
     });
 
-    ipcMain.on('random', async (event) => {
-      this.addUserMessage(this.addCodeRules([
-        "Please send me a random Javascript code snippet.",
-      ]));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('analyze', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Analyze the following code snippet, look for any errors and potential improvements.",
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('javascript', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Convert the code or description in the following message to JavaScript.",
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('stack', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
-        ...CHAKRA_OUTPUT_RULES,
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('react-native', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Using the following code or description, write React Native code for a mobile application to satisfy it.",
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('chakratize', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Convert all following possible code using inline ChakraUI components.",
-        ...CHAKRA_OUTPUT_RULES,
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('utils', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
-        "Return a new component implementing the suggestions as best as possible with comments.",
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('unit-tests', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Do your best to create a full Jest unit test suite for the following code snippet.",
-        "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
-      ], code));
-      this.sendChat(event);
-    });
-
-    ipcMain.on('cypress-tests', async (event, code) => {
-      this.addUserMessage(this.addCodeRules([
-        "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
-        "You can assume the following helper functions exist:",
-        "  - cy.login(username, password) to login before each test",
-        "  - cy.getById() as a helper function to get an element by id that does more than cy.get()",
-        "  - cy.checkLocal() as a helper function to check local storage for a value",
-        "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
-        "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
-        "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
-      ], code));
-      this.sendChat(event);
+    // Go through the events and set the IPC events for each one.
+    events.forEach((event) => {
+      ipcMain.on(event.event, event.handler);
     });
   }
 }

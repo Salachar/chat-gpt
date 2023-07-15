@@ -1,6 +1,9 @@
 import { createSignal } from 'solid-js';
 
 export const createAppStore = () => {
+  // The list of the actions used to create buttons.
+  const [events, setEvents] = createSignal([]);
+
   const [isWaiting, setIsWaiting] = createSignal(false);
 
   const [wordwrap, setWordwrap] = createSignal(false);
@@ -30,6 +33,9 @@ export const createAppStore = () => {
   };
 
   return {
+    events,
+    setEvents,
+
     isWaiting,
     setIsWaiting,
 
