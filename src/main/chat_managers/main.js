@@ -43,7 +43,6 @@ class MainChat extends ChatBase {
     });
   }
 
-
   addCodeRules (message_array = [], code) {
     // Join code rules, message array, and prompt together into one openai message content
     const message_content = message_array.join(" ");
@@ -55,6 +54,13 @@ class MainChat extends ChatBase {
     }
     return prompt_content;
   };
+
+  addUserMessage (prompt) {
+    this.messages.push({
+      role: "user",
+      content: prompt,
+    });
+  }
 
   setIPCEvents () {
     ipcMain.on('clear', async (event) => {
@@ -70,103 +76,76 @@ class MainChat extends ChatBase {
     });
 
     ipcMain.on('random', async (event) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Please send me a random Javascript code snippet.",
-        ]),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Please send me a random Javascript code snippet.",
+      ]));
       this.sendChat(event);
     });
 
     ipcMain.on('analyze', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Analyze the following code snippet, look for any errors and potential improvements.",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Analyze the following code snippet, look for any errors and potential improvements.",
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('javascript', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Convert the code or description in the following message to JavaScript.",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Convert the code or description in the following message to JavaScript.",
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('stack', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
-          ...CHAKRA_OUTPUT_RULES,
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
+        ...CHAKRA_OUTPUT_RULES,
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('react-native', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Using the following code or description, write React Native code for a mobile application to satisfy it.",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Using the following code or description, write React Native code for a mobile application to satisfy it.",
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('chakratize', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Convert all following possible code into using inline ChakraUI components.",
-          ...CHAKRA_OUTPUT_RULES,
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Convert all following possible code using inline ChakraUI components.",
+        ...CHAKRA_OUTPUT_RULES,
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('utils', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
-          "Return a new component implementing the suggestions as best as possible with comments.",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
+        "Return a new component implementing the suggestions as best as possible with comments.",
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('unit-tests', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Do your best to create a full Jest unit test suite for the following code snippet.",
-          "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Do your best to create a full Jest unit test suite for the following code snippet.",
+        "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
+      ], code));
       this.sendChat(event);
     });
 
     ipcMain.on('cypress-tests', async (event, code) => {
-      this.messages.push({
-        role: "user",
-        content: this.addCodeRules([
-          "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
-          "You can assume the following helper functions exist:",
-          "  - cy.login(username, password) to login before each test",
-          "  - cy.getById() as a helper function to get an element by id that does more than cy.get()",
-          "  - cy.checkLocal() as a helper function to check local storage for a value",
-          "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
-          "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
-          "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
-        ], code),
-      });
+      this.addUserMessage(this.addCodeRules([
+        "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
+        "You can assume the following helper functions exist:",
+        "  - cy.login(username, password) to login before each test",
+        "  - cy.getById() as a helper function to get an element by id that does more than cy.get()",
+        "  - cy.checkLocal() as a helper function to check local storage for a value",
+        "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
+        "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
+        "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
+      ], code));
       this.sendChat(event);
     });
   }
