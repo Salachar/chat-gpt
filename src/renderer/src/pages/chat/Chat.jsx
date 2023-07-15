@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, onMount, onCleanup, Show } from 'solid-js'
+import { createEffect, createSignal, For, onMount, onCleanup, Show, on } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
@@ -47,6 +47,21 @@ export const Chat = () => {
     }
   });
 
+  const onClear = () => {
+    // Clear the chat history
+    // store.clearMessages();
+    IPC.send('clear');
+    store.clearMessages();
+    store.addMessage({
+      role: "generator",
+      content: "Clearing chat history...",
+    });
+    store.addMessage({
+      role: "assistant",
+      content: "Chat history has been cleared.",
+    });
+  };
+
   return (
     <StyledContainer>
       <StyledTabs>
@@ -59,17 +74,7 @@ export const Chat = () => {
         <StyledChatHistoryWrapper actions={{
             "x": () => {
               // Clear the chat history
-              // store.clearMessages();
-              IPC.send('clear');
-              store.clearMessages();
-              store.addMessage({
-                role: "generator",
-                content: "Clearing chat history...",
-              });
-              store.addMessage({
-                role: "assistant",
-                content: "Chat history has been cleared.",
-              });
+              onClear();
             }
           }}>
           <StyledChatHistory ref={scrollable}>
@@ -196,19 +201,36 @@ export const Chat = () => {
           ipc: "storybook",
         }]}>
           {(button_data) => (
-            <StyledButton
-              disabled={store.isWaiting()}
-              label={button_data.label}
-              onClick={() => {
-                if (store.isWaiting()) return;
-                store.addMessage({
-                  role: "generator",
-                  content: `Running ${button_data.label}...`,
-                });
-                store.setIsWaiting(true);
-                IPC.send(button_data.ipc, store.code());
-              }}
-            />
+            <StyledButtonWrapper>
+              <StyledButton
+                disabled={store.isWaiting()}
+                label={button_data.label}
+                onClick={() => {
+                  if (store.isWaiting()) return;
+                  store.addMessage({
+                    role: "generator",
+                    content: `Running ${button_data.label}...`,
+                  });
+                  store.setIsWaiting(true);
+                  IPC.send(button_data.ipc, store.code());
+                }}
+              />
+              <StyledRefreshButton
+                disabled={store.isWaiting()}
+                onClick={() => {
+                  if (store.isWaiting()) return;
+                  onClear();
+                  store.addMessage({
+                    role: "generator",
+                    content: `Running ${button_data.label}...`,
+                  });
+                  store.setIsWaiting(true);
+                  IPC.send(button_data.ipc, store.code());
+                }}
+              >
+                <StyledRefreshIcon class="icss-synchronize" />
+              </StyledRefreshButton>
+            </StyledButtonWrapper>
           )}
         </For>
       </StyledChatActions>
@@ -252,7 +274,6 @@ const StyledCodeTextArea = styled(TextArea)`
 
 const StyledChatHistoryWrapper = styled(ActionsContainer)`
   grid-area: chathistory;
-  /* padding: 1rem 0 1rem 1rem; */
   padding: 1rem 0 0 0;
   height: 100%;
   overflow: hidden;
@@ -297,12 +318,41 @@ const StyledDisplayWrapper = styled.div`
     "prompt";
 `;
 
-const StyledButton = styled(Button)`
-  border-top-right-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
+const StyledButtonWrapper = styled.div`
+  height: 2rem;
+  display: flex;
   &:not(:last-child) {
     margin-bottom: 1rem;
   }
+`;
+
+const StyledButton = styled(Button)`
+  height: 2rem;
+  font-size: 0.75rem;
+  padding-right: 0.25rem;
+`;
+
+const StyledRefreshButton = styled.div`
+  height: 2rem;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  background-color: var(--color-orange-spice);
+  padding-right: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  &:hover { filter: brightness(1.2); }
+  &:active { filter: brightness(0.8); }
+  ${({ disabled }) => disabled && `
+    cursor: not-allowed;
+    opacity: 0.5;
+  `}
+`;
+
+const StyledRefreshIcon = styled.i`
+  font-size: 1.25rem;
+  color: var(--color-red);
+  cursor: pointer;
 `;
 
 const StyledEyes = styled(Eyes)`

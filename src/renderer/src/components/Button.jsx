@@ -12,15 +12,10 @@ const StyledButton = styled.button`
   text-transform: uppercase;
   transition: all 0.1s ease;
   text-align: left;
+  padding: 0 0.25rem;
 
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-
-  &:active {
-    filter: brightness(0.8);
-  }
+  &:hover { filter: brightness(1.2); }
+  &:active { filter: brightness(0.8); }
 
   ${({ disabled }) => disabled && `
     cursor: not-allowed;
