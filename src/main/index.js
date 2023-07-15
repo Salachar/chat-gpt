@@ -24,8 +24,8 @@ contextMenu({
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 1040,
+    width: 1600,
+    height: 1000,
     x: 100,
     y: 60,
     show: false,

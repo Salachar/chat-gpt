@@ -3,7 +3,7 @@ import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
 
-import { Eyes, TextArea, Button } from '@components';
+import { ActionsContainer, Eyes, TextArea, Button } from '@components';
 
 import { parseMessagesForChat } from './utils';
 
@@ -49,71 +49,111 @@ export const Chat = () => {
 
   return (
     <StyledContainer>
-      <StyledEyes />
+      <StyledTabs>
+        Tabs
+      </StyledTabs>
 
-      <StyledTabs />
+      <StyledDisplayWrapper>
+        <StyledEyes />
 
-      <StyledDisplay ref={scrollable}>
-        <For each={parseMessagesForChat(store.messages())}>
-          {(message) => (
-            <>
-              <Show when={!message.parsed_sub_messages}>
-                <StyledMessage
-                  isUser={message.role === "user"}
-                  isAssistant={message.role === "assistant"}
-                  isGenerator={message.role === "generator"}
-                >
-                  {message.content}
-                </StyledMessage>
-              </Show>
+        <StyledChatHistoryWrapper actions={{
+            "x": () => {
+              // Clear the chat history
+              // store.clearMessages();
+              IPC.send('clear');
+              store.clearMessages();
+              store.addMessage({
+                role: "generator",
+                content: "Clearing chat history...",
+              });
+              store.addMessage({
+                role: "assistant",
+                content: "Chat history has been cleared.",
+              });
+            }
+          }}>
+          <StyledChatHistory ref={scrollable}>
+            <For each={parseMessagesForChat(store.messages())}>
+              {(message) => (
+                <>
+                  <Show when={!message.parsed_sub_messages}>
+                    <StyledMessage
+                      isUser={message.role === "user"}
+                      isAssistant={message.role === "assistant"}
+                      isGenerator={message.role === "generator"}
+                    >
+                      {message.content}
+                    </StyledMessage>
+                  </Show>
 
-              <Show when={message.parsed_sub_messages}>
-                <For each={message.parsed_sub_messages}>
-                  {(sub_message) => (
-                    <>
-                      {sub_message.type === "text" && (
-                        <For each={sub_message.split_content}>
-                          {(chunk) => (
-                            <StyledMessage
-                              isUser={message.role === "user"}
-                              isAssistant={message.role === "assistant"}
-                              isGenerator={message.role === "generator"}
-                            >
-                              {chunk}
-                            </StyledMessage>
+                  <Show when={message.parsed_sub_messages}>
+                    <For each={message.parsed_sub_messages}>
+                      {(sub_message) => (
+                        <>
+                          {sub_message.type === "text" && (
+                            <For each={sub_message.split_content}>
+                              {(chunk) => (
+                                <StyledMessage
+                                  isUser={message.role === "user"}
+                                  isAssistant={message.role === "assistant"}
+                                  isGenerator={message.role === "generator"}
+                                >
+                                  {chunk}
+                                </StyledMessage>
+                              )}
+                            </For>
                           )}
-                        </For>
+                          {sub_message.type === "code" && (
+                            <StyledCodeMessageContainer actions={{
+                              "files": () => {
+                                // Copy code snippet to navigator clipboard
+                                navigator.clipboard.writeText(sub_message.code_snippet);
+                              },
+                              "expand": () => {
+                                // TODO: Open new tab with code snippet
+                              },
+                              "quotation-l": () => {
+                                // Copy code snippet to code section
+                                store.setCode(sub_message.code_snippet);
+                              }
+                            }}>
+                              <StyledPre>
+                                <code class="language-javascript" innerHTML={
+                                  Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
+                                }></code>
+                              </StyledPre>
+                            </StyledCodeMessageContainer>
+                          )}
+                        </>
                       )}
-                      {sub_message.type === "code" && (
-                        <StyledMessageContainer>
-                          <StyledMessageActions>
-                            <StyledIcon class="icss-files" onClick={() => {
-                              // Copy code snippet to navigator clipboard
-                              navigator.clipboard.writeText(sub_message.code_snippet);
-                            }} />
-                            <StyledIcon class="icss-expand" onClick={() => {
-                              // TODO: Open new tab with code snippet
-                            }} />
-                            <StyledIcon class="icss-quotation-l" onClick={() => {
-                              // Copy code snippet to code section
-                              store.setCode(sub_message.code_snippet);
-                            }} />
-                          </StyledMessageActions>
-                          <StyledPre>
-                            <code class="language-javascript" innerHTML={
-                              Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
-                            }></code>
-                          </StyledPre>
-                        </StyledMessageContainer>
-                      )}
-                    </>
-                  )}
-                </For>
-              </Show>
-            </>
-          )}
-        </For>
-      </StyledDisplay>
+                    </For>
+                  </Show>
+                </>
+              )}
+            </For>
+          </StyledChatHistory>
+        </StyledChatHistoryWrapper>
+
+
+        <StyledPrompt
+          value={getPrompt()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              store.addMessage({
+                role: "user",
+                content: getPrompt(),
+              });
+              IPC.send('chat', getPrompt());
+              setTimeout(() => {
+                setPrompt("");
+              }, 0);
+            }
+          }}
+          onChange={(value) => {
+            setPrompt(value);
+          }}
+        />
+      </StyledDisplayWrapper>
 
       <StyledChatActions>
         <StyledTokenData>
@@ -123,21 +163,6 @@ export const Chat = () => {
           <StyledTokenPiece>Remaining: {JSON.stringify(store.tokenData().tokens_left)}</StyledTokenPiece>
           <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
         </StyledTokenData>
-        <Button
-          label="Clear"
-          onClick={() => {
-            IPC.send('clear');
-            store.clearMessages();
-            store.addMessage({
-              role: "generator",
-              content: "Clearing chat history...",
-            });
-            store.addMessage({
-              role: "assistant",
-              content: "Chat history has been cleared.",
-            });
-          }}
-        />
 
         <For each={[{
           label: "Random Code",
@@ -171,7 +196,7 @@ export const Chat = () => {
           ipc: "storybook",
         }]}>
           {(button_data) => (
-            <Button
+            <StyledButton
               disabled={store.isWaiting()}
               label={button_data.label}
               onClick={() => {
@@ -188,17 +213,16 @@ export const Chat = () => {
         </For>
       </StyledChatActions>
 
-      <StyledCodeSection>
-        <StyledMessageActions>
-          <StyledIcon class="icss-files" onClick={() => {
-            // Copy code to navigator clipboard
-            navigator.clipboard.writeText(store.code());
-          }} />
-          <StyledIcon class="icss-x" onClick={() => {
-            // Clear the code section
-            store.setCode("");
-          }} />
-        </StyledMessageActions>
+      <StyledCodeSection actions={{
+        "files": () => {
+          // Copy code to navigator clipboard
+          navigator.clipboard.writeText(store.code());
+        },
+        "x": () => {
+          // Clear the code section
+          store.setCode("");
+        }
+      }}>
         <StyledCodeTextArea
           value={store.code()}
           onChange={(value) => {
@@ -207,88 +231,104 @@ export const Chat = () => {
         />
       </StyledCodeSection>
 
-      <StyledPrompt
-        value={getPrompt()}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            store.addMessage({
-              role: "user",
-              content: getPrompt(),
-            });
-            IPC.send('chat', getPrompt());
-            setTimeout(() => {
-              setPrompt("");
-            }, 0);
-          }
-        }}
-        onChange={(value) => {
-          setPrompt(value);
-        }}
-      />
     </StyledContainer>
   );
 }
 
-const StyledContainer = styled.div`
-  font-size: 0.85rem;
-  position: relative;
-  padding: 1rem 1rem 1rem 0;
-  background-color: var(--color-blue);
-  display: grid;
-  box-sizing: border-box;
-  height: 100%;
-  grid-template-columns: 1fr 0.85fr 10rem;
-  grid-template-rows: 4rem 1fr 5rem;
-  grid-template-areas:
-    "eyes tabs tabs"
-    "chathistory codesection chatactions"
-    "prompt codesection chatactions";
-`;
-
-const StyledEyes = styled(Eyes)`
-  grid-area: eyes;
-`;
-
-const StyledTabs = styled.div`
-  grid-area: tabs;
-`;
-
-const StyledDisplay = styled.div`
-  position: relative;
-  grid-area: chathistory;
-  background-color: var(--color-dark-blue-70);
-  margin: 1rem 0;
-  padding: 0.25rem;
-  border-top-right-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
-  overflow-y: scroll;
-
-  * {
-    cursor: text;
-  }
-`;
-
-const StyledCodeSection = styled.div`
-  position: relative;
+const StyledCodeSection = styled(ActionsContainer)`
   grid-area: codesection;
-  margin: 1rem 1rem 0 1rem;
-  padding-top: 2rem;
+  padding: 1rem 0 1rem 1rem;
 `;
+
 
 const StyledCodeTextArea = styled(TextArea)`
   white-space: nowrap;
   width: 100%;
   height: 100%;
   resize: none;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+`;
+
+const StyledChatHistoryWrapper = styled(ActionsContainer)`
+  grid-area: chathistory;
+  /* padding: 1rem 0 1rem 1rem; */
+  padding: 1rem 0 0 0;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const StyledChatHistory = styled.div`
+  position: relative;
+  background-color: var(--color-dark-blue-70);
+  overflow-y: scroll;
+  height: 100%;
+`;
+
+const StyledContainer = styled.div`
+  font-size: 0.85rem;
+  position: relative;
+  background-color: var(--color-blue);
+  display: grid;
+  box-sizing: border-box;
+  height: 100%;
+  grid-template-columns: 10rem 1fr 0.9fr 11rem;
+  grid-template-rows: 1fr;
+  grid-template-areas: "tabs chatdisplay codesection chatactions";
+`;
+
+const StyledTabs = styled.div`
+  grid-area: tabs;
+  border-right: 1rem solid var(--color-light-blue);
+`;
+
+const StyledDisplayWrapper = styled.div`
+  position: relative;
+  grid-area: chatdisplay;
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3rem 1fr 5rem;
+  padding: 1rem 0;
+  grid-template-areas:
+    "eyes"
+    "chathistory"
+    "prompt";
+`;
+
+const StyledButton = styled(Button)`
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+`;
+
+const StyledEyes = styled(Eyes)`
+  grid-area: eyes;
+`;
+
+const StyledPrompt = styled(TextArea)`
+  position: relative;
+  resize: none;
+  grid-area: prompt;
+  background-color: var(--color-light-blue);
+  overflow: hidden;
+  border-bottom-right-radius: 0.5rem;
 `;
 
 const StyledChatActions = styled.div`
   grid-area: chatactions;
-  margin: 1rem 0;
+  /* margin-top: 1rem; */
+  /* padding: 1rem; */
+  /* padding-right */
+  padding: 2rem 1rem 1rem 0;
 `;
 
 const StyledTokenData = styled.div`
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
+  padding: 0 0 2rem 1rem;
 `;
 
 const StyledTokenPiece = styled.div`
@@ -300,30 +340,9 @@ const StyledTokenPiece = styled.div`
   }
 `;
 
-const StyledPrompt = styled(TextArea)`
+const StyledCodeMessageContainer = styled(ActionsContainer)`
   position: relative;
-  resize: none;
-  grid-area: prompt;
-  background-color: var(--color-light-blue);
-  border-radius: 0;
-  border-top-right-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
-  overflow: hidden;
-`;
-
-const StyledMessageContainer = styled.div`
-  position: relative;
-`;
-
-const StyledMessageActions = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.5em;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  margin: 0.5rem 0;
 `;
 
 const StyledMessage = styled.span`
@@ -352,13 +371,4 @@ const StyledMessage = styled.span`
 const StyledPre = styled.pre`
   font-size: 0.9em !important;
   padding: 0 0.5em;
-`;
-
-const StyledIcon = styled.i`
-  font-size: 1rem;
-  color: var(--color-orange-spice);
-  cursor: pointer;
-  &:not(:last-child) {
-    margin-right: 1rem;
-  }
 `;

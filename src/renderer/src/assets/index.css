@@ -15,7 +15,7 @@
   --color-dark-blue-70: #262c49;
   --color-orange-darkest: #2d2620;
 
-  --eyes-size: 64px;
+  --eyes-size: 48px;
   --eyes-border-size: calc(var(--eyes-size) * 0.13);
   --eyes-va1-1: calc(var(--eyes-size) * 0.25);
   --eyes-va1-2: calc(var(--eyes-size) * 0.192);
@@ -47,6 +47,7 @@ html, body, #root {
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
   background: #262433 !important;
+  margin: 0;
 }
 
 .token.property,

@@ -9,9 +9,10 @@ const StyledButton = styled.button`
   min-height: 2rem;
   width: 100%;
   border: 0;
-  border-radius: 0.5rem;
   text-transform: uppercase;
   transition: all 0.1s ease;
+  text-align: left;
+
 
   &:hover {
     filter: brightness(1.2);
@@ -19,10 +20,6 @@ const StyledButton = styled.button`
 
   &:active {
     filter: brightness(0.8);
-  }
-
-  &:not(:last-child) {
-    margin-bottom: 1rem;
   }
 
   ${({ disabled }) => disabled && `
