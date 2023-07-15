@@ -2,7 +2,9 @@ import { ipcMain } from 'electron'
 
 import ChatBase from './base';
 
-const CODE_OUTPUT_RULE = "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```.";
+const CODE_OUTPUT_RULES = [
+  "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```."
+];
 
 class MainChat extends ChatBase {
   constructor (openai, parent, opts) {
@@ -19,186 +21,143 @@ class MainChat extends ChatBase {
     this.__messages = new_messages;
   }
 
+  sendChat (event, event_type = 'chat') {
+    this.send({
+      messages: this.messages,
+      onReply: (message) => {
+        this.messages.push(message.original);
+        event.reply(event_type, message.parsed);
+      },
+    });
+  }
+
+
+  addCodeRules (message_array = [], prompt) {
+    // Join code rules, message array, and prompt together into one openai message content
+    const code_rules = CODE_OUTPUT_RULES.join(" ");
+    const message_content = message_array.join(" ");
+    let prompt_content = "";
+    if (prompt) {
+      prompt_content = `${code_rules} ${message_content} Code: \`\`\`${prompt}\`\`\``;
+    } else {
+      prompt_content = `${code_rules} ${message_content}`;
+    }
+    return prompt_content;
+  };
+
   setIPCEvents () {
+    ipcMain.on('clear', async (event) => {
+      this.messages = [];
+    });
+
     ipcMain.on('chat', async (event, prompt) => {
       this.messages.push({
         role: "user",
         content: prompt,
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
-    });
-
-    ipcMain.on('clear', async (event) => {
-      this.messages = [];
+      this.sendChat(event);
     });
 
     ipcMain.on('random', async (event) => {
       this.messages.push({
         role: "user",
-        content: "Please send me a random Javascript code snippet.",
+        content: this.addCodeRules([
+          "Please send me a random Javascript code snippet.",
+        ]),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('analyze', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: "Do your best to analyze the following code snippet, look for any errors and potential improvements.",
-      }, {
-        role: "user",
-        content: prompt,
+        content: this.addCodeRules([
+          "Do your best to analyze the following code snippet, look for any errors and potential improvements.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('javascript', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `Do your best to convert the code or description in the following message to JavaScript. ${CODE_OUTPUT_RULE}`,
-      }, {
-        role: "user",
-        content: prompt,
+        content: this.addCodeRules([
+          "Do your best to convert the code or description in the following message to JavaScript.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('stack', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable. ${CODE_OUTPUT_RULE}`,
-      }, {
-        role: "user",
-        content: prompt,
+        content: this.addCodeRules([
+          "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('react-native', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `${CODE_OUTPUT_RULE}. Using the following code or description, write React Native code for a mobile application to satisfy it.
-        Do not show the code being utilized in a mobile application, only the code itself. Code: ${prompt}.`,
+        content: this.addCodeRules([
+          "Using the following code or description, write React Native code for a mobile application to satisfy it.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('chakratize', async (event, prompt) => {
-      // this.messages.push({
-      //   role: "user",
-      //   content: `Convert all following possible code into using ChakraUI components If styled-components are used, replace them with ChakraUI components as best possible. ${CODE_OUTPUT_RULE}`,
-      // }, {
-      //   role: "user",
-      //   content: prompt,
-      // });
-
       this.messages.push({
         role: "user",
-        content: `${CODE_OUTPUT_RULE}. Convert all following possible code into using inline ChakraUI components.
-        If styled-components are used, replace them with ChakraUI components as best possible, and remove all styled-component references.
-        Use ChakraUI directly when possible avoiding separate variables like "StyledButton" or "StyledContainer". Code: ${prompt}.`,
+        content: this.addCodeRules([
+          "Convert all following possible code into using inline ChakraUI components.",
+          "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
+          "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
+          "All styling should be done using ChakraUI components.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('utils', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `${CODE_OUTPUT_RULE}. Analyze the following component and suggest any pure helper functions that can be created to
-        reduce the logic in the component as much as possible. Return a new component implementing the suggestions as best as possible with comments. Code: ${prompt}.`,
+        content: this.addCodeRules([
+          "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
+          "Return a new component implementing the suggestions as best as possible with comments.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('unit-tests', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `Do your best to create a full Jest unit test suite for the following code snippet. ${CODE_OUTPUT_RULE}`,
-      }, {
-        role: "user",
-        content: prompt,
+        content: this.addCodeRules([
+          "Do your best to create a full Jest unit test suite for the following code snippet.",
+          "If an element does not have a data-testid, suggest one and use it in the test.",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
 
     ipcMain.on('cypress-tests', async (event, prompt) => {
       this.messages.push({
         role: "user",
-        content: `Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet. ${CODE_OUTPUT_RULE}`,
-      }, {
-        role: "user",
-        content: prompt,
+        content: this.addCodeRules([
+          "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
+          "You can assume the following helper functions exist:",
+          "  - cy.login(username, password) to login before each test",
+          "  - cy.getById() as a helper function to get an element by id that does more than cy.get()",
+          "  - cy.checkLocal() as a helper function to check local storage for a value",
+          "  - cy.waitList() as a helper function to wait for a list of interceptors to finish",
+          "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
+          "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
+        ], prompt),
       });
-
-      this.send({
-        messages: this.messages,
-        onReply: (message) => {
-          this.messages.push(message.original);
-          event.reply('chat', message.parsed);
-        },
-      });
+      this.sendChat(event);
     });
   }
 }
