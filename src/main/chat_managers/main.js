@@ -6,11 +6,30 @@ const CODE_OUTPUT_RULES = [
   "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```."
 ].join(" ");
 
+// const CHAKRA_OUTPUT_RULES = [
+//   "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
+//   "Variables should only be created for components that are very similar and have a lot of shared styling.",
+//   "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
+//   "All styling should be done using ChakraUI components.",
+// ];
+
 const CHAKRA_OUTPUT_RULES = [
-  "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
-  "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
+  "Use ChakraUI components for all components and styling.",
+  "'Styled*' should be created for components, inline and direct styling should not be used.",
+  "Reusable components should be created for components that are very similar and have a lot of shared styling.",
+  "If styled-components are used, remove all of them and replace them using ChakraUI components.",
   "All styling should be done using ChakraUI components.",
+  "Ensure all ChakraUI components are imported from '@chakra-ui/react'.",
+  "Do not create but suggest css variables for colors and other styling.",
+  "Do not create additional props for any components.",
 ];
+
+// const CHAKRA_OUTPUT_RULES = [
+//   "Use ChakraUI components directly for components that are not reused instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
+//   "'Styled*' variables should only be created for components that are very similar and have a lot of shared styling.",
+//   "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
+//   "All styling should be done using ChakraUI components.",
+// ];
 
 class MainChat extends ChatBase {
   constructor (openai, parent, opts) {

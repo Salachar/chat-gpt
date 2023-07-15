@@ -74,7 +74,7 @@ const StyledEyesLoader = styled.div`
     z-index: 5;
     border-bottom: var(--eyes-border-size) solid #131a1d;
     box-sizing: border-box;
-    animation: ${eyeShade} 6s infinite;
+    animation: ${eyeShade} 9s infinite;
     transition: all 0.2s ease;
   }
 
@@ -88,7 +88,7 @@ const StyledEyesLoader = styled.div`
     height: var(--eyes-va1-3);
     background: #111;
     border-radius: 50%;
-    animation: ${eyeMove} 6s infinite;
+    animation: ${eyeMove} 9s infinite;
     transition: all 0.2s ease;
   }
 `;

@@ -11,7 +11,7 @@ const StyledButton = styled.button`
   border: 0;
   border-radius: 0.5rem;
   text-transform: uppercase;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
 
   &:hover {
     filter: brightness(1.2);

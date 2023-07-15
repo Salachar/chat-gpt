@@ -3,8 +3,7 @@ import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
 
-import { TextArea, Button } from '@inputs';
-import { Eyes } from '@components/loaders/Eyes';
+import { Eyes, TextArea, Button } from '@components';
 
 import { parseMessagesForChat } from './utils';
 
@@ -273,6 +272,7 @@ const StyledCodeSection = styled.div`
   position: relative;
   grid-area: codesection;
   margin: 1rem 1rem 0 1rem;
+  padding-top: 2rem;
 `;
 
 const StyledCodeTextArea = styled(TextArea)`
