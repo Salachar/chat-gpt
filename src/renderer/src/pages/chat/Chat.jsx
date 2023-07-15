@@ -111,66 +111,51 @@ export const Chat = () => {
             IPC.send('clear');
           }}
         />
-        <Button
-          label="Random Code"
-          onClick={() => {
-            IPC.send('random');
-          }}
-        />
-        <Button
-          label="Analyze"
-          onClick={() => {
-            IPC.send('analyze', store.code());
-          }}
-        />
-        <Button
-          label="To Javascript"
-          onClick={() => {
-            IPC.send('javascript', store.code());
-          }}
-        />
-        <Button
-          label="To React/Chakra"
-          onClick={() => {
-            IPC.send('stack', store.code());
-          }}
-        />
-        <Button
-          label="To React Native"
-          onClick={() => {
-            IPC.send('react-native', store.code());
-          }}
-        />
-        <Button
-          label="Chakratize"
-          onClick={() => {
-            IPC.send('chakratize', store.code());
-          }}
-        />
-        <Button
-          label="Utils Check"
-          onClick={() => {
-            IPC.send('utils', store.code());
-          }}
-        />
-        <Button
-          label="Unit Tests"
-          onClick={() => {
-            IPC.send('unit-tests', store.code());
-          }}
-        />
-        <Button
-          label="Cypress Tests"
-          onClick={() => {
-            IPC.send('cypress-tests', store.code());
-          }}
-        />
-        <Button
-          label="Storybook"
-          onClick={() => {
-            IPC.send('storybook', store.code());
-          }}
-        />
+
+        <For each={[{
+          label: "Random Code",
+          ipc: "random",
+        }, {
+          label: "Analyze",
+          ipc: "analyze",
+        }, {
+          label: "To Javascript",
+          ipc: "javascript",
+        }, {
+          label: "To React/Chakra",
+          ipc: "stack",
+        }, {
+          label: "To React Native",
+          ipc: "react-native",
+        }, {
+          label: "Chakratize",
+          ipc: "chakratize",
+        }, {
+          label: "Utils Check",
+          ipc: "utils",
+        }, {
+          label: "Unit Tests",
+          ipc: "unit-tests",
+        }, {
+          label: "Cypress Tests",
+          ipc: "cypress-tests",
+        }, {
+          label: "Storybook",
+          ipc: "storybook",
+        }]}>
+          {(button_data) => (
+            <Button
+              label={button_data.label}
+              onClick={() => {
+                store.addMessage({
+                  role: "generator",
+                  content: `Running ${button_data.label}...`,
+                });
+                IPC.send(button_data.ipc, store.code());
+              }}
+            />
+          )}
+        </For>
       </StyledChatActions>
 
       <StyledCodeSection
