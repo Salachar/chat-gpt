@@ -15,40 +15,11 @@
   --color-dark-blue-70: #262c49;
   --color-orange-darkest: #2d2620;
 
-  --die-size: 200px;
-  --die-color: var(--color-light-blue);
-  --die-time: 3s;
-  --die-time-2: calc(var(--die-time) * 2);
-  --die-pip-size: calc(var(--die-size) * 0.092);
-  --die-pip-color: var(--color-orange-spice);
-  --die-val-1: calc(var(--die-size) * 0.22);
-  --die-val-1-neg: calc(var(--die-size) * -0.22);
-  --die-val-2: calc(var(--die-size) * 0.27);
-  --die-val-2-neg: calc(var(--die-size) * -0.27);
-  --die-val-3: calc(var(--die-size) * 0.63);
-  --die-val-3-neg: calc(var(--die-size) * -0.63);
-  --die-val-4: calc(var(--die-size) * -0.185);
-
   --eyes-size: 64px;
   --eyes-border-size: calc(var(--eyes-size) * 0.13);
   --eyes-va1-1: calc(var(--eyes-size) * 0.25);
   --eyes-va1-2: calc(var(--eyes-size) * 0.192);
   --eyes-va1-3: calc(var(--eyes-size) * 0.41);
-
-  --image-size: 256px;
-  --image-border-radius: calc(var(--image-size) * 0.0625);
-  --image-before-size: calc(var(--image-size) * 0.625 );
-  --image-before-1: calc(var(--image-size) * 0.5 );
-  --image-before-2: calc(var(--image-size) * -0.53125 );
-  --image-before-3: calc(var(--image-size) * 0.078 );
-  --image-after-size: calc(var(--image-size) * 0.25 );
-  --image-after-pos: calc(var(--image-size) * 0.156 );
-  --image-after-origin-1: calc(var(--image-size) * 0.546 );
-  --image-after-origin-2: calc(var(--image-size) * 2.265 );
-
-  --image-anim-1: calc(var(--image-size) * -0.546 );
-  --image-anim-2: calc(var(--image-size) * -0.031 );
-  --image-anim-3: calc(var(--image-size) * 0.031 );
 }
 
 *::-webkit-scrollbar {

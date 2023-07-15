@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 
 import ChatBase from './base';
 
-const CODE_OUTPUT_RULE = "Required: Code output must be in the following format, surrounded by triple backticks: ```<code>```";
+const CODE_OUTPUT_RULE = "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```.";
 
 class MainChat extends ChatBase {
   constructor (openai, parent, opts) {
@@ -79,6 +79,40 @@ class MainChat extends ChatBase {
       }, {
         role: "user",
         content: prompt,
+      });
+
+      this.send({
+        messages: this.messages,
+        onReply: (message) => {
+          this.messages.push(message.original);
+          event.reply('chat', message.parsed);
+        },
+      });
+    });
+
+    ipcMain.on('stack', async (event, prompt) => {
+      this.messages.push({
+        role: "user",
+        content: `Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable. ${CODE_OUTPUT_RULE}`,
+      }, {
+        role: "user",
+        content: prompt,
+      });
+
+      this.send({
+        messages: this.messages,
+        onReply: (message) => {
+          this.messages.push(message.original);
+          event.reply('chat', message.parsed);
+        },
+      });
+    });
+
+    ipcMain.on('react-native', async (event, prompt) => {
+      this.messages.push({
+        role: "user",
+        content: `${CODE_OUTPUT_RULE}. Using the following code or description, write React Native code for a mobile application to satisfy it.
+        Do not show the code being utilized in a mobile application, only the code itself. Code: ${prompt}.`,
       });
 
       this.send({

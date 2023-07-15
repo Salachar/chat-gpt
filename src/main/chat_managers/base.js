@@ -97,20 +97,25 @@ export default class ChatBase {
           if (chunk.includes("```")) {
             const language = message.split_content[i + 1];
             const code_snippet = message.split_content[i + 2];
-            const parsed_sub_message = {
-              type: "code",
-              language,
-              code_snippet,
-            };
-            message.parsed_sub_messages.push(parsed_sub_message);
             i += 2;
+
+            if (code_snippet) {
+              const parsed_sub_message = {
+                type: "code",
+                language: language || "javascript",
+                code_snippet,
+              };
+              message.parsed_sub_messages.push(parsed_sub_message);
+            }
           } else {
-            const parsed_sub_message = {
-              type: "text",
-              content: chunk,
-              split_content: chunk.split("\n"),
-            };
-            message.parsed_sub_messages.push(parsed_sub_message);
+            if (chunk) {
+              const parsed_sub_message = {
+                type: "text",
+                content: chunk,
+                split_content: chunk.split("\n"),
+              };
+              message.parsed_sub_messages.push(parsed_sub_message);
+            }
           }
         }
 

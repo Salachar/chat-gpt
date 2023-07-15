@@ -100,7 +100,7 @@ export const Chat = () => {
           }}
         />
         <Button
-          label="Random"
+          label="Random Code"
           onClick={() => {
             IPC.send('random');
           }}
@@ -112,9 +112,21 @@ export const Chat = () => {
           }}
         />
         <Button
-          label="Javascript"
+          label="To Javascript"
           onClick={() => {
             IPC.send('javascript', store.code());
+          }}
+        />
+        <Button
+          label="To React/Chakra"
+          onClick={() => {
+            IPC.send('stack', store.code());
+          }}
+        />
+        <Button
+          label="To React Native"
+          onClick={() => {
+            IPC.send('react-native', store.code());
           }}
         />
         <Button
@@ -124,7 +136,7 @@ export const Chat = () => {
           }}
         />
         <Button
-          label="Utils"
+          label="Utils Check"
           onClick={() => {
             IPC.send('utils', store.code());
           }}
