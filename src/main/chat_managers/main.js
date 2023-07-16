@@ -202,17 +202,18 @@ class MainChat extends ChatBase {
       this.messages = [];
     });
 
-    ipcMain.on('chat', async (event, prompt) => {
-      this.messages.push({
-        role: "user",
-        content: prompt,
-      });
-      this.sendChat(event);
-    });
+    ipcMain.on('chat', async (event, data) => {
+      const { prompt = "", code = "" } = data;
 
-    ipcMain.on('chat-code', async (event, data) => {
-      const {prompt = "", code = "" } = data;
-      this.addUserMessage(this.addCodeRules([prompt], code));
+      if (code) {
+        this.addUserMessage(this.addCodeRules([prompt], code));
+      } else {
+        this.messages.push({
+          role: "user",
+          content: prompt,
+        });
+      }
+
       this.sendChat(event);
     });
 

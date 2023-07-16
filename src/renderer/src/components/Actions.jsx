@@ -7,14 +7,28 @@ const StyledActionsContainer = styled.div`
   flex-direction: column;
 `;
 
+const StyledHeader = styled.div`
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const StyledLabel = styled.span`
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.7rem;
+`;
+
 const StyledActions = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem;
 `;
 
 const StyledIconWrapper = styled.div`
@@ -42,15 +56,18 @@ export const ActionsContainer = (props) => {
       onClick={props.onClick}
       disabled={props.disabled}
     >
-      <StyledActions>
-        <For each={Object.entries(props.actions)}>
-          {([icon, handler]) => (
-            <StyledIconWrapper onClick={handler}>
-              <StyledIcon class={`icss-${icon}`} />
-            </StyledIconWrapper>
-          )}
-        </For>
-      </StyledActions>
+      <StyledHeader>
+        <StyledLabel>{props.label}</StyledLabel>
+        <StyledActions>
+          <For each={Object.entries(props.actions)}>
+            {([icon, handler]) => (
+              <StyledIconWrapper onClick={handler}>
+                <StyledIcon class={`icss-${icon}`} />
+              </StyledIconWrapper>
+            )}
+          </For>
+        </StyledActions>
+      </StyledHeader>
       <StyledContent>
         {props.children}
       </StyledContent>

@@ -89,11 +89,14 @@ export const Chat = () => {
           )}
         </StyledSnippy>
 
-        <StyledChatHistoryWrapper actions={{
+        <StyledChatHistoryWrapper
+          label="Clearing the chat will reset token data"
+          actions={{
             "x": () => {
               onClear();
             }
-          }}>
+          }}
+        >
           <StyledChatHistory ref={scrollable}>
             <For each={parseMessagesForChat(store.messages())}>
               {(message) => (
@@ -126,19 +129,22 @@ export const Chat = () => {
                             </For>
                           )}
                           {sub_message.type === "code" && (
-                            <StyledCodeMessageContainer actions={{
-                              "files": () => {
-                                // Copy code snippet to navigator clipboard
-                                navigator.clipboard.writeText(sub_message.code_snippet);
-                              },
-                              "expand": () => {
-                                // TODO: Open new tab with code snippet
-                              },
-                              "quotation-l": () => {
-                                // Copy code snippet to code section
-                                store.setCode(sub_message.code_snippet);
-                              }
-                            }}>
+                            <StyledCodeMessageContainer
+                              label={sub_message.language}
+                              actions={{
+                                "files": () => {
+                                  // Copy code snippet to navigator clipboard
+                                  navigator.clipboard.writeText(sub_message.code_snippet);
+                                },
+                                "expand": () => {
+                                  // TODO: Open new tab with code snippet
+                                },
+                                "quotation-l": () => {
+                                  // Copy code snippet to code section
+                                  store.setCode(sub_message.code_snippet);
+                                }
+                              }}
+                            >
                               <StyledPre>
                                 <code class="language-javascript" innerHTML={
                                   Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
@@ -156,25 +162,26 @@ export const Chat = () => {
           </StyledChatHistory>
         </StyledChatHistoryWrapper>
 
-
-
-        <StyledPromptContainer  actions={{
-          "server": () => {
-            // Send the prompt and the code together
-            store.setIsWaiting(true);
-            store.addMessage({
-              role: "user",
-              content: getPrompt(),
-            });
-            IPC.send('chat-code', {
-              prompt: getPrompt(),
-              code: store.code()
-            });
-            setTimeout(() => {
-              setPrompt("");
-            }, 0);
-          },
-        }}>
+        <StyledPromptContainer
+          label="Send prompts with the Code Section by ending with a semicolon"
+          actions={{
+            "server": () => {
+              // Send the prompt and the code together
+              store.setIsWaiting(true);
+              store.addMessage({
+                role: "user",
+                content: getPrompt(),
+              });
+              IPC.send('chat', {
+                prompt: getPrompt(),
+                code: store.code()
+              });
+              setTimeout(() => {
+                setPrompt("");
+              }, 0);
+            },
+          }}
+        >
           <StyledPrompt
             value={getPrompt()}
             onKeyDown={(e) => {
@@ -182,12 +189,24 @@ export const Chat = () => {
               // does not send the prompt so a new line can be added
               if (e.key === "Enter") {
                 if (e.shiftKey) return;
+
                 store.setIsWaiting(true);
+
+                const trimmed_prompt = getPrompt().trim();
+                const payload = {
+                  prompt: trimmed_prompt,
+                }
+                // Check if the trimmed prompt ends with a semicolon
+                // and if so attach the code to the payload
+                if (trimmed_prompt.endsWith(";")) {
+                  payload.code = store.code();
+                }
+
                 store.addMessage({
                   role: "user",
-                  content: getPrompt(),
+                  content: trimmed_prompt,
                 });
-                IPC.send('chat', getPrompt());
+                IPC.send('chat', payload);
                 setTimeout(() => {
                   setPrompt("");
                 }, 0);
@@ -246,20 +265,23 @@ export const Chat = () => {
         </For>
       </StyledChatActions>
 
-      <StyledCodeSection actions={{
-        "text-justify": () => {
-          // Controls word wrap of the code section
-          store.toggleWordwrap();
-        },
-        "files": () => {
-          // Copy code to navigator clipboard
-          navigator.clipboard.writeText(store.code());
-        },
-        "x": () => {
-          // Clear the code section
-          store.setCode("");
-        }
-      }}>
+      <StyledCodeSection
+        label="Code Section"
+        actions={{
+          "text-justify": () => {
+            // Controls word wrap of the code section
+            store.toggleWordwrap();
+          },
+          "files": () => {
+            // Copy code to navigator clipboard
+            navigator.clipboard.writeText(store.code());
+          },
+          "x": () => {
+            // Clear the code section
+            store.setCode("");
+          }
+        }}
+      >
         <StyledCodeTextArea
           wordwrap={store.wordwrap()}
           value={store.code()}

@@ -19,7 +19,8 @@ export default class ChatBase {
 
     try {
       message.original_content = message.content;
-      message.split_content = message.content.split(/(```(.*?)\n([\s\S]*?)```)/gs)
+      message.split_content = message.content.split(/(```(.*?)\n([\s\S]*?)```)/gs);
+      console.log(message.split_content)
       message.parsed_sub_messages = [];
 
       for (let i = 0; i < message.split_content.length; i++) {
@@ -35,7 +36,7 @@ export default class ChatBase {
           if (code_snippet) {
             const parsed_sub_message = {
               type: "code",
-              language: language || "javascript",
+              language: language || "code",
               code_snippet,
             };
             message.parsed_sub_messages.push(parsed_sub_message);
