@@ -3,7 +3,13 @@ import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
 
-import { ActionsContainer, Eyes, TextArea, Button } from '@components';
+import {
+  ActionsContainer,
+  Eyes,
+  SpeechBubble,
+  TextArea,
+  Button,
+} from '@components';
 
 import { parseMessagesForChat } from './utils';
 
@@ -76,7 +82,12 @@ export const Chat = () => {
       </StyledTabs>
 
       <StyledDisplayWrapper>
-        <StyledEyes />
+        <StyledSnippy>
+          <StyledEyes />
+          {store.isWaiting() && (
+            <StyledSpeechBubble />
+          )}
+        </StyledSnippy>
 
         <StyledChatHistoryWrapper actions={{
             "x": () => {
@@ -294,7 +305,7 @@ const StyledDisplayWrapper = styled.div`
   grid-template-rows: 3rem 1fr 5rem;
   padding: 1rem 0;
   grid-template-areas:
-    "eyes"
+    "snippy"
     "chathistory"
     "prompt";
 `;
@@ -336,8 +347,20 @@ const StyledRefreshIcon = styled.i`
   cursor: pointer;
 `;
 
+const StyledSnippy = styled.div`
+  grid-area: snippy;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+`;
+
 const StyledEyes = styled(Eyes)`
-  grid-area: eyes;
+  margin-right: 1rem;
+`;
+
+const StyledSpeechBubble = styled(SpeechBubble)`
+  font-size: 0.7rem;
 `;
 
 const StyledPrompt = styled(TextArea)`
