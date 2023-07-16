@@ -157,24 +157,48 @@ export const Chat = () => {
         </StyledChatHistoryWrapper>
 
 
-        <StyledPrompt
-          value={getPrompt()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              store.addMessage({
-                role: "user",
-                content: getPrompt(),
-              });
-              IPC.send('chat', getPrompt());
-              setTimeout(() => {
-                setPrompt("");
-              }, 0);
-            }
-          }}
-          onChange={(value) => {
-            setPrompt(value);
-          }}
-        />
+
+        <StyledPromptContainer  actions={{
+          "server": () => {
+            // Send the prompt and the code together
+            store.setIsWaiting(true);
+            store.addMessage({
+              role: "user",
+              content: getPrompt(),
+            });
+            IPC.send('chat-code', {
+              prompt: getPrompt(),
+              code: store.code()
+            });
+            setTimeout(() => {
+              setPrompt("");
+            }, 0);
+          },
+        }}>
+          <StyledPrompt
+            value={getPrompt()}
+            onKeyDown={(e) => {
+              // Enter potentially sends the prompt or combined with shift
+              // does not send the prompt so a new line can be added
+              if (e.key === "Enter") {
+                if (e.shiftKey) return;
+                store.setIsWaiting(true);
+                store.addMessage({
+                  role: "user",
+                  content: getPrompt(),
+                });
+                IPC.send('chat', getPrompt());
+                setTimeout(() => {
+                  setPrompt("");
+                }, 0);
+              }
+            }}
+            onChange={(value) => {
+              setPrompt(value);
+            }}
+          />
+        </StyledPromptContainer>
+
       </StyledDisplayWrapper>
 
       <StyledChatActions>
@@ -255,6 +279,21 @@ const StyledCodeSection = styled(ActionsContainer)`
 `;
 
 
+const StyledPromptContainer = styled(ActionsContainer)`
+  position: relative;
+  grid-area: prompt;
+`;
+
+const StyledPrompt = styled(TextArea)`
+  position: relative;
+  resize: none;
+  background-color: var(--color-light-blue);
+  overflow: hidden;
+  border-bottom-right-radius: 0.5rem;
+  width: 100%;
+  height: 100%;
+`;
+
 const StyledCodeTextArea = styled(TextArea)`
   white-space: nowrap;
   width: 100%;
@@ -302,7 +341,7 @@ const StyledDisplayWrapper = styled.div`
   height: 100%;
   overflow: hidden;
   grid-template-columns: 1fr;
-  grid-template-rows: 3rem 1fr 5rem;
+  grid-template-rows: 3rem 1fr 7rem;
   padding: 1rem 0;
   grid-template-areas:
     "snippy"
@@ -363,14 +402,7 @@ const StyledSpeechBubble = styled(SpeechBubble)`
   font-size: 0.7rem;
 `;
 
-const StyledPrompt = styled(TextArea)`
-  position: relative;
-  resize: none;
-  grid-area: prompt;
-  background-color: var(--color-light-blue);
-  overflow: hidden;
-  border-bottom-right-radius: 0.5rem;
-`;
+
 
 const StyledChatActions = styled.div`
   grid-area: chatactions;

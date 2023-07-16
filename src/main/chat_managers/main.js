@@ -210,6 +210,12 @@ class MainChat extends ChatBase {
       this.sendChat(event);
     });
 
+    ipcMain.on('chat-code', async (event, data) => {
+      const {prompt = "", code = "" } = data;
+      this.addUserMessage(this.addCodeRules([prompt], code));
+      this.sendChat(event);
+    });
+
     // Go through the events and set the IPC events for each one.
     events.forEach((event) => {
       ipcMain.on(event.event, event.handler);
