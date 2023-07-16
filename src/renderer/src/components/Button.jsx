@@ -14,8 +14,12 @@ const StyledButton = styled.button`
   text-align: left;
   padding: 0 0.25rem;
 
-  &:hover { filter: brightness(1.2); }
-  &:active { filter: brightness(0.8); }
+  &:hover {
+    filter: brightness(1.2);
+  }
+  &:active {
+    filter: brightness(0.8);
+  }
 
   ${({ disabled }) => disabled && `
     cursor: not-allowed;

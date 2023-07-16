@@ -45,6 +45,15 @@ export const createAppStore = () => {
     return new_chat.id;
   };
 
+  const clearChat = (id) => {
+    // Clear the whole chat
+    id = id || currentChatId();
+    clearChatMessages(id);
+    setChatCode({ id, code: "" });
+    setChatPrompt({ id, prompt: "" });
+    setChatWaiting({ id, waiting: false });
+  }
+
   const getChatName = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
@@ -165,6 +174,8 @@ export const createAppStore = () => {
 
     getChat,
     addChat,
+    clearChat,
+
     getChatName,
     setChatName,
     getChatWaiting,
