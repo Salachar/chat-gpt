@@ -23,7 +23,7 @@ export const CodeSection = (props) => {
       actions={{
         "text-justify": () => {
           // Controls word wrap of the code section
-          store.toggleChatWordwrap();
+          store.toggleChatCodeWrap();
         },
         "files": () => {
           // Copy code to navigator clipboard

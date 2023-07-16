@@ -26,6 +26,16 @@ export const Chat = () => {
       id: chatId,
       message: message
     });
+    // If there are no tokens left, put a message in the chat
+    if (message.token_data.tokens_left <= 0) {
+      store.addChatMessage({
+        id: chatId,
+        message: {
+          role: "error",
+          content: "No tokens left, please clear the chat.",
+        }
+      });
+    }
     store.setChatTokenData({
       id: chatId,
       token_data: message.token_data
