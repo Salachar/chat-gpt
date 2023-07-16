@@ -115,6 +115,9 @@ export const createAppStore = () => {
 
   const clearChatMessages = (id) => {
     id = id || currentChatId();
+    IPC.send('clear', {
+      chatId: id,
+    });
     setChats(chat => chat.id === id, 'messages', []);
     setChats(chat => chat.id === id, 'token_data', {
       completion_tokens: 0,

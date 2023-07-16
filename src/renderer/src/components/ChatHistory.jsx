@@ -22,30 +22,22 @@ export const ChatHistory = (props) => {
     }
   });
 
-  const onClear = () => {
-    // Clear the chat history
-    IPC.send('clear', {
-      chatId: store.currentChatId(),
-    });
-    store.clearChatMessages();
-    store.addChatMessages({
-      messages: [{
-        role: "generator",
-        content: "Clearing chat history...",
-      }, {
-        role: "assistant",
-        content: "Chat history has been cleared.",
-      }]
-    });
-  };
-
   return (
     <StyledContainer
       class={props.class}
       label="Clearing the chat will reset token data"
       actions={{
         "x": () => {
-          onClear();
+          store.clearChatMessages();
+          store.addChatMessages({
+            messages: [{
+              role: "generator",
+              content: "Clearing chat history...",
+            }, {
+              role: "assistant",
+              content: "Chat history has been cleared.",
+            }]
+          });
         }
       }}
     >

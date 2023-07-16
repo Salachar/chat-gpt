@@ -41,7 +41,7 @@ export const ChatActions = (props) => {
               disabled={store.getChatWaiting()}
               onClick={() => {
                 if (store.getChatWaiting()) return;
-                onClear();
+                store.clearChatMessages();
                 store.addChatMessage({
                   message: {
                     role: "generator",
