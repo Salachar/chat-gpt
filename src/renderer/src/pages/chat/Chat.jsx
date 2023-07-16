@@ -72,7 +72,7 @@ const StyledContainer = styled.div`
   display: grid;
   box-sizing: border-box;
   height: 100%;
-  grid-template-columns: 10rem 1fr 0.9fr 11rem;
+  grid-template-columns: 12rem 1fr 0.9fr 11rem;
   grid-template-rows: 1fr;
   grid-template-areas: "tabs chatdisplay codesection chatactions";
 `;

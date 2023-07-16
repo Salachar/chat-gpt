@@ -33,7 +33,11 @@ export const createAppStore = () => {
 
   const getChat = (id) => {
     id = id || currentChatId();
-    const chat = chats.find(chats => chats.id === id);
+    const chat = chats.find((chat) => {
+      if (chat && chat.id === id) {
+        return chat;
+      }
+    });
     return chat || copy(CHAT_SCHEMA);
   };
 
@@ -52,6 +56,17 @@ export const createAppStore = () => {
     setChatCode({ id, code: "" });
     setChatPrompt({ id, prompt: "" });
     setChatWaiting({ id, waiting: false });
+  }
+
+  const removeChat = (id) => {
+    const removing_current_chat = id === currentChatId();
+    const filtered_chats = chats.filter(chat => chat.id !== id);
+    setChats(filtered_chats);
+    if (filtered_chats.length === 0) {
+      addChat();
+    } else if (removing_current_chat) {
+      setCurrentChatId(filtered_chats[0].id);
+    }
   }
 
   const getChatName = (id) => {
@@ -175,6 +190,7 @@ export const createAppStore = () => {
     getChat,
     addChat,
     clearChat,
+    removeChat,
 
     getChatName,
     setChatName,

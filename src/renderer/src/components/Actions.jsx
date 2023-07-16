@@ -33,6 +33,12 @@ const StyledActions = styled.div`
 
 const StyledIconWrapper = styled.div`
   cursor: pointer;
+  &:hover {
+    filter: brightness(1.3);
+  }
+  &:active {
+    filter: brightness(0.8);
+  }
   &:not(:last-child) {
     margin-right: 1.25rem;
   }

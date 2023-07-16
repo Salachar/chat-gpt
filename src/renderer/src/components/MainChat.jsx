@@ -49,7 +49,6 @@ export const MainChat = (props) => {
         <StyledPrompt
           value={store.getChatPrompt()}
           onKeyDown={(e) => {
-            console.log(e)
             // Enter potentially sends the prompt or combined with shift
             // does not send the prompt so a new line can be added
             if (e.key === "Enter") {

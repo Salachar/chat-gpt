@@ -13,14 +13,6 @@ export const MainChatHeader = (props) => {
           <StyledSpeechBubble />
         )}
       </StyledSnippy>
-      <StyledBigRedCancelButton onClick={() => {
-        IPC.send('clear', {
-          chatId: store.currentChatId(),
-        });
-        store.clearChat();
-      }}>
-        <StyledX class="icss-x" />
-      </StyledBigRedCancelButton>
     </StyledContainer>
   );
 }
@@ -43,31 +35,4 @@ const StyledEyes = styled(Eyes)`
 
 const StyledSpeechBubble = styled(SpeechBubble)`
   font-size: 0.7rem;
-`;
-
-const StyledBigRedCancelButton = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 3rem;
-  height: 3rem;
-  background-color: var(--color-red);
-  border-radius: 0.5rem;
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-  &:active {
-    filter: brightness(0.8);
-  }
-`;
-
-const StyledX = styled.i`
-  color: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 2rem;
-  transform: translateX(-50%) translateY(-50%);
 `;

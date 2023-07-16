@@ -1,7 +1,6 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
-
 import { Button } from './Button';
 
 export const ChatActions = (props) => {

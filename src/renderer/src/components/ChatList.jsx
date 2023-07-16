@@ -1,6 +1,7 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
+import { Button } from './Button';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -12,16 +13,14 @@ const StyledContainer = styled.div`
   padding: 1rem 0 0 1rem;
 `;
 
-const StyledChat = styled.div`
+const StyledTab = styled.div`
   position: relative;
-  padding: 0.5rem;
   color: white;
   font-weight: bold;
-  background-color: var(--color-blue);
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
   margin-bottom: 0.5rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   width: 100%;
@@ -29,22 +28,10 @@ const StyledChat = styled.div`
   text-overflow: ellipsis;
   cursor: pointer;
   transition: all 0.2s ease;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-
-  &:active {
-    filter: brightness(0.8);
-  }
-
-  ${({ isCurrent }) => isCurrent && `
-    background-color: var(--color-light-blue);
-  `}
-
-  ${({ isWaiting }) => isWaiting && `
-    background-color: var(--color-orange-spice);
-  `}
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
 `;
 
 const StyledAddButton = styled.div`
@@ -89,21 +76,67 @@ const StyledAddButton = styled.div`
   }
 `;
 
+const StyledClose = styled.div`
+  font-size: 0.8rem;
+  line-height: 2rem;
+  height: 2rem;
+  color: var(--color-red);
+  padding: 0 0.5rem 0 0.5rem;
+  transition: all 0.1s ease;
+
+  &:hover { filter: brightness(1.2); }
+  &:active { filter: brightness(0.8); }
+
+  background-color: var(--color-blue);
+  ${({ isCurrent }) => isCurrent && `
+    background-color: var(--color-light-blue);
+  `}
+  ${({ isWaiting }) => isWaiting && `
+    background-color: var(--color-orange-spice);
+  `}
+`;
+
+const StyledName = styled(Button)`
+  height: 2rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  font-weight: bold;
+  color: white;
+
+  background-color: var(--color-blue);
+  ${({ isCurrent }) => isCurrent && `
+    background-color: var(--color-light-blue);
+  `}
+  ${({ isWaiting }) => isWaiting && `
+    background-color: var(--color-orange-spice);
+  `}
+`;
+
 export const ChatList = (props) => {
   return (
     <StyledContainer class={props.class}>
       <For each={store.chats}>
         {(chat) => {
           return (
-            <StyledChat
-              isCurrent={store.currentChatId() === chat.id}
-              isWaiting={chat.waiting}
-              onClick={() => {
-                store.setCurrentChatId(chat.id);
-              }}
-            >
-              {chat.name}
-            </StyledChat>
+            <StyledTab>
+              <StyledClose
+                isCurrent={store.currentChatId() === chat.id}
+                isWaiting={chat.waiting}
+                onClick={() => {
+                  store.removeChat(chat.id);
+                }}
+              >
+                <i class="icss-x" />
+              </StyledClose>
+              <StyledName
+                label={chat.name}
+                isCurrent={store.currentChatId() === chat.id}
+                isWaiting={chat.waiting}
+                onClick={() => {
+                  store.setCurrentChatId(chat.id);
+                }}
+              />
+            </StyledTab>
           );
         }}
       </For>
