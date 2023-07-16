@@ -9,6 +9,7 @@ import {
   SpeechBubble,
   TextArea,
   Button,
+  ChatList,
 } from '@components';
 
 import { parseMessagesForChat } from './utils';
@@ -17,27 +18,39 @@ export const Chat = () => {
   // Create a ref for your scrollable element
   let scrollable;
 
-  const [getPrompt, setPrompt] = createSignal("");
-
   const onLoadEvent = (event, events = []) => {
     if (!Array.isArray(events)) events = [];
     store.setEvents(events);
   };
 
-  const onChatEvent = (event, message = {}) => {
-    store.setIsWaiting(false);
+  const onChatEvent = (event, data = {}) => {
+    const { chatId, message } = data;
+    store.setChatWaiting({
+      id: chatId,
+      waiting: false
+    });
     window.last_message = message;
-    store.addMessage(message);
-    store.setTokenData(message.token_data);
+    store.addChatMessage({
+      id: chatId,
+      message: message
+    });
+    store.setChatTokenData({
+      id: chatId,
+      token_data: message.token_data
+    });
   };
 
-  const onErrorMessage = (event, error) => {
-    console.log(error);
-    store.setIsWaiting(false);
-    store.clearMessages();
+  const onErrorMessage = (event, data) => {
+    const { chatId, error } = data;
+    store.setChatWaiting({
+      id: chatId,
+      waiting: false
+    });
+    store.clearChatMessages(chatId);
   };
 
   onMount(() => {
+    store.addChat();
     IPC.on('onload', onLoadEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
@@ -52,7 +65,8 @@ export const Chat = () => {
 
   // Use createEffect to scroll down whenever data changes
   createEffect(() => {
-    if ((store.messages() || []).length && scrollable) {
+    // On messages change scroll to bottom if the chat is the current chat
+    if (store.getChatMessages().length && scrollable) {
       Prism.highlightAll();
       setTimeout(() => {
         scrollable.scrollTop = scrollable.scrollHeight;
@@ -62,28 +76,29 @@ export const Chat = () => {
 
   const onClear = () => {
     // Clear the chat history
-    IPC.send('clear');
-    store.clearMessages();
-    store.addMessage({
-      role: "generator",
-      content: "Clearing chat history...",
+    IPC.send('clear', {
+      chatId: store.currentChatId(),
     });
-    store.addMessage({
-      role: "assistant",
-      content: "Chat history has been cleared.",
+    store.clearChatMessages();
+    store.addChatMessages({
+      messages: [{
+        role: "generator",
+        content: "Clearing chat history...",
+      }, {
+        role: "assistant",
+        content: "Chat history has been cleared.",
+      }]
     });
   };
 
   return (
     <StyledContainer>
-      <StyledTabs>
-        Tabs
-      </StyledTabs>
+      <StyledChatList />
 
       <StyledDisplayWrapper>
         <StyledSnippy>
           <StyledEyes />
-          {store.isWaiting() && (
+          {store.getChatWaiting() && (
             <StyledSpeechBubble />
           )}
         </StyledSnippy>
@@ -97,7 +112,7 @@ export const Chat = () => {
           }}
         >
           <StyledChatHistory ref={scrollable}>
-            <For each={parseMessagesForChat(store.messages())}>
+            <For each={parseMessagesForChat(store.getChatMessages())}>
               {(message) => (
                 <>
                   <Show when={!message.parsed_sub_messages}>
@@ -140,7 +155,9 @@ export const Chat = () => {
                                 },
                                 "quotation-l": () => {
                                   // Copy code snippet to code section
-                                  store.setCode(sub_message.code_snippet);
+                                  store.setChatCode({
+                                    code: sub_message.code_snippet
+                                  });
                                 }
                               }}
                             >
@@ -166,53 +183,75 @@ export const Chat = () => {
           actions={{
             "server": () => {
               // Send the prompt and the code together
-              store.setIsWaiting(true);
-              store.addMessage({
-                role: "user",
-                content: getPrompt(),
+              store.setChatWaiting({
+                waiting: true
+              });
+              store.addChatMessage({
+                message: {
+                  role: "user",
+                  content: store.getChatPrompt(),
+                }
               });
               IPC.send('chat', {
-                prompt: getPrompt(),
-                code: store.code()
+                chatId: store.currentChatId(),
+                prompt: store.getChatPrompt(),
+                code: store.getChatCode(),
               });
               setTimeout(() => {
-                setPrompt("");
+                store.setChatPrompt({
+                  prompt: ""
+                });
               }, 0);
             },
           }}
         >
           <StyledPrompt
-            value={getPrompt()}
+            value={store.getChatPrompt()}
             onKeyDown={(e) => {
+              console.log(e)
               // Enter potentially sends the prompt or combined with shift
               // does not send the prompt so a new line can be added
               if (e.key === "Enter") {
                 if (e.shiftKey) return;
 
-                store.setIsWaiting(true);
+                store.setChatWaiting({
+                  waiting: true
+                });
 
-                const trimmed_prompt = getPrompt().trim();
+                const trimmed_prompt = store.getChatPrompt().trim();
+
                 const payload = {
                   prompt: trimmed_prompt,
                 }
                 // Check if the trimmed prompt ends with a semicolon
                 // and if so attach the code to the payload
                 if (trimmed_prompt.endsWith(";")) {
-                  payload.code = store.code();
+                  payload.code = store.getChatCode();
                 }
 
-                store.addMessage({
-                  role: "user",
-                  content: trimmed_prompt,
+                store.addChatMessage({
+                  message: {
+                    role: "user",
+                    content: trimmed_prompt,
+                  }
                 });
-                IPC.send('chat', payload);
+
+                IPC.send('chat', {
+                  chatId: store.currentChatId(),
+                  ...payload,
+                });
+
                 setTimeout(() => {
-                  setPrompt("");
+                  store.setChatPrompt({
+                    prompt: ""
+                  });
                 }, 0);
               }
             }}
             onChange={(value) => {
-              setPrompt(value);
+              store.setChatPrompt({
+                prompt: value
+              });
             }}
           />
         </StyledPromptContainer>
@@ -222,39 +261,53 @@ export const Chat = () => {
       <StyledChatActions>
         <StyledTokenData>
           <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
-          <StyledTokenPiece>Completion: {JSON.stringify(store.tokenData().completion_tokens)}</StyledTokenPiece>
-          <StyledTokenPiece>Prompt: {JSON.stringify(store.tokenData().prompt_tokens)}</StyledTokenPiece>
-          <StyledTokenPiece>Remaining: {JSON.stringify(store.tokenData().tokens_left)}</StyledTokenPiece>
-          <StyledTokenPiece>Total: {JSON.stringify(store.tokenData().total_tokens)}</StyledTokenPiece>
+          <StyledTokenPiece>Completion: {JSON.stringify(store.getChatTokenData().completion_tokens)}</StyledTokenPiece>
+          <StyledTokenPiece>Prompt: {JSON.stringify(store.getChatTokenData().prompt_tokens)}</StyledTokenPiece>
+          <StyledTokenPiece>Remaining: {JSON.stringify(store.getChatTokenData().tokens_left)}</StyledTokenPiece>
+          <StyledTokenPiece>Total: {JSON.stringify(store.getChatTokenData().total_tokens)}</StyledTokenPiece>
         </StyledTokenData>
 
         <For each={store.events()}>
           {(button_data) => (
             <StyledButtonWrapper>
               <StyledButton
-                disabled={store.isWaiting()}
+                disabled={store.getChatWaiting()}
                 label={button_data.label}
                 onClick={() => {
-                  if (store.isWaiting()) return;
-                  store.addMessage({
-                    role: "generator",
-                    content: `Running ${button_data.label}...`,
+                  if (store.getChatWaiting()) return;
+                  store.addChatMessage({
+                    message: {
+                      role: "generator",
+                      content: `Running ${button_data.label}...`,
+                    }
                   });
-                  store.setIsWaiting(true);
-                  IPC.send(button_data.event, store.code());
+                  store.setChatWaiting({
+                    waiting: true
+                  });
+                  IPC.send(button_data.event, {
+                    chatId: store.currentChatId(),
+                    code: store.getChatCode(),
+                  });
                 }}
               />
               <StyledRefreshButton
-                disabled={store.isWaiting()}
+                disabled={store.getChatWaiting()}
                 onClick={() => {
-                  if (store.isWaiting()) return;
+                  if (store.getChatWaiting()) return;
                   onClear();
-                  store.addMessage({
-                    role: "generator",
-                    content: `Running ${button_data.label}...`,
+                  store.addChatMessage({
+                    message: {
+                      role: "generator",
+                      content: `Running ${button_data.label}...`,
+                    }
                   });
-                  store.setIsWaiting(true);
-                  IPC.send(button_data.event, store.code());
+                  store.setChatWaiting({
+                    waiting: true
+                  });
+                  IPC.send(button_data.event, {
+                    chatId: store.currentChatId(),
+                    code: store.getChatCode(),
+                  });
                 }}
               >
                 <StyledRefreshIcon class="icss-synchronize" />
@@ -269,23 +322,27 @@ export const Chat = () => {
         actions={{
           "text-justify": () => {
             // Controls word wrap of the code section
-            store.toggleWordwrap();
+            store.toggleChatWordwrap();
           },
           "files": () => {
             // Copy code to navigator clipboard
-            navigator.clipboard.writeText(store.code());
+            navigator.clipboard.writeText(store.getChatCode());
           },
           "x": () => {
             // Clear the code section
-            store.setCode("");
+            store.setChatCode({
+              code: ""
+            });
           }
         }}
       >
         <StyledCodeTextArea
-          wordwrap={store.wordwrap()}
-          value={store.code()}
+          wordwrap={store.getChatCodeWrap()}
+          value={store.getChatCode()}
           onChange={(value) => {
-            store.setCode(value);
+            store.setChatCode({
+              code: value
+            });
           }}
         />
       </StyledCodeSection>
@@ -298,7 +355,6 @@ const StyledCodeSection = styled(ActionsContainer)`
   grid-area: codesection;
   padding: 1rem 0 1rem 1rem;
 `;
-
 
 const StyledPromptContainer = styled(ActionsContainer)`
   position: relative;
@@ -350,7 +406,7 @@ const StyledContainer = styled.div`
   grid-template-areas: "tabs chatdisplay codesection chatactions";
 `;
 
-const StyledTabs = styled.div`
+const StyledChatList = styled(ChatList)`
   grid-area: tabs;
   border-right: 1rem solid var(--color-light-blue);
 `;

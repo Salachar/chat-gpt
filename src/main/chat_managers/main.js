@@ -27,6 +27,7 @@ class MainChat extends ChatBase {
   constructor (openai, parent, opts) {
     super(openai, parent, opts);
 
+    this.__chats = {};
     this.__messages = [];
 
     this.setIPCEvents();
@@ -40,16 +41,22 @@ class MainChat extends ChatBase {
     this.__messages = new_messages;
   }
 
-  sendChat (event, event_type = 'chat') {
+  sendChat (chatId, event, event_type = 'chat') {
     this.send({
-      messages: this.messages,
+      messages: this.__chats[chatId],
       onReply: (data) => {
         if (data.error) {
-          event.reply('error', data.error);
-          return;
+          event.reply('error', {
+            chatId,
+            error: data.error,
+          });
+        } else {
+          this.__chats[chatId].push(data.original);
+          event.reply(event_type, {
+            chatId,
+            message: data.parsed,
+          });
         }
-        this.messages.push(data.original);
-        event.reply(event_type, data.parsed);
       },
     });
   }
@@ -66,8 +73,11 @@ class MainChat extends ChatBase {
     return prompt_content;
   };
 
-  addUserMessage (prompt) {
-    this.messages.push({
+  addUserMessage (chatId, prompt) {
+    if (!this.__chats[chatId]) {
+      this.__chats[chatId] = [];
+    }
+    this.__chats[chatId].push({
       role: "user",
       content: prompt,
     });
@@ -79,93 +89,103 @@ class MainChat extends ChatBase {
     const events = [{
       event: 'random',
       label: 'Random Code',
-      handler: (event) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Please send me a random Javascript code snippet.",
         ]));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'random-json',
       label: 'Random JSON',
-      handler: (event) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Please send me a random chunk of JSON with an assortment of types and values for testing.",
         ]));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'analyze',
       label: 'Analyze',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Analyze the following code snippet, look for any errors and potential improvements.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'javascript',
       label: 'To Javascript',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Convert the code or description in the following message to JavaScript.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'stack',
       label: 'To React/Chakra',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
           ...CHAKRA_OUTPUT_RULES,
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'react-native',
       label: 'To React Native',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Using the following code or description, write React Native code for a mobile application to satisfy it.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'chakratize',
       label: 'Chakratize',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Convert all following possible code using inline ChakraUI components.",
           ...CHAKRA_OUTPUT_RULES,
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'utils',
       label: 'Utils Check',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
           "Return a new component implementing the suggestions as best as possible with comments.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'unit-tests',
       label: 'Unit Tests',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Do your best to create a full Jest unit test suite for the following code snippet.",
           "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'cypress-tests',
       label: 'Cypress Tests',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Do your best to create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
           "You can assume the following helper functions exist:",
           "  - cy.login(username, password) to login before each test",
@@ -175,16 +195,17 @@ class MainChat extends ChatBase {
           "  - cy.setInput() as a helper function to set an input value, uses cy.getById()",
           "  - cy.clickItem() as a helper function to click any element, uses cy.getById()",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }, {
       event: 'storybook',
       label: 'Storybook',
-      handler: (event, code) => {
-        this.addUserMessage(this.addCodeRules([
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
           "Do your best to create a full Storybook (React UI Component Library) story for the following code snippet.",
         ], code));
-        this.sendChat(event);
+        this.sendChat(chatId, event);
       }
     }];
 
@@ -204,18 +225,13 @@ class MainChat extends ChatBase {
     });
 
     ipcMain.on('chat', async (event, data) => {
-      const { prompt = "", code = "" } = data;
-
+      const { chatId, prompt = "", code = "" } = data;
       if (code) {
-        this.addUserMessage(this.addCodeRules([prompt], code));
+        this.addUserMessage(this.addCodeRules(chatId, [prompt], code));
       } else {
-        this.messages.push({
-          role: "user",
-          content: prompt,
-        });
+        this.addUserMessage(chatId, prompt);
       }
-
-      this.sendChat(event);
+      this.sendChat(chatId, event);
     });
 
     // Go through the events and set the IPC events for each one.
