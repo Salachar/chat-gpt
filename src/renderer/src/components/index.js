@@ -5,6 +5,9 @@ import { SpeechBubble } from './SpeechBubble';
 import { TextArea } from './TextArea'
 import { ChatList } from './ChatList'
 import { PulsingCircle } from './PulsingCircle'
+import { ChatActions } from './ChatActions'
+import { MainChat } from './MainChat'
+import { CodeSection } from './CodeSection'
 
 export {
   ActionsContainer,
@@ -14,4 +17,7 @@ export {
   TextArea,
   ChatList,
   PulsingCircle,
+  ChatActions,
+  MainChat,
+  CodeSection,
 };

@@ -1,5 +1,5 @@
 import { For } from 'solid-js'
-import { styled, keyframes } from 'solid-styled-components';
+import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
 const StyledContainer = styled.div`

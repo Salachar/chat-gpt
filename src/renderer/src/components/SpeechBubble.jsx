@@ -2,16 +2,16 @@ import { styled, keyframes } from 'solid-styled-components';
 
 const flash = keyframes`
   0% {
-    background-color: rgba(255, 60, 0, 0.25);
-    box-shadow: 1.25em 0 rgba(255, 60, 0, 0.25), -1.25em 0 #FF3D00;
+    background-color: var(--color-orange-darkest);
+    box-shadow: 1.25em 0 var(--color-orange-darkest), -1.25em 0 var(--color-orange-spice);
   }
   50% {
-    background-color: #FF3D00;
-    box-shadow: 1.25em 0 rgba(255, 60, 0, 0.25), -1.25em 0 rgba(255, 60, 0, 0.25);
+    background-color: var(--color-orange-spice);
+    box-shadow: 1.25em 0 var(--color-orange-darkest), -1.25em 0 var(--color-orange-darkest);
   }
   100% {
-    background-color: rgba(255, 60, 0, 0.25);
-    box-shadow: 1.25em 0 #FF3D00, -1.25em 0 rgba(255, 60, 0, 0.25);
+    background-color: var(--color-orange-darkest);
+    box-shadow: 1.25em 0 var(--color-orange-spice), -1.25em 0 var(--color-orange-darkest);
   }
 `;
 
@@ -23,7 +23,7 @@ const StyledSpeechBubble = styled.div`
   width: 6.25em; /* 100px */
   height: 4.6875em; /* 75px */
   margin: 0 auto;
-  background: #fff;
+  background: var(--color-light-blue);
   position: relative;
   border-radius: 100%;
 
@@ -32,7 +32,7 @@ const StyledSpeechBubble = styled.div`
     position: absolute;
     box-sizing: border-box;
     border: 0.9375em solid transparent; /* 15px */
-    border-top: 1.5625em solid #fff; /* 25px */
+    border-top: 1.5625em solid var(--color-light-blue); /* 25px */
     transform: rotate(45deg);
     top: 3.125em; /* 50px */
     left: -0.9375em; /* -15px */
@@ -47,8 +47,8 @@ const StyledSpeechBubble = styled.div`
     top: 50%;
     transform: translate(-50% , -50%);
     border-radius: 50%;
-    background-color: #FF3D00;
-    box-shadow: 1.25em 0 #FF3D00, -1.25em 0 #FF3D00;
+    background-color: var(--color-orange-spice);
+    box-shadow: 1.25em 0 var(--color-orange-spice), -1.25em 0 var(--color-orange-spice);
     animation: ${flash} 0.5s ease-out infinite alternate;
   }
 `;

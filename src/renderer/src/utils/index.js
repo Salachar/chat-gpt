@@ -1,2 +1,10 @@
 import { alphaTrim, uuid, copy } from "./general";
-export { alphaTrim, uuid, copy };
+import { parseMessagesForChat } from "./message";
+
+export {
+  alphaTrim,
+  uuid,
+  copy,
+
+  parseMessagesForChat,
+};
