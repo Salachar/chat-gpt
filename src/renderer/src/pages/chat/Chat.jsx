@@ -38,7 +38,15 @@ export const Chat = () => {
       id: chatId,
       waiting: false
     });
-    store.clearChatMessages(chatId);
+    store.addChatMessages({
+      messages: [{
+        role: "generator",
+        content: "An error occurred.",
+      }, {
+        role: "error",
+        content: error,
+      }],
+    });
   };
 
   onMount(() => {

@@ -42,11 +42,17 @@ export const ChatActions = (props) => {
               onClick={() => {
                 if (store.getChatWaiting()) return;
                 store.clearChatMessages();
-                store.addChatMessage({
-                  message: {
+                store.addChatMessages({
+                  messages: [{
+                    role: "generator",
+                    content: "Clearing chat history...",
+                  }, {
+                    role: "assistant",
+                    content: "Chat history has been cleared.",
+                  }, {
                     role: "generator",
                     content: `Running ${button_data.label}...`,
-                  }
+                  }]
                 });
                 store.setChatWaiting({
                   waiting: true

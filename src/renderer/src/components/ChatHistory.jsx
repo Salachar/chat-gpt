@@ -50,6 +50,7 @@ export const ChatHistory = (props) => {
                   isUser={message.role === "user"}
                   isAssistant={message.role === "assistant"}
                   isGenerator={message.role === "generator"}
+                  isError={message.role === "error"}
                 >
                   {message.content}
                 </StyledMessage>
@@ -66,6 +67,7 @@ export const ChatHistory = (props) => {
                               isUser={message.role === "user"}
                               isAssistant={message.role === "assistant"}
                               isGenerator={message.role === "generator"}
+                              isError={message.role === "error"}
                             >
                               {chunk}
                             </StyledMessage>

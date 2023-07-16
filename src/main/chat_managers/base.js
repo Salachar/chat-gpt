@@ -57,51 +57,55 @@ export default class ChatBase {
     return message;
   }
 
-  async send (opts = {}) {
+  send (opts = {}) {
     const {
       messages = [],
       onReply = () => {},
     } = opts;
 
-    const chatCompletion = await this.openai.createChatCompletion({
+    this.openai.createChatCompletion({
       model: this.model,
       messages: messages,
       temperature: this.temperature,
-    });
+    }).then((res) => {
+      try {
+        const {
+          data = {},
+        } = res;
+        const {
+          usage = {},
+          choices = [],
+        } = data;
+        const {
+          prompt_tokens = 0,
+          completion_tokens = 0,
+          total_tokens = 0,
+        } = usage;
 
-    try {
-      const {
-        data = {},
-      } = chatCompletion;
-      const {
-        usage = {},
-        choices = [],
-      } = data;
-      const {
-        prompt_tokens = 0,
-        completion_tokens = 0,
-        total_tokens = 0,
-      } = usage;
+        const tokens_left = TOKEN_LIMIT - total_tokens;
+        const token_data = {
+          prompt_tokens,
+          completion_tokens,
+          total_tokens,
+          tokens_left
+        };
 
-      const tokens_left = TOKEN_LIMIT - total_tokens;
-      const token_data = {
-        prompt_tokens,
-        completion_tokens,
-        total_tokens,
-        tokens_left
-      };
-
-      const message = choices[0].message;
-      const parsed_message = this.parseMessage(message);
-      parsed_message.token_data = token_data;
-      onReply({
-        original: message,
-        parsed: parsed_message,
-      });
-    } catch (e) {
+        const message = choices[0].message;
+        const parsed_message = this.parseMessage(message);
+        parsed_message.token_data = token_data;
+        onReply({
+          original: message,
+          parsed: parsed_message,
+        });
+      } catch (e) {
+        onReply({
+          error: e.message,
+        });
+      }
+    }).catch((e) => {
       onReply({
         error: e.message,
       });
-    }
+    });
   }
 };

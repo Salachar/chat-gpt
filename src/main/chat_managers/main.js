@@ -28,17 +28,8 @@ class MainChat extends ChatBase {
     super(openai, parent, opts);
 
     this.__chats = {};
-    this.__messages = [];
 
     this.setIPCEvents();
-  }
-
-  get messages () {
-    return this.__messages;
-  }
-
-  set messages (new_messages = []) {
-    this.__messages = new_messages;
   }
 
   sendChat (chatId, event, event_type = 'chat') {
@@ -81,6 +72,19 @@ class MainChat extends ChatBase {
       role: "user",
       content: prompt,
     });
+  }
+
+  // A wrapper to put around handlers to send a generic error message
+  // if the handler fails.
+  handlerWrapper (event, data, handler) {
+    try {
+      handler(event, data);
+    } catch (e) {
+      event.reply('error', {
+        chatId: data.chatId,
+        error: e.message,
+      });
+    }
   }
 
   setIPCEvents () {
@@ -231,23 +235,37 @@ class MainChat extends ChatBase {
       }));
     });
 
-    ipcMain.on('clear', async (event) => {
-      this.messages = [];
+    ipcMain.on('clear', async (event, data) => {
+      // Clear out the chat for the passed in chatId
+      const { chatId = null } = data;
+      this.__chats[chatId] = [];
     });
 
     ipcMain.on('chat', async (event, data) => {
-      const { chatId, prompt = "", code = "" } = data;
-      if (code) {
-        this.addUserMessage(chatId, this.addCodeRules([prompt], code));
-      } else {
-        this.addUserMessage(chatId, prompt);
+      try {
+        const { chatId, prompt = "", code = "" } = data;
+        if (code) {
+          this.addUserMessage(chatId, this.addCodeRules([prompt], code));
+        } else {
+          this.addUserMessage(chatId, prompt);
+        }
+        this.sendChat(chatId, event);
+      } catch (e) {
+        event.reply('error', {
+          chatId: data.chatId,
+          error: e.message,
+        });
       }
-      this.sendChat(chatId, event);
     });
 
     // Go through the events and set the IPC events for each one.
-    events.forEach((event) => {
-      ipcMain.on(event.event, event.handler);
+    // events.forEach((event) => {
+    //   ipcMain.on(event.event, event.handler);
+    // });
+    events.forEach(({ event: eventName, handler }) => {
+      ipcMain.on(eventName, (event, data) => {
+        this.handlerWrapper(event, data, handler);
+      });
     });
   }
 }
