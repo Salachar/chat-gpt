@@ -3,15 +3,11 @@ import { ipcMain } from 'electron'
 import ChatBase from './base';
 
 const CODE_OUTPUT_RULES = [
+  "JSON: All JSON must be valid and have no errors.",
+  "JSON: All JSON must be formatted with 2 spaces.",
+  "Required: JSON included in messages must be in the following format, surrounded by triple backticks: ```<json>```.",
   "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```."
 ].join(" ");
-
-// const CHAKRA_OUTPUT_RULES = [
-//   "Use ChakraUI components directly instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
-//   "Variables should only be created for components that are very similar and have a lot of shared styling.",
-//   "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
-//   "All styling should be done using ChakraUI components.",
-// ];
 
 const CHAKRA_OUTPUT_RULES = [
   "Use ChakraUI components for all components and styling.",
@@ -24,12 +20,8 @@ const CHAKRA_OUTPUT_RULES = [
   "Do not create additional props for any components.",
 ];
 
-// const CHAKRA_OUTPUT_RULES = [
-//   "Use ChakraUI components directly for components that are not reused instead of creating a separate `Styled*` variable for them such as 'StyledContainer' or 'StyledButton'.",
-//   "'Styled*' variables should only be created for components that are very similar and have a lot of shared styling.",
-//   "If styled-components are used, remove them and replace them using inline ChakraUI components directly.",
-//   "All styling should be done using ChakraUI components.",
-// ];
+// This was a good rule for converting the loaders I use in 3.5 gpt
+// Convert the following to a styled-component replacing all `px` values with `em` values based off of 1rem;
 
 class MainChat extends ChatBase {
   constructor (openai, parent, opts) {
@@ -90,6 +82,15 @@ class MainChat extends ChatBase {
       handler: (event) => {
         this.addUserMessage(this.addCodeRules([
           "Please send me a random Javascript code snippet.",
+        ]));
+        this.sendChat(event);
+      }
+    }, {
+      event: 'random-json',
+      label: 'Random JSON',
+      handler: (event) => {
+        this.addUserMessage(this.addCodeRules([
+          "Please send me a random chunk of JSON with an assortment of types and values for testing.",
         ]));
         this.sendChat(event);
       }

@@ -1,4 +1,6 @@
-import { createSignal } from 'solid-js';
+import { createEffect, createSignal } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import { uuid, copy } from '@utils';
 
 export const createAppStore = () => {
   // The list of the actions used to create buttons.

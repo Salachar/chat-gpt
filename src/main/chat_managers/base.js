@@ -20,7 +20,6 @@ export default class ChatBase {
     try {
       message.original_content = message.content;
       message.split_content = message.content.split(/(```(.*?)\n([\s\S]*?)```)/gs);
-      console.log(message.split_content)
       message.parsed_sub_messages = [];
 
       for (let i = 0; i < message.split_content.length; i++) {

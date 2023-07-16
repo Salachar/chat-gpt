@@ -25,7 +25,6 @@ export const Chat = () => {
   };
 
   const onChatEvent = (event, message = {}) => {
-    console.log(message);
     store.setIsWaiting(false);
     window.last_message = message;
     store.addMessage(message);
@@ -163,7 +162,7 @@ export const Chat = () => {
         </StyledChatHistoryWrapper>
 
         <StyledPromptContainer
-          label="Send prompts with the Code Section by ending with a semicolon"
+          label="Send prompts with the Code Section by ending with a semicolon;"
           actions={{
             "server": () => {
               // Send the prompt and the code together
@@ -424,18 +423,12 @@ const StyledSpeechBubble = styled(SpeechBubble)`
   font-size: 0.7rem;
 `;
 
-
-
 const StyledChatActions = styled.div`
   grid-area: chatactions;
-  /* margin-top: 1rem; */
-  /* padding: 1rem; */
-  /* padding-right */
   padding: 2rem 1rem 1rem 0;
 `;
 
 const StyledTokenData = styled.div`
-  /* margin-bottom: 2rem; */
   padding: 0 0 2rem 1rem;
 `;
 
@@ -455,7 +448,7 @@ const StyledCodeMessageContainer = styled(ActionsContainer)`
 
 const StyledMessage = styled.span`
   display: block;
-  padding: 0.25em 0.5em;
+  padding: 0.35em 0.5em;
   font-size: 0.9em;
   font-weight: 600;
 
