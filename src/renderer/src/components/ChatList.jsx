@@ -1,5 +1,5 @@
 import { For } from 'solid-js'
-import { styled } from 'solid-styled-components';
+import { styled, keyframes } from 'solid-styled-components';
 import { store } from '@store';
 
 const StyledContainer = styled.div`
@@ -39,7 +39,11 @@ const StyledChat = styled.div`
   }
 
   ${({ isCurrent }) => isCurrent && `
-    background-color: var(--color-light-blue) !important;
+    background-color: var(--color-light-blue);
+  `}
+
+  ${({ isWaiting }) => isWaiting && `
+    background-color: var(--color-orange-spice);
   `}
 `;
 
@@ -93,6 +97,7 @@ export const ChatList = (props) => {
           return (
             <StyledChat
               isCurrent={store.currentChatId() === chat.id}
+              isWaiting={chat.waiting}
               onClick={() => {
                 store.setCurrentChatId(chat.id);
               }}

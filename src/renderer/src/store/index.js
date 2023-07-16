@@ -42,6 +42,7 @@ export const createAppStore = () => {
     new_chat.id = uuid();
     setChats(chats => [...chats, new_chat]);
     setCurrentChatId(new_chat.id);
+    return new_chat.id;
   };
 
   const getChatName = (id) => {

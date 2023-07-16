@@ -152,6 +152,11 @@ export const Chat = () => {
                                 },
                                 "expand": () => {
                                   // TODO: Open new tab with code snippet
+                                  const newChatId = store.addChat();
+                                  store.setChatCode({
+                                    id: newChatId,
+                                    code: sub_message.code_snippet
+                                  });
                                 },
                                 "quotation-l": () => {
                                   // Copy code snippet to code section

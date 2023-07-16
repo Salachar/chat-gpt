@@ -4,6 +4,7 @@ import { Eyes } from './Eyes'
 import { SpeechBubble } from './SpeechBubble';
 import { TextArea } from './TextArea'
 import { ChatList } from './ChatList'
+import { PulsingCircle } from './PulsingCircle'
 
 export {
   ActionsContainer,
@@ -12,4 +13,5 @@ export {
   SpeechBubble,
   TextArea,
   ChatList,
+  PulsingCircle,
 };

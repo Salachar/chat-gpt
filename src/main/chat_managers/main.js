@@ -159,6 +159,17 @@ class MainChat extends ChatBase {
         this.sendChat(chatId, event);
       }
     }, {
+      event: 'styled-components',
+      label: 'Styled Comp',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addUserMessage(chatId, this.addCodeRules([
+          "Convert the following code or snippet to use styled-components.",
+          "If there are any `px` values, convert them to `em` values based off of a default 1rem of 16px.",
+        ], code));
+        this.sendChat(chatId, event);
+      }
+    }, {
       event: 'utils',
       label: 'Utils Check',
       handler: (event, data) => {
@@ -227,7 +238,7 @@ class MainChat extends ChatBase {
     ipcMain.on('chat', async (event, data) => {
       const { chatId, prompt = "", code = "" } = data;
       if (code) {
-        this.addUserMessage(this.addCodeRules(chatId, [prompt], code));
+        this.addUserMessage(chatId, this.addCodeRules([prompt], code));
       } else {
         this.addUserMessage(chatId, prompt);
       }
