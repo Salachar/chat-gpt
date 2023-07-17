@@ -59,11 +59,34 @@ export const Chat = () => {
     });
   };
 
+  const onNoAPIKey = (event, data) => {
+    store.addChatMessages({
+      messages: [{
+        role: "error",
+        content: "No API key was found in the .env file.",
+      }, {
+        role: "assistant",
+        parsed_sub_messages: [{
+          type: "text",
+          split_content: ["Please add an API key, it is required to use this application."]
+        }, {
+          type: "text",
+          split_content: ["You might have to create an `.env` file in the root of the application."]
+        }, {
+          type: "code",
+          language: ".env",
+          code_snippet: "OPENAI=your-api-key-here",
+        }]
+      }],
+    });
+  }
+
   onMount(() => {
     store.addChat();
     IPC.on('onload', onLoadEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
+    IPC.on('no-openai-api-key', onNoAPIKey);
     IPC.send('onload');
   });
 
@@ -71,6 +94,7 @@ export const Chat = () => {
     IPC.removeListener('onload', onLoadEvent);
     IPC.removeListener('chat', onChatEvent);
     IPC.removeListener('error', onErrorMessage);
+    IPC.removeListener('no-openai-api-key', onNoAPIKey);
   });
 
   return (

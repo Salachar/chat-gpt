@@ -6,9 +6,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import contextMenu from 'electron-context-menu';
 
+// const OPENAI_API_KEY = null;
+const OPENAI_API_KEY = process.env.OPENAI;
+
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI
+  apiKey: OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
 
@@ -39,10 +42,14 @@ function createWindow() {
     }
   })
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+    // If there is no OPENAI_API_KEY, send a message to the renderer saying so.
+    if (!OPENAI_API_KEY) {
+      mainWindow.webContents.send('no-openai-api-key');
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
