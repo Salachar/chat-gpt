@@ -8,6 +8,7 @@ const CHAT_SCHEMA = {
   waiting: false,
   messages: [],
   code: "",
+  code_langugage: "javascript",
   code_wrap: true,
   prompt: "",
   token_data: {
@@ -151,6 +152,17 @@ export const createAppStore = () => {
     setChats(chat => chat.id === id, 'code', code);
   };
 
+  const getChatCodeLanguage = (id) => {
+    id = id || currentChatId();
+    const chat = getChat(id);
+    return chat.code_langugage;
+  };
+
+  const setChatCodeLanguage = ({ id = null, code_langugage = "javascript" }) => {
+    id = id || currentChatId();
+    setChats(chat => chat.id === id, 'code_langugage', code_langugage);
+  };
+
   const getChatCodeWrap = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
@@ -219,6 +231,8 @@ export const createAppStore = () => {
     clearChatMessages,
     getChatCode,
     setChatCode,
+    getChatCodeLanguage,
+    setChatCodeLanguage,
     getChatCodeWrap,
     setChatCodeWrap,
     toggleChatCodeWrap,

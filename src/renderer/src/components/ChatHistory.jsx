@@ -83,11 +83,14 @@ export const ChatHistory = (props) => {
                               navigator.clipboard.writeText(sub_message.code_snippet);
                             },
                             "expand": () => {
-                              // TODO: Open new tab with code snippet
                               const newChatId = store.addChat();
                               store.setChatCode({
                                 id: newChatId,
                                 code: sub_message.code_snippet
+                              });
+                              // Set the language
+                              store.setChatCodeLanguage({
+                                code_language: sub_message.language
                               });
                               // Set the name of the new chat to the language or "Chat"
                               store.setChatName({
@@ -99,6 +102,10 @@ export const ChatHistory = (props) => {
                               // Copy code snippet to code section
                               store.setChatCode({
                                 code: sub_message.code_snippet
+                              });
+                              // Set the language
+                              store.setChatCodeLanguage({
+                                code_language: sub_message.language
                               });
                             }
                           }}

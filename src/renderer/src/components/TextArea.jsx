@@ -29,6 +29,7 @@ export const TextArea = (props) => {
       value={props.value || ""}
       class={props.class}
       wordwrap={props.wordwrap}
+      spellcheck={props.spellcheck || true}
       placeholder={props.placeholder}
       onKeyDown={(e) => {
         if (props.onKeyDown) {

@@ -115,7 +115,7 @@ const StyledChatHistory = styled(ChatHistory)`
 `;
 
 const StyledPromptContainer = styled(ActionsContainer)`
-  height: 7rem;
+  height: 8rem;
 `;
 
 const StyledPrompt = styled(TextArea)`
