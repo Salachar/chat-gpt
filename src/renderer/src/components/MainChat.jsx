@@ -54,6 +54,19 @@ export const MainChat = (props) => {
             if (e.key === "Enter") {
               if (e.shiftKey) return;
 
+              // If waiting, don't send another prompt
+              if (store.getChatWaiting()) {
+                e.preventDefault();
+                // Add an assistant message saying to wait
+                store.addChatMessage({
+                  message: {
+                    role: "assistant",
+                    content: "Please wait until I'm finished with your last request.",
+                  }
+                });
+                return;
+              }
+
               store.setChatWaiting({
                 waiting: true
               });
