@@ -20,6 +20,7 @@ export const ChatActions = (props) => {
             <StyledButton
               disabled={store.getChatWaiting()}
               label={button_data.label}
+              toUpperCase={true}
               onClick={() => {
                 if (store.getChatWaiting()) return;
                 store.addChatMessage({
@@ -27,6 +28,9 @@ export const ChatActions = (props) => {
                     role: "generator",
                     content: `Running ${button_data.label}...`,
                   }
+                });
+                store.checkChatName({
+                  action_name: button_data.label
                 });
                 store.setChatWaiting({
                   waiting: true
@@ -53,6 +57,9 @@ export const ChatActions = (props) => {
                     role: "generator",
                     content: `Running ${button_data.label}...`,
                   }]
+                });
+                store.checkChatName({
+                  action_name: button_data.label
                 });
                 store.setChatWaiting({
                   waiting: true

@@ -80,6 +80,19 @@ export const createAppStore = () => {
     setChats(chat => chat.id === id, 'name', name);
   };
 
+  const checkChatName = ({ id = null, action_name = "" }) => {
+    id = id || currentChatId();
+    const current_name = getChatName(id);
+    if (current_name === "Chat") {
+      setChatName({ id, name: action_name });
+    } else {
+      const event = events().find(event => event.label === current_name);
+      if (event) {
+        setChatName({ id, name: action_name });
+      }
+    }
+  }
+
   const getChatWaiting = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
@@ -197,6 +210,7 @@ export const createAppStore = () => {
 
     getChatName,
     setChatName,
+    checkChatName,
     getChatWaiting,
     setChatWaiting,
     getChatMessages,

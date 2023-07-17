@@ -100,32 +100,21 @@ export const MainChat = (props) => {
 };
 
 const StyledContainer = styled.div`
-  /* display: grid; */
   height: 100%;
   overflow: hidden;
-  /* grid-template-columns: 1fr; */
-  /* grid-template-rows: 3rem 1fr 7rem; */
   padding: 1rem 0;
-  /* grid-template-areas:
-    "mainchatheader"
-    "chathistory"
-    "prompt"; */
 `;
 
 const StyledMainChatHeader = styled(MainChatHeader)`
-  /* grid-area: mainchatheader; */
   height: 3rem;
 `;
 
 const StyledChatHistory = styled(ChatHistory)`
-  /* grid-area: chathistory; */
-  padding: 1rem 0 0 0;
   height: 100%;
   overflow: hidden;
 `;
 
 const StyledPromptContainer = styled(ActionsContainer)`
-  /* grid-area: prompt; */
   height: 7rem;
 `;
 

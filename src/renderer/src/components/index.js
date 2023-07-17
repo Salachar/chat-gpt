@@ -8,6 +8,7 @@ import { PulsingCircle } from './PulsingCircle'
 import { ChatActions } from './ChatActions'
 import { MainChat } from './MainChat'
 import { CodeSection } from './CodeSection'
+import { TextInput } from './TextInput';
 
 export {
   ActionsContainer,
@@ -20,4 +21,5 @@ export {
   ChatActions,
   MainChat,
   CodeSection,
+  TextInput,
 };

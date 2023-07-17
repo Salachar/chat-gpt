@@ -9,7 +9,7 @@ const StyledButton = styled.button`
   min-height: 2rem;
   width: 100%;
   border: 0;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   transition: all 0.1s ease;
   text-align: left;
   padding: 0 0.25rem;
@@ -25,6 +25,10 @@ const StyledButton = styled.button`
     cursor: not-allowed;
     opacity: 0.5;
   `}
+
+  ${({ toUpperCase }) => toUpperCase && `
+    text-transform: uppercase;
+  `}
 `;
 
 export const Button = (props) => {
@@ -33,6 +37,7 @@ export const Button = (props) => {
       class={props.class}
       onClick={props.onClick}
       disabled={props.disabled}
+      toUpperCase={props.toUpperCase}
     >
       {props.label}
     </StyledButton>

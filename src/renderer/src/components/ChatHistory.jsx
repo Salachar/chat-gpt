@@ -89,6 +89,11 @@ export const ChatHistory = (props) => {
                                 id: newChatId,
                                 code: sub_message.code_snippet
                               });
+                              // Set the name of the new chat to the language or "Chat"
+                              store.setChatName({
+                                id: newChatId,
+                                name: sub_message.language || "Chat"
+                              });
                             },
                             "quotation-l": () => {
                               // Copy code snippet to code section
