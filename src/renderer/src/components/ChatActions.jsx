@@ -15,63 +15,73 @@ export const ChatActions = (props) => {
       </StyledTokenData>
 
       <For each={store.events()}>
-        {(button_data) => (
+        {(action) => (
           <StyledButtonWrapper>
             <StyledButton
               disabled={store.getChatWaiting()}
-              label={button_data.label}
+              nonrefresh={action.non_refresh}
+              label={action.label}
               toUpperCase={true}
               onClick={() => {
-                if (store.getChatWaiting()) return;
-                store.addChatMessage({
-                  message: {
-                    role: "generator",
-                    content: `Running ${button_data.label}...`,
-                  }
-                });
-                store.checkChatName({
-                  action_name: button_data.label
-                });
-                store.setChatWaiting({
-                  waiting: true
-                });
-                IPC.send(button_data.event, {
+                if (!action.non_waiting) {
+                  if (store.getChatWaiting()) return;
+                }
+                if (!action.non_action) {
+                  store.addChatMessage({
+                    message: {
+                      role: "generator",
+                      content: `Running ${action.label}...`,
+                    }
+                  });
+                  store.checkChatName({
+                    action_name: action.label
+                  });
+                }
+                if (!action.non_waiting) {
+                  store.setChatWaiting({
+                    waiting: true
+                  });
+                }
+                IPC.send(action.event, {
                   chatId: store.currentChatId(),
                   code: store.getChatCode(),
                 });
               }}
             />
-            <StyledRefreshButton
-              disabled={store.getChatWaiting()}
-              onClick={() => {
-                if (store.getChatWaiting()) return;
-                store.clearChatMessages();
-                store.addChatMessages({
-                  messages: [{
-                    role: "generator",
-                    content: "Clearing chat history...",
-                  }, {
-                    role: "assistant",
-                    content: "Chat history has been cleared.",
-                  }, {
-                    role: "generator",
-                    content: `Running ${button_data.label}...`,
-                  }]
-                });
-                store.checkChatName({
-                  action_name: button_data.label
-                });
-                store.setChatWaiting({
-                  waiting: true
-                });
-                IPC.send(button_data.event, {
-                  chatId: store.currentChatId(),
-                  code: store.getChatCode(),
-                });
-              }}
-            >
-              <StyledRefreshIcon class="icss-synchronize" />
-            </StyledRefreshButton>
+            {!action.non_refresh && (
+              <StyledRefreshButton
+                title="Clear messages and run action"
+                disabled={store.getChatWaiting()}
+                onClick={() => {
+                  if (store.getChatWaiting()) return;
+                  store.clearChatMessages();
+                  store.addChatMessages({
+                    messages: [{
+                      role: "generator",
+                      content: "Clearing chat history...",
+                    }, {
+                      role: "assistant",
+                      content: "Chat history has been cleared.",
+                    }, {
+                      role: "generator",
+                      content: `Running ${button_data.label}...`,
+                    }]
+                  });
+                  store.checkChatName({
+                    action_name: button_data.label
+                  });
+                  store.setChatWaiting({
+                    waiting: true
+                  });
+                  IPC.send(button_data.event, {
+                    chatId: store.currentChatId(),
+                    code: store.getChatCode(),
+                  });
+                }}
+              >
+                <StyledRefreshIcon class="icss-synchronize" />
+              </StyledRefreshButton>
+            )}
           </StyledButtonWrapper>
         )}
       </For>
@@ -97,6 +107,11 @@ const StyledButton = styled(Button)`
   height: 2rem;
   font-size: 0.75rem;
   padding-right: 0.25rem;
+
+  ${({ nonrefresh }) => nonrefresh && `
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  `}
 `;
 
 const StyledRefreshButton = styled.div`

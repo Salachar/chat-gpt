@@ -9,6 +9,24 @@ import {
   CodeSection,
 } from '@components';
 
+const ABOUT_SNIPPET =
+` getActions () {
+    return [{
+      event: 'your-custom-action',
+      label: 'Your Custom Action Label',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addMessages(chatId, "system", [
+          GENERIC_CODE_OUTPUT_RULES, // You'll probably always want to keep these
+          "One of your custom rules here for the system",
+        ]).addMessages(chatId, "user", [
+          "The "user's prompt" to trigger the generation",
+        ], code).sendChat(chatId, event);
+      }
+    }];
+  }
+`;
+
 export const Chat = () => {
   const onLoadEvent = (event, events = []) => {
     if (!Array.isArray(events)) events = [];
@@ -81,12 +99,33 @@ export const Chat = () => {
     });
   }
 
+  const onAbout = (event, data) => {
+    console.log("about");
+    store.addChatMessages({
+      messages: [{
+        role: "assistant",
+        parsed_sub_messages: [{
+          type: "text",
+          split_content: [
+            "I can help you with creating your own actions. This will allow you to create buttons like those on the righthand side.",
+            "The snippet below represents an example action you can create.",
+          ],
+        }, {
+          type: "code",
+          language: ["src/main/chat_managers/main.js"],
+          code_snippet: ABOUT_SNIPPET,
+        }]
+      }],
+    });
+  };
+
   onMount(() => {
     store.addChat();
     IPC.on('onload', onLoadEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
     IPC.on('no-openai-api-key', onNoAPIKey);
+    IPC.on('about', onAbout);
     IPC.send('onload');
   });
 
@@ -95,6 +134,7 @@ export const Chat = () => {
     IPC.removeListener('chat', onChatEvent);
     IPC.removeListener('error', onErrorMessage);
     IPC.removeListener('no-openai-api-key', onNoAPIKey);
+    IPC.removeListener('about', onAbout);
   });
 
   return (

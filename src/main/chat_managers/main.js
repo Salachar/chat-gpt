@@ -48,6 +48,15 @@ class MainChat extends ChatBase {
 
   getActions () {
     return [{
+      event: 'about',
+      label: 'About',
+      non_action: true,
+      non_refresh: true,
+      non_waiting: true,
+      handler: (event, data) => {
+        event.reply('about');
+      }
+    }, {
       event: 'example-code',
       label: 'Example Code',
       handler: (event, data) => {
@@ -260,6 +269,9 @@ class MainChat extends ChatBase {
         return {
           label: event.label,
           event: event.event,
+          non_action: event.non_action,
+          non_refresh: event.non_refresh,
+          non_waiting: event.non_waiting,
         };
       }));
     });

@@ -8,7 +8,7 @@ import { TextInput } from './TextInput';
 export const MainChatHeader = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <StyledSnippy>
+      <StyledSnippy title="This is Snippy, the Code Snippet AI Bot">
         <StyledEyes />
         {store.getChatWaiting() && (
           <StyledSpeechBubble />
