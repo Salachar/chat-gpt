@@ -9,7 +9,6 @@ const StyledButton = styled.button`
   min-height: 2rem;
   width: 100%;
   border: 0;
-  /* text-transform: uppercase; */
   transition: all 0.1s ease;
   text-align: left;
   padding: 0 0.25rem;

@@ -1,8 +1,6 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { Eyes } from './Eyes';
-import { SpeechBubble } from './SpeechBubble';
 import { ActionsContainer } from './Actions';
 import { ChatHistory } from './ChatHistory';
 import { TextArea } from './TextArea';

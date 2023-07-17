@@ -120,11 +120,6 @@ const StyledRefreshIcon = styled.i`
   cursor: pointer;
 `;
 
-// const StyledChatActions = styled.div`
-//   grid-area: chatactions;
-//   padding: 2rem 1rem 1rem 0;
-// `;
-
 const StyledTokenData = styled.div`
   padding: 0 0 2rem 1rem;
 `;
