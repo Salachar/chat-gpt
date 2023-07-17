@@ -34,6 +34,7 @@ export const Chat = () => {
   };
 
   const onChatEvent = (event, data = {}) => {
+    console.log(data);
     const { chatId, message } = data;
     store.setChatWaiting({
       id: chatId,
@@ -100,7 +101,6 @@ export const Chat = () => {
   }
 
   const onAbout = (event, data) => {
-    console.log("about");
     store.addChatMessages({
       messages: [{
         role: "assistant",
@@ -119,9 +119,15 @@ export const Chat = () => {
     });
   };
 
+  const onModelListEvent = (event, data) => {
+    console.log(event, data);
+    // store.setModels(data);
+  };
+
   onMount(() => {
     store.addChat();
     IPC.on('onload', onLoadEvent);
+    IPC.on('model-list', onModelListEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
     IPC.on('no-openai-api-key', onNoAPIKey);
@@ -131,6 +137,7 @@ export const Chat = () => {
 
   onCleanup(() => {
     IPC.removeListener('onload', onLoadEvent);
+    IPC.removeListener('model-list', onModelListEvent);
     IPC.removeListener('chat', onChatEvent);
     IPC.removeListener('error', onErrorMessage);
     IPC.removeListener('no-openai-api-key', onNoAPIKey);

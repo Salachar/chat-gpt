@@ -22,13 +22,6 @@ const CHAT_SCHEMA = {
 export const createAppStore = () => {
   // The list of the actions used to create buttons.
   const [events, setEvents] = createSignal([]);
-
-  // const [chats, setChats] = createStore([{
-  //   ...copy(CHAT_SCHEMA),
-  //   id: uuid(),
-  // }]);
-  // const [currentChatId, setCurrentChatId] = createSignal(chats[0].id);
-
   const [chats, setChats] = createStore([]);
   const [currentChatId, setCurrentChatId] = createSignal(null);
 

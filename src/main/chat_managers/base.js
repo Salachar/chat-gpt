@@ -59,12 +59,13 @@ export default class ChatBase {
 
   send (opts = {}) {
     const {
+      model = this.model,
       messages = [],
       onReply = () => {},
     } = opts;
 
     this.openai.createChatCompletion({
-      model: this.model,
+      model: model,
       messages: messages,
       temperature: this.temperature,
     }).then((res) => {

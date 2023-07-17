@@ -18,6 +18,10 @@ const openai = new OpenAIApi(configuration);
 import AIManager from './ai-manager';
 new AIManager(openai);
 
+global.shared = {
+  mainWindow: null,
+};
+
 contextMenu({
 	showSaveImageAs: true
 });
@@ -41,7 +45,7 @@ function createWindow() {
       webSecurity: false,
     }
   })
-
+  global.shared.mainWindow = mainWindow;
   // mainWindow.webContents.openDevTools();
 
   mainWindow.on('ready-to-show', () => {

@@ -203,17 +203,20 @@ class MainChat extends ChatBase {
 
   sendChat (chatId, event, event_type = 'chat') {
     this.send({
-      messages: this.__chats[chatId],
+      model:  this.__chats[chatId].model,
+      messages: this.__chats[chatId].messages,
       onReply: (data) => {
         if (data.error) {
           event.reply('error', {
             chatId,
+            chat: this.__chats[chatId],
             error: data.error,
           });
         } else {
-          this.__chats[chatId].push(data.original);
+          this.__chats[chatId].messages.push(data.original);
           event.reply(event_type, {
             chatId,
+            chat: this.__chats[chatId],
             message: data.parsed,
           });
         }
@@ -223,12 +226,14 @@ class MainChat extends ChatBase {
 
   addMessages (chatId, role, messages = [], code) {
     if (!this.__chats[chatId]) {
-      this.__chats[chatId] = [];
-      // Add the AI rules to the chat as a system message.
-      this.__chats[chatId].push({
-        role: "system",
-        content: AI_RULES,
-      });
+      this.__chats[chatId] = {
+        id: chatId,
+        model: "gpt-3.5-turbo",
+        messages: [{ // Add the AI rules to the chat as a system message.
+          role: "system",
+          content: AI_RULES,
+        }],
+      };
     }
     const message_content = messages.join(" ");
     let prompt_content = "";
@@ -237,7 +242,7 @@ class MainChat extends ChatBase {
     } else {
       prompt_content = `${message_content}`;
     }
-    this.__chats[chatId].push({
+    this.__chats[chatId].messages.push({
       role,
       content: prompt_content,
     });
@@ -252,6 +257,7 @@ class MainChat extends ChatBase {
     } catch (e) {
       event.reply('error', {
         chatId: data.chatId,
+        chat: this.__chats[data.chatId],
         error: e.message,
       });
     }
@@ -277,16 +283,22 @@ class MainChat extends ChatBase {
     });
 
     ipcMain.on('clear', async (event, data) => {
-      // Clear out the chat for the passed in chatId
       const { chatId = null } = data;
-      this.__chats[chatId] = [];
-      // Add the AI rules to the chat as a system message.
-      this.__chats[chatId].push({
-        role: "system",
-        content: AI_RULES,
-      });
-      // Send the chat back to the renderer.
-      // this.sendChat(chatId, event);
+      if (!this.__chats[chatId]) {
+        this.__chats[chatId] = {
+          id: chatId,
+          model: "gpt-3.5-turbo",
+          messages: [{ // Add the AI rules to the chat as a system message.
+            role: "system",
+            content: AI_RULES,
+          }],
+        };
+      } else {
+        this.__chats[chatId].messages = [{
+          role: "system",
+          content: AI_RULES,
+        }];
+      }
     });
 
     ipcMain.on('chat', async (event, data) => {
@@ -306,6 +318,7 @@ class MainChat extends ChatBase {
       } catch (e) {
         event.reply('error', {
           chatId: data.chatId,
+          chat: this.__chats[data.chatId],
           error: e.message,
         });
       }
