@@ -53,27 +53,33 @@ export const ChatActions = (props) => {
                 title="Clear messages and run action"
                 disabled={store.getChatWaiting()}
                 onClick={() => {
-                  if (store.getChatWaiting()) return;
-                  store.clearChatMessages();
-                  store.addChatMessages({
-                    messages: [{
-                      role: "generator",
-                      content: "Clearing chat history...",
-                    }, {
-                      role: "assistant",
-                      content: "Chat history has been cleared.",
-                    }, {
-                      role: "generator",
-                      content: `Running ${button_data.label}...`,
-                    }]
-                  });
-                  store.checkChatName({
-                    action_name: button_data.label
-                  });
-                  store.setChatWaiting({
-                    waiting: true
-                  });
-                  IPC.send(button_data.event, {
+                  if (!action.non_waiting) {
+                    if (store.getChatWaiting()) return;
+                  }
+                  if (!action.non_action) {
+                    store.clearChatMessages();
+                    store.addChatMessages({
+                      messages: [{
+                        role: "generator",
+                        content: "Clearing chat history...",
+                      }, {
+                        role: "assistant",
+                        content: "Chat history has been cleared.",
+                      }, {
+                        role: "generator",
+                        content: `Running ${action.label}...`,
+                      }]
+                    });
+                    store.checkChatName({
+                      action_name: action.label
+                    });
+                  }
+                  if (!action.non_waiting) {
+                    store.setChatWaiting({
+                      waiting: true
+                    });
+                  }
+                  IPC.send(action.event, {
                     chatId: store.currentChatId(),
                     code: store.getChatCode(),
                   });
