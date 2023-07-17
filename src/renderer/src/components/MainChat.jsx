@@ -16,31 +16,37 @@ export const MainChat = (props) => {
       <StyledPromptContainer
         label="Send prompts with the Snippet Section by ending with a semicolon;"
         actions={{
-          "files": () => {
-            // Copy the current prompt to the navigator clipboard
-            navigator.clipboard.writeText(store.getChatPrompt());
+          "files": {
+            title: "Copy to Clipboard",
+            handler: () => {
+              // Copy the current prompt to the navigator clipboard
+              navigator.clipboard.writeText(store.getChatPrompt());
+            }
           },
-          "server": () => {
-            // Send the prompt and the code together
-            store.setChatWaiting({
-              waiting: true
-            });
-            store.addChatMessage({
-              message: {
-                role: "user",
-                content: store.getChatPrompt(),
-              }
-            });
-            IPC.send('chat', {
-              chatId: store.currentChatId(),
-              prompt: store.getChatPrompt(),
-              code: store.getChatCode(),
-            });
-            setTimeout(() => {
-              store.setChatPrompt({
-                prompt: ""
+          "server": {
+            title: "Send prompt with Snippet Section attached",
+            handler: () => {
+              // Send the prompt and the code together
+              store.setChatWaiting({
+                waiting: true
               });
-            }, 0);
+              store.addChatMessage({
+                message: {
+                  role: "user",
+                  content: store.getChatPrompt(),
+                }
+              });
+              IPC.send('chat', {
+                chatId: store.currentChatId(),
+                prompt: store.getChatPrompt(),
+                code: store.getChatCode(),
+              });
+              setTimeout(() => {
+                store.setChatPrompt({
+                  prompt: ""
+                });
+              }, 0);
+            },
           }
         }}
       >

@@ -27,17 +27,20 @@ export const ChatHistory = (props) => {
       class={props.class}
       label="Clearing the chat will reset token data"
       actions={{
-        "x": () => {
-          store.clearChatMessages();
-          store.addChatMessages({
-            messages: [{
-              role: "generator",
-              content: "Clearing chat history...",
-            }, {
-              role: "assistant",
-              content: "Chat history has been cleared.",
-            }]
-          });
+        "x": {
+          title: "Clear chat messages",
+          handler: () => {
+            store.clearChatMessages();
+            store.addChatMessages({
+              messages: [{
+                role: "generator",
+                content: "Clearing chat history...",
+              }, {
+                role: "assistant",
+                content: "Chat history has been cleared.",
+              }]
+            });
+          },
         }
       }}
     >
@@ -78,35 +81,44 @@ export const ChatHistory = (props) => {
                         <StyledCodeMessageContainer
                           label={sub_message.language}
                           actions={{
-                            "files": () => {
-                              // Copy code snippet to navigator clipboard
-                              navigator.clipboard.writeText(sub_message.code_snippet);
+                            "files": {
+                              title: "Copy to Clipboard",
+                              handler: () => {
+                                // Copy code snippet to navigator clipboard
+                                navigator.clipboard.writeText(sub_message.code_snippet);
+                              },
                             },
-                            "expand": () => {
-                              const newChatId = store.addChat();
-                              store.setChatCode({
-                                id: newChatId,
-                                code: sub_message.code_snippet
-                              });
-                              // Set the language
-                              store.setChatCodeLanguage({
-                                code_language: sub_message.language
-                              });
-                              // Set the name of the new chat to the language or "Chat"
-                              store.setChatName({
-                                id: newChatId,
-                                name: sub_message.language || "Chat"
-                              });
+                            "expand": {
+                              title: "Open in new chat",
+                              handler: () => {
+                                const newChatId = store.addChat();
+                                store.setChatCode({
+                                  id: newChatId,
+                                  code: sub_message.code_snippet
+                                });
+                                // Set the language
+                                store.setChatCodeLanguage({
+                                  code_language: sub_message.language
+                                });
+                                // Set the name of the new chat to the language or "Chat"
+                                store.setChatName({
+                                  id: newChatId,
+                                  name: sub_message.language || "Chat"
+                                });
+                              }
                             },
-                            "quotation-l": () => {
-                              // Copy code snippet to code section
-                              store.setChatCode({
-                                code: sub_message.code_snippet
-                              });
-                              // Set the language
-                              store.setChatCodeLanguage({
-                                code_language: sub_message.language
-                              });
+                            "quotation-l": {
+                              title: "Copy to Snippet Section",
+                              handler: () => {
+                                // Copy code snippet to code section
+                                store.setChatCode({
+                                  code: sub_message.code_snippet
+                                });
+                                // Set the language
+                                store.setChatCodeLanguage({
+                                  code_language: sub_message.language
+                                });
+                              }
                             }
                           }}
                         >

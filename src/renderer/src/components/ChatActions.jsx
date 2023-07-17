@@ -86,6 +86,8 @@ const StyledContainer = styled.div`
 const StyledButtonWrapper = styled.div`
   height: 2rem;
   display: flex;
+  border-left: 0.35rem solid var(--color-orange-spice-light);
+
   &:not(:last-child) {
     margin-bottom: 1rem;
   }

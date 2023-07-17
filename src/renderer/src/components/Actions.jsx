@@ -66,8 +66,11 @@ export const ActionsContainer = (props) => {
         <StyledLabel>{props.label}</StyledLabel>
         <StyledActions>
           <For each={Object.entries(props.actions)}>
-            {([icon, handler]) => (
-              <StyledIconWrapper onClick={handler}>
+            {([icon, action]) => (
+              <StyledIconWrapper
+                title={action.title}
+                onClick={action.handler}
+              >
                 <StyledIcon class={`icss-${icon}`} />
               </StyledIconWrapper>
             )}

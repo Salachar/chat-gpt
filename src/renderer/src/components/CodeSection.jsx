@@ -10,34 +10,46 @@ export const CodeSection = (props) => {
       class={props.class}
       label="Snippet Section"
       actions={{
-        "text-justify": () => {
-          // Controls word wrap of the code section
-          store.toggleChatCodeWrap();
+        "text-justify": {
+          title: "Word Wrap",
+          handler: () => {
+            // Controls word wrap of the code section
+            store.toggleChatCodeWrap();
+          },
         },
-        "files": () => {
-          // Copy code to navigator clipboard
-          navigator.clipboard.writeText(store.getChatCode());
+        "files": {
+          title: "Copy to Clipboard",
+          handler: () => {
+            // Copy code to navigator clipboard
+            navigator.clipboard.writeText(store.getChatCode());
+          },
         },
-        "expand": () => {
-          const currentChatId = store.currentChatId();
-          const newChatId = store.addChat();
-          store.setChatCode({
-            id: newChatId,
-            code: store.getChatCode(currentChatId),
-          });
-          store.setChatCodeLanguage({
-            code_language: store.getChatCodeLanguage(currentChatId),
-          });
-          store.setChatName({
-            id: newChatId,
-            name: "Code Section",
-          });
+        "expand": {
+          title: "Open in new chat",
+          handler: () => {
+            const currentChatId = store.currentChatId();
+            const newChatId = store.addChat();
+            store.setChatCode({
+              id: newChatId,
+              code: store.getChatCode(currentChatId),
+            });
+            store.setChatCodeLanguage({
+              code_language: store.getChatCodeLanguage(currentChatId),
+            });
+            store.setChatName({
+              id: newChatId,
+              name: "Code Section",
+            });
+          },
         },
-        "x": () => {
-          // Clear the code section
-          store.setChatCode({
-            code: ""
-          });
+        "x": {
+          title: "Clear the Snippet Section",
+          handler: () => {
+            // Clear the code section
+            store.setChatCode({
+              code: ""
+            });
+          }
         }
       }}
     >
