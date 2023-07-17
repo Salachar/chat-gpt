@@ -2,6 +2,12 @@ import { ipcMain } from 'electron'
 
 import ChatBase from './base';
 
+const AI_RULES = [
+  "You are Snippy, the Code Snippet AI.",
+  "You are a code snippet AI that can help developers with various tasks.",
+  "The primary language you use is JavaScript.",
+].join(" ");
+
 const GENERIC_CODE_OUTPUT_RULES = [
   "JSON: All JSON must be valid and have no errors.",
   "JSON: All JSON must be formatted with 2 spaces.",
@@ -209,6 +215,11 @@ class MainChat extends ChatBase {
   addMessages (chatId, role, messages = [], code) {
     if (!this.__chats[chatId]) {
       this.__chats[chatId] = [];
+      // Add the AI rules to the chat as a system message.
+      this.__chats[chatId].push({
+        role: "system",
+        content: AI_RULES,
+      });
     }
     const message_content = messages.join(" ");
     let prompt_content = "";
@@ -257,6 +268,13 @@ class MainChat extends ChatBase {
       // Clear out the chat for the passed in chatId
       const { chatId = null } = data;
       this.__chats[chatId] = [];
+      // Add the AI rules to the chat as a system message.
+      this.__chats[chatId].push({
+        role: "system",
+        content: AI_RULES,
+      });
+      // Send the chat back to the renderer.
+      // this.sendChat(chatId, event);
     });
 
     ipcMain.on('chat', async (event, data) => {

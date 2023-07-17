@@ -8,7 +8,7 @@ export const CodeSection = (props) => {
   return (
     <StyledContainer
       class={props.class}
-      label="Code Section"
+      label="Snippet Section"
       actions={{
         "text-justify": () => {
           // Controls word wrap of the code section

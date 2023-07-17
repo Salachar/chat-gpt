@@ -16,7 +16,7 @@ export const MainChat = (props) => {
       <StyledChatHistory />
 
       <StyledPromptContainer
-        label="Send prompts with the Code Section by ending with a semicolon;"
+        label="Send prompts with the Snippet Section by ending with a semicolon;"
         actions={{
           "files": () => {
             // Copy the current prompt to the navigator clipboard
