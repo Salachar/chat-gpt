@@ -4,6 +4,7 @@ import Prism from 'prismjs';
 import { store } from '@store';
 
 import { ActionsContainer } from './Actions';
+import { Message } from './Message';
 
 import { parseMessagesForChat } from '@utils';
 
@@ -47,34 +48,23 @@ export const ChatHistory = (props) => {
       <StyledHistory ref={scrollable}>
         <For each={parseMessagesForChat(store.getChatMessages())}>
           {(message) => (
-            <>
-              <Show when={!message.parsed_sub_messages}>
-                <StyledMessage
-                  isUser={message.role === "user"}
-                  isAssistant={message.role === "assistant"}
-                  isGenerator={message.role === "generator"}
-                  isError={message.role === "error"}
-                >
-                  {message.content}
-                </StyledMessage>
+            <StyledMessageContainer
+              isUser={message.role === "user"}
+              isAssistant={message.role === "assistant"}
+              isGenerator={message.role === "generator"}
+              isError={message.role === "error"}
+            >
+              <Show when={!Array.isArray(message.content)}>
+                <Message role={message.role} message={message} />
               </Show>
 
-              <Show when={message.parsed_sub_messages}>
-                <For each={message.parsed_sub_messages}>
+              <Show when={Array.isArray(message.content)}>
+                <For each={message.content}>
                   {(sub_message) => (
                     <>
                       {sub_message.type === "text" && (
-                        <For each={sub_message.split_content}>
-                          {(chunk) => (
-                            <StyledMessage
-                              isUser={message.role === "user"}
-                              isAssistant={message.role === "assistant"}
-                              isGenerator={message.role === "generator"}
-                              isError={message.role === "error"}
-                            >
-                              {chunk}
-                            </StyledMessage>
-                          )}
+                        <For each={sub_message.lines}>
+                          {(line) => <Message role={message.role} message={line} />}
                         </For>
                       )}
                       {sub_message.type === "code" && (
@@ -133,13 +123,40 @@ export const ChatHistory = (props) => {
                   )}
                 </For>
               </Show>
-            </>
+            </StyledMessageContainer>
           )}
         </For>
       </StyledHistory>
     </StyledContainer>
   );
 };
+
+const StyledMessageContainer = styled.div`
+  font-weight: 600;
+  line-height: 1.1rem;
+  font-size: 0.85rem;
+
+  ${({ isUser }) => isUser && `
+    color: var(--color-dark-white);
+    background-color: rgba(255, 255, 255, 0.1);
+  `}
+
+  ${({ isAssistant }) => isAssistant && `
+    color: var(--color-dark-white);
+  `}
+
+  ${({ isGenerator }) => isGenerator && `
+    color: #6ed86e;
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.25);
+  `}
+
+  ${({ isError }) => isError && `
+    color: #FF5C79;
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.25);
+  `}
+`;
 
 const StyledContainer = styled(ActionsContainer)`
   position: relative;
@@ -154,30 +171,6 @@ const StyledHistory = styled.div`
 
 const StyledCodeMessageContainer = styled(ActionsContainer)`
   position: relative;
-  margin: 0.5rem 0;
-`;
-
-const StyledMessage = styled.span`
-  display: block;
-  padding: 0.35em 0.5em;
-  font-size: 0.9em;
-  font-weight: 600;
-
-  ${({ isUser }) => isUser && `
-    color: white;
-  `}
-
-  ${({ isAssistant }) => isAssistant && `
-    color: var(--color-orange-spice);
-  `}
-
-  ${({ isGenerator }) => isGenerator && `
-    color: #6ed86e;
-  `}
-
-  ${({ isError }) => isError && `
-    color: #FF5C79;
-  `}
 `;
 
 const StyledPre = styled.pre`

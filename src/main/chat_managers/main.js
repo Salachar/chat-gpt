@@ -1,14 +1,25 @@
 import { ipcMain } from 'electron'
+import axios from 'axios';
+import yaml from 'js-yaml';
 
 import ChatBase from './base';
+
+// const DEFAULT_MODEL = "gpt-3.5-turbo";
+const DEFAULT_MODEL = "gpt-3.5-turbo-16k";
 
 const AI_RULES = [
   "You are Snippy, the Code Snippet AI.",
   "You are a code snippet AI that can help developers with various tasks.",
   "The primary language you use is JavaScript.",
+  "You also help with React, React Native, and ChakraUI, and Java.",
+  "When outputing lists of information, never use nested lists.",
+  "Never use numbered lists like '1.' or '1)', only bulleted lists with '-' or '*'.",
+  "List headers should always end with a colon.",
+  "Mark underline with double underscores, like this: __underline__.",
 ].join(" ");
 
 const GENERIC_CODE_OUTPUT_RULES = [
+  "Info like variables `const thing = 3`, routes `/api/integrations/connect` should be formatted with single backticks, not triple backticks, like this: `<info>`.",
   "JSON: All JSON must be valid and have no errors.",
   "JSON: All JSON must be formatted with 2 spaces.",
   "Required: JSON included in messages must be in the following format, surrounded by triple backticks: ```<json>```.",
@@ -198,6 +209,39 @@ class MainChat extends ChatBase {
           "Create a full Storybook (React UI Component Library) story for the following code snippet.",
         ], code).sendChat(chatId, event);
       }
+    }, {
+      event: 'glaium-swagger',
+      label: 'Glaium Swagger',
+      handler: (event, data) => {
+        const { chatId = null } = data;
+        axios.get("https://api.glaium.io/api-docs/v1/swagger.yaml").then((response) => {
+          const parsed_file = yaml.load(response.data);
+
+          // Go through the entire file and remove any instances of "responses"
+          // because it makes the payload too long for now until I have access to better models
+          const removeResponses = (obj) => {
+            Object.keys(obj).forEach((key) => {
+              if (key === "responses") {
+                delete obj[key];
+              } else if (typeof obj[key] === "object") {
+                removeResponses(obj[key]);
+              }
+            });
+          }
+          removeResponses(parsed_file);
+
+          const rule_content = parsed_file;
+          this.addMessages(chatId, "system", [
+            GENERIC_CODE_OUTPUT_RULES,
+            JSON.stringify(rule_content),
+            "Prompt context should default to the rules provided above.",
+            "Give a very brief description of the rule and what it does.",
+            "If there are any endpoints provided, briefly list them all."
+          ]).addMessages(chatId, "user", [
+            `Information on Glaium has just been added.`,
+          ]).sendChat(chatId, event);
+        });
+      }
     }];
   }
 
@@ -228,10 +272,13 @@ class MainChat extends ChatBase {
     if (!this.__chats[chatId]) {
       this.__chats[chatId] = {
         id: chatId,
-        model: "gpt-3.5-turbo",
+        model: DEFAULT_MODEL,
         messages: [{ // Add the AI rules to the chat as a system message.
           role: "system",
           content: AI_RULES,
+        }, { // Add the generic code output rules to the chat as a system message.
+          role: "system",
+          content: GENERIC_CODE_OUTPUT_RULES,
         }],
       };
     }
@@ -287,16 +334,22 @@ class MainChat extends ChatBase {
       if (!this.__chats[chatId]) {
         this.__chats[chatId] = {
           id: chatId,
-          model: "gpt-3.5-turbo",
+          model: DEFAULT_MODEL,
           messages: [{ // Add the AI rules to the chat as a system message.
             role: "system",
             content: AI_RULES,
+          }, { // Add the generic code output rules to the chat as a system message.
+            role: "system",
+            content: GENERIC_CODE_OUTPUT_RULES,
           }],
         };
       } else {
         this.__chats[chatId].messages = [{
           role: "system",
           content: AI_RULES,
+        }, { // Add the generic code output rules to the chat as a system message.
+          role: "system",
+          content: GENERIC_CODE_OUTPUT_RULES,
         }];
       }
     });

@@ -46,14 +46,17 @@ function createWindow() {
     }
   })
   global.shared.mainWindow = mainWindow;
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+
     // If there is no OPENAI_API_KEY, send a message to the renderer saying so.
     if (!OPENAI_API_KEY) {
       mainWindow.webContents.send('no-openai-api-key');
     }
+
+    // ai_manager.onWindowReady();
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

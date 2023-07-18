@@ -103,7 +103,7 @@ const StyledButtonWrapper = styled.div`
   height: 2rem;
   display: flex;
   &:not(:last-child) {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 `;
 

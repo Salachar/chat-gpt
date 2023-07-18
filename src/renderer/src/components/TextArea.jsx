@@ -10,7 +10,7 @@ const StyledTextArea = styled.textarea`
   resize: vertical;
   color: white;
   font-size: 0.9rem;
-  font-weight: 600;
+  /* font-weight: 600; */
   vertical-align: top;
 
   &::placeholder {

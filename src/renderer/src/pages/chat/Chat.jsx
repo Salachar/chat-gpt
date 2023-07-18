@@ -104,12 +104,21 @@ export const Chat = () => {
     store.addChatMessages({
       messages: [{
         role: "assistant",
-        parsed_sub_messages: [{
+        content: [{
           type: "text",
-          split_content: [
-            "I can help you with creating your own actions. This will allow you to create buttons like those on the righthand side.",
-            "The snippet below represents an example action you can create.",
-          ],
+          lines: [{
+            type: "text",
+            pieces: [{
+              type: "text",
+              piece: "I can help you with creating your own actions. This will allow you to create buttons like those on the righthand side.",
+            }],
+          }, {
+            type: "text",
+            pieces: [{
+              type: "text",
+              piece: "The snippet below represents an example action you can create.",
+            }],
+          }],
         }, {
           type: "code",
           language: ["src/main/chat_managers/main.js"],
@@ -126,12 +135,14 @@ export const Chat = () => {
 
   onMount(() => {
     store.addChat();
+
     IPC.on('onload', onLoadEvent);
     IPC.on('model-list', onModelListEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
     IPC.on('no-openai-api-key', onNoAPIKey);
     IPC.on('about', onAbout);
+
     IPC.send('onload');
   });
 
@@ -161,7 +172,7 @@ const StyledContainer = styled.div`
   display: grid;
   box-sizing: border-box;
   height: 100%;
-  grid-template-columns: 12rem 1fr 0.9fr 11rem;
+  grid-template-columns: 12rem 1fr 0.75fr 11rem;
   grid-template-rows: 1fr;
   grid-template-areas: "tabs chatdisplay codesection chatactions";
 `;

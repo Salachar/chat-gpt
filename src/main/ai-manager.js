@@ -7,6 +7,8 @@ class AIManager {
     this.main_chat = new MainChat(openai, this);
 
     this.listModels();
+
+    return this;
   }
 
   listModels () {
