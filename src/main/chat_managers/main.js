@@ -219,16 +219,8 @@ class MainChat extends ChatBase {
 
           // Go through the entire file and remove any instances of "responses"
           // because it makes the payload too long for now until I have access to better models
-          const removeResponses = (obj) => {
-            Object.keys(obj).forEach((key) => {
-              if (key === "responses") {
-                delete obj[key];
-              } else if (typeof obj[key] === "object") {
-                removeResponses(obj[key]);
-              }
-            });
-          }
-          removeResponses(parsed_file);
+          this.removeKeyFromWholeObject(parsed_file, "responses");
+          console.log(JSON.stringify(parsed_file).length);
 
           const rule_content = parsed_file;
           this.addMessages(chatId, "system", [
@@ -242,7 +234,47 @@ class MainChat extends ChatBase {
           ]).sendChat(chatId, event);
         });
       }
-    }];
+    },
+      // {
+      //   event: 'sanlo-swagger',
+      //   label: 'Sanlo Swagger',
+      //   handler: (event, data) => {
+      //     const { chatId = null } = data;
+      //     axios.get(" https://app.dev.sanlo.io/api/v3/api-docs").then((response) => {
+      //       const parsed_file = response.data;
+
+      //       Object.keys(parsed_file.paths).forEach((path) => {
+      //         // Set the path to empty obj to save space for now
+      //         parsed_file.paths[path] = {};
+      //       });
+      //       // Kill components for now, its huge
+      //       parsed_file.components = {};
+
+      //       console.log(JSON.stringify(parsed_file).length);
+
+      //       const rule_content = parsed_file;
+      //       this.addMessages(chatId, "system", [
+      //         GENERIC_CODE_OUTPUT_RULES,
+      //         JSON.stringify(rule_content),
+      //         "Prompt context should default to the rules provided above.",
+      //         "Give a very brief description of the rule and what it does.",
+      //       ]).addMessages(chatId, "user", [
+      //         `Information on Sanlo has just been added.`,
+      //       ]).sendChat(chatId, event);
+      //     });
+      //   }
+      // }
+    ];
+  }
+
+  removeKeyFromWholeObject (obj, key) {
+    Object.keys(obj).forEach((k) => {
+      if (k === key) {
+        delete obj[k];
+      } else if (typeof obj[k] === "object") {
+        this.removeKeyFromWholeObject(obj[k], key);
+      }
+    });
   }
 
   sendChat (chatId, event, event_type = 'chat') {
