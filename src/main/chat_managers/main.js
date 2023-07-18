@@ -23,7 +23,8 @@ const GENERIC_CODE_OUTPUT_RULES = [
   "JSON: All JSON must be valid and have no errors.",
   "JSON: All JSON must be formatted with 2 spaces.",
   "Required: JSON included in messages must be in the following format, surrounded by triple backticks: ```<json>```.",
-  "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```."
+  "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```.",
+  "If Java is being used, the default Java stack is based on Java 11 and uses Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok",
 ].join(" ");
 
 const CHAKRA_OUTPUT_RULES = [
@@ -136,6 +137,18 @@ class MainChat extends ChatBase {
           GENERIC_CODE_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write React Native code for a mobile application to satisfy it.",
+        ], code).sendChat(chatId, event);
+      }
+    }, {
+      event: 'To Java',
+      label: 'to-java',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addMessages(chatId, "system", [
+          GENERIC_CODE_OUTPUT_RULES,
+          "Java stack is based on Java 11 and uses Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok",
+        ]).addMessages(chatId, "user", [
+          "Using the following code or description, write code using the Java stack to satisfy it.",
         ], code).sendChat(chatId, event);
       }
     }, {
