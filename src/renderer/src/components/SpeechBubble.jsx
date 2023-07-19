@@ -3,15 +3,15 @@ import { styled, keyframes } from 'solid-styled-components';
 const flash = keyframes`
   0% {
     background-color: var(--color-orange-spice);
-    box-shadow: 1.25em 0 var(--color-orange-spice), -1.25em 0 var(--color-orange-spice-lightest);
+    box-shadow: 1.25em 0 var(--color-orange-spice), -1.25em 0 var(--color-orange-spice-light);
   }
   50% {
-    background-color: var(--color-orange-spice-lightest);
+    background-color: var(--color-orange-spice-light);
     box-shadow: 1.25em 0 var(--color-orange-spice), -1.25em 0 var(--color-orange-spice);
   }
   100% {
     background-color: var(--color-orange-spice);
-    box-shadow: 1.25em 0 var(--color-orange-spice-lightest), -1.25em 0 var(--color-orange-spice);
+    box-shadow: 1.25em 0 var(--color-orange-spice-light), -1.25em 0 var(--color-orange-spice);
   }
 `;
 

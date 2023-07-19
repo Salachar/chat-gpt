@@ -176,7 +176,6 @@ export const Chat = () => {
 const StyledContainer = styled.div`
   font-size: 0.85rem;
   position: relative;
-  background-color: var(--color-blue);
   display: grid;
   box-sizing: border-box;
   height: 100%;
@@ -187,7 +186,7 @@ const StyledContainer = styled.div`
 
 const StyledChatList = styled(ChatList)`
   grid-area: tabs;
-  border-right: 1rem solid var(--color-light-blue);
+  border-right: 1rem solid var(--color-main-light);
 `;
 
 const StyledMainChat = styled(MainChat)`

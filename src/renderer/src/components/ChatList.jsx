@@ -9,7 +9,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   justify-content: unset;
   align-items: end;
-  background-color: var(--color-dark-blue-70);
+  background-color: var(--color-main-dark);
   padding: 1rem 0 0 1rem;
 `;
 
@@ -39,7 +39,7 @@ const StyledAddButton = styled.div`
   height: 3rem;
   width: 3rem;
   cursor: pointer;
-  background-color: var(--color-blue);
+  background-color: var(--color-main);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
   transition: all 0.2s ease;
@@ -87,9 +87,9 @@ const StyledClose = styled.div`
   &:hover { filter: brightness(1.2); }
   &:active { filter: brightness(0.8); }
 
-  background-color: var(--color-blue);
+  background-color: var(--color-main);
   ${({ isCurrent }) => isCurrent && `
-    background-color: var(--color-light-blue);
+    background-color: var(--color-main-light);
   `}
   ${({ isWaiting }) => isWaiting && `
     background-color: var(--color-orange-spice);
@@ -103,9 +103,9 @@ const StyledName = styled(Button)`
   font-weight: bold;
   color: white;
 
-  background-color: var(--color-blue);
+  background-color: var(--color-main);
   ${({ isCurrent }) => isCurrent && `
-    background-color: var(--color-light-blue);
+    background-color: var(--color-main-light);
   `}
   ${({ isWaiting }) => isWaiting && `
     background-color: var(--color-orange-spice);

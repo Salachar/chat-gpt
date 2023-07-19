@@ -1,4 +1,4 @@
-# dnd-gpt
+# Snippy - The Code Snippet AI
 
 An Electron application with Solid
 

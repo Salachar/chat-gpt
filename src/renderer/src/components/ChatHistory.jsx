@@ -156,7 +156,7 @@ const StyledContainer = styled(ActionsContainer)`
 
 const StyledHistory = styled.div`
   position: relative;
-  background-color: var(--color-dark-blue-70);
+  background-color: var(--color-main-dark);
   overflow-y: scroll;
   height: 100%;
 `;

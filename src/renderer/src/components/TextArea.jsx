@@ -3,7 +3,7 @@ import { styled } from 'solid-styled-components';
 const StyledTextArea = styled.textarea`
   border: none;
   box-shadow: none;
-  background-color: var(--color-dark-blue-70);
+  background-color: var(--color-main-dark);
   padding: 0.5rem;
   box-sizing: border-box;
   outline: 0;

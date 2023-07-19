@@ -137,7 +137,7 @@ const StyledPromptContainer = styled(ActionsContainer)`
 
 const StyledPrompt = styled(TextArea)`
   resize: none;
-  background-color: var(--color-light-blue);
+  background-color: var(--color-main-light);
   overflow: hidden;
   border-bottom-right-radius: 0.5rem;
   width: 100%;
