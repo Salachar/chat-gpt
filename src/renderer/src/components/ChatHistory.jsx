@@ -6,8 +6,6 @@ import { store } from '@store';
 import { ActionsContainer } from './Actions';
 import { Message } from './Message';
 
-import { parseMessagesForChat } from '@utils';
-
 export const ChatHistory = (props) => {
   // Create a ref for your scrollable element
   let scrollable;
@@ -46,7 +44,7 @@ export const ChatHistory = (props) => {
       }}
     >
       <StyledHistory ref={scrollable}>
-        <For each={parseMessagesForChat(store.getChatMessages())}>
+        <For each={store.getChatMessages()}>
           {(message) => (
             <StyledMessageContainer
               isUser={message.role === "user"}
@@ -54,75 +52,70 @@ export const ChatHistory = (props) => {
               isGenerator={message.role === "generator"}
               isError={message.role === "error"}
             >
-              <Show when={!Array.isArray(message.content)}>
-                <Message role={message.role} message={message} />
-              </Show>
-
-              <Show when={Array.isArray(message.content)}>
-                <For each={message.content}>
-                  {(sub_message) => (
-                    <>
-                      {sub_message.type === "text" && (
-                        <For each={sub_message.lines}>
-                          {(line) => <Message role={message.role} message={line} />}
-                        </For>
-                      )}
-                      {sub_message.type === "code" && (
-                        <StyledCodeMessageContainer
-                          label={sub_message.language}
-                          actions={{
-                            "files": {
-                              title: "Copy to Clipboard",
-                              handler: () => {
-                                // Copy code snippet to navigator clipboard
-                                navigator.clipboard.writeText(sub_message.code_snippet);
-                              },
+              <For each={message.content}>
+                {(sub_message) => (
+                  <>
+                    {sub_message.type === "text" && (
+                      // <For each={sub_message.lines}>
+                      //   {(line) => <Line role={message.role} line={line} />}
+                      // </For>
+                      <Message role={message.role} message={sub_message} />
+                    )}
+                    {sub_message.type === "code" && (
+                      <StyledCodeMessageContainer
+                        label={sub_message.language}
+                        actions={{
+                          "files": {
+                            title: "Copy to Clipboard",
+                            handler: () => {
+                              // Copy code snippet to navigator clipboard
+                              navigator.clipboard.writeText(sub_message.code_snippet);
                             },
-                            "expand": {
-                              title: "Open in new chat",
-                              handler: () => {
-                                const newChatId = store.addChat();
-                                store.setChatCode({
-                                  id: newChatId,
-                                  code: sub_message.code_snippet
-                                });
-                                // Set the language
-                                store.setChatCodeLanguage({
-                                  code_language: sub_message.language
-                                });
-                                // Set the name of the new chat to the language or "Chat"
-                                store.setChatName({
-                                  id: newChatId,
-                                  name: sub_message.language || "Chat"
-                                });
-                              }
-                            },
-                            "quotation-l": {
-                              title: "Copy to Snippet Section",
-                              handler: () => {
-                                // Copy code snippet to code section
-                                store.setChatCode({
-                                  code: sub_message.code_snippet
-                                });
-                                // Set the language
-                                store.setChatCodeLanguage({
-                                  code_language: sub_message.language
-                                });
-                              }
+                          },
+                          "expand": {
+                            title: "Open in new chat",
+                            handler: () => {
+                              const newChatId = store.addChat();
+                              store.setChatCode({
+                                id: newChatId,
+                                code: sub_message.code_snippet
+                              });
+                              // Set the language
+                              store.setChatCodeLanguage({
+                                code_language: sub_message.language
+                              });
+                              // Set the name of the new chat to the language or "Chat"
+                              store.setChatName({
+                                id: newChatId,
+                                name: sub_message.language || "Chat"
+                              });
                             }
-                          }}
-                        >
-                          <StyledPre>
-                            <code class="language-javascript" innerHTML={
-                              Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
-                            }></code>
-                          </StyledPre>
-                        </StyledCodeMessageContainer>
-                      )}
-                    </>
-                  )}
-                </For>
-              </Show>
+                          },
+                          "quotation-l": {
+                            title: "Copy to Snippet Section",
+                            handler: () => {
+                              // Copy code snippet to code section
+                              store.setChatCode({
+                                code: sub_message.code_snippet
+                              });
+                              // Set the language
+                              store.setChatCodeLanguage({
+                                code_language: sub_message.language
+                              });
+                            }
+                          }
+                        }}
+                      >
+                        <StyledPre>
+                          <code class="language-javascript" innerHTML={
+                            Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
+                          }></code>
+                        </StyledPre>
+                      </StyledCodeMessageContainer>
+                    )}
+                  </>
+                )}
+              </For>
             </StyledMessageContainer>
           )}
         </For>
@@ -138,17 +131,16 @@ const StyledMessageContainer = styled.div`
 
   ${({ isUser }) => isUser && `
     color: var(--color-dark-white);
-    background-color: rgba(255, 255, 255, 0.1);
   `}
 
   ${({ isAssistant }) => isAssistant && `
     color: var(--color-dark-white);
+    background-color: rgba(255, 255, 255, 0.08);
   `}
 
   ${({ isGenerator }) => isGenerator && `
     color: #6ed86e;
     font-weight: 600;
-    background-color: rgba(0, 0, 0, 0.25);
   `}
 
   ${({ isError }) => isError && `

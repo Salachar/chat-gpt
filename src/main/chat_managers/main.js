@@ -8,23 +8,24 @@ import ChatBase from './base';
 const DEFAULT_MODEL = "gpt-3.5-turbo-16k";
 
 const AI_RULES = [
-  "You are Snippy, the Code Snippet AI.",
-  "You are a code snippet AI that can help developers with various tasks.",
-  "The primary language you use is JavaScript.",
-  "You also help with React, React Native, and ChakraUI, and Java.",
-  "When outputing lists of information, never use nested lists.",
+  "You are Snippy, the Code Snippet AI, and are a helpful assistant to developers.",
+  // Main stack rules
+  "When working with Javascript, the primary development stack is: React, ChakraUI, Cypress, Jest, Storybook.",
+  "When working with Java, the primary development stack is: Java 11, Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok.",
+  // Output rules
+  // "When outputing lists of information, never use nested lists.",
+  "Lists must always be bulleted, never numbered.",
+  "Lists must always be indentented with 4 spaces.",
   "Never use numbered lists like '1.' or '1)', only bulleted lists with '-' or '*'.",
   "List headers should always end with a colon.",
   "Mark underline with double underscores, like this: __underline__.",
-].join(" ");
-
-const GENERIC_CODE_OUTPUT_RULES = [
-  "Info like variables `const thing = 3`, routes `/api/integrations/connect` should be formatted with single backticks, not triple backticks, like this: `<info>`.",
+  // Code rules
+  "Route names and endpoints such as '/api/integrations', '/v1/*' should always be formatted with single backticks, not triple backticks, like this: `<info>`.",
+  "When referencing JSON field names or variables outside of code use single backticks, like this: `field_name`.",
   "JSON: All JSON must be valid and have no errors.",
   "JSON: All JSON must be formatted with 2 spaces.",
   "Required: JSON included in messages must be in the following format, surrounded by triple backticks: ```<json>```.",
   "Required: Code included in messages must be in the following format, surrounded by triple backticks: ```<code>```.",
-  "If Java is being used, the default Java stack is based on Java 11 and uses Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok",
 ].join(" ");
 
 const CHAKRA_OUTPUT_RULES = [
@@ -74,7 +75,6 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
           "Try to avoid generating examples similar to ones that have already been generated.",
         ]).addMessages(chatId, "user", [
           "Generate an example javascript function.",
@@ -86,7 +86,6 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
           "Try to avoid generating examples similar to ones that have already been generated.",
           "Example JSON should be medium sized, showing various types of data.",
           "The test data should look realistic, but not be real data.",
@@ -100,7 +99,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // analysis rules,
         ]).addMessages(chatId, "user", [
           "Analyze the following code snippet, look for any errors and potential improvements.",
         ], code).sendChat(chatId, event);
@@ -111,7 +110,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // javascript rules,
         ]).addMessages(chatId, "user", [
           "Convert the code or description in the following message to JavaScript.",
         ], code).sendChat(chatId, event);
@@ -122,7 +121,6 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
           CHAKRA_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
@@ -134,7 +132,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // react native rules,
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write React Native code for a mobile application to satisfy it.",
         ], code).sendChat(chatId, event);
@@ -145,7 +143,6 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
           "Java stack is based on Java 11 and uses Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok",
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write code using the Java stack to satisfy it.",
@@ -157,7 +154,6 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
           CHAKRA_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Convert all following possible code using inline ChakraUI components.",
@@ -169,7 +165,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // Styled Components rules,
         ]).addMessages(chatId, "user", [
           "Convert the following code or snippet to use styled-components.",
           "If there are any `px` values, convert them to `em` values based off of a default 1rem of 16px.",
@@ -181,10 +177,10 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // Utils rules,
         ]).addMessages(chatId, "user", [
           "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
-          "Return a new component implementing the suggestions as best as possible with comments.",
+          "Return a new snippet implementing the suggestions as best as possible with comments.",
         ], code).sendChat(chatId, event);
       }
     }, {
@@ -193,10 +189,10 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // Utils rules,
         ]).addMessages(chatId, "user", [
-          "Do your best to create a full Jest unit test suite for the following code snippet.",
-          "If the test uses an element that does not have a data-testid, suggest one and use it in the test.",
+          "Do your best to create a full unit test suite for the following code snippet, try to use the framework provided for the stack being used.",
+          "If applicable to the framework, and the test uses an element that does not have a 'data-testid', suggest one and use it in the test.",
         ], code).sendChat(chatId, event);
       }
     }, {
@@ -205,7 +201,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // Cypress rules,
           CYPRESS_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
@@ -217,7 +213,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
-          GENERIC_CODE_OUTPUT_RULES,
+          // Storybook rules,
         ]).addMessages(chatId, "user", [
           "Create a full Storybook (React UI Component Library) story for the following code snippet.",
         ], code).sendChat(chatId, event);
@@ -237,7 +233,6 @@ class MainChat extends ChatBase {
 
           const rule_content = parsed_file;
           this.addMessages(chatId, "system", [
-            GENERIC_CODE_OUTPUT_RULES,
             JSON.stringify(rule_content),
             "Prompt context should default to the rules provided above.",
             "Give a very brief description of the rule and what it does.",
@@ -264,7 +259,6 @@ class MainChat extends ChatBase {
 
           const rule_content = parsed_file;
           this.addMessages(chatId, "system", [
-            GENERIC_CODE_OUTPUT_RULES,
             JSON.stringify(rule_content),
             "Prompt context should default to the rules provided above.",
             "Give a very brief description of the rule and what it does.",
@@ -317,9 +311,6 @@ class MainChat extends ChatBase {
         messages: [{ // Add the AI rules to the chat as a system message.
           role: "system",
           content: AI_RULES,
-        }, { // Add the generic code output rules to the chat as a system message.
-          role: "system",
-          content: GENERIC_CODE_OUTPUT_RULES,
         }],
       };
     }
@@ -379,18 +370,12 @@ class MainChat extends ChatBase {
           messages: [{ // Add the AI rules to the chat as a system message.
             role: "system",
             content: AI_RULES,
-          }, { // Add the generic code output rules to the chat as a system message.
-            role: "system",
-            content: GENERIC_CODE_OUTPUT_RULES,
           }],
         };
       } else {
         this.__chats[chatId].messages = [{
           role: "system",
           content: AI_RULES,
-        }, { // Add the generic code output rules to the chat as a system message.
-          role: "system",
-          content: GENERIC_CODE_OUTPUT_RULES,
         }];
       }
     });
@@ -398,17 +383,9 @@ class MainChat extends ChatBase {
     ipcMain.on('chat', async (event, data) => {
       try {
         const { chatId, prompt = "", code = "" } = data;
-        if (code) {
-          this.addMessages(chatId, "system", [
-            GENERIC_CODE_OUTPUT_RULES,
-          ]).addMessages(chatId, "user", [
-            prompt,
-          ], code).sendChat(chatId, event);
-        } else {
-          this.addMessages(chatId, "user", [
-            prompt,
-          ]).sendChat(chatId, event);
-        }
+        this.addMessages(chatId, "user", [
+          prompt,
+        ], code).sendChat(chatId, event);
       } catch (e) {
         event.reply('error', {
           chatId: data.chatId,

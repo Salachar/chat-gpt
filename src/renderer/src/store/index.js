@@ -1,6 +1,7 @@
 import { createEffect, createSignal } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { uuid, copy } from '@utils';
+import MessageParser from '../../../utils/message-parser';
 
 const CHAT_SCHEMA = {
   id: null,
@@ -105,21 +106,28 @@ export const createAppStore = () => {
     return chat.messages;
   };
 
+  const addChatMessage = ({ id = null, message = {} }) => {
+    id = id || currentChatId();
+    addChatMessages({ id, messages: [message] });
+  };
+
   const addChatMessages = ({ id = null, messages = [] }) => {
     if (!Array.isArray(messages)) {
       messages = [messages];
     }
     id = id || currentChatId();
+
+    // parse the incoming messages
+    messages = messages.map(message => {
+      const parsed_message = MessageParser.parse(message);
+      return parsed_message;
+    });
+
     setChats(chat => chat.id === id, 'messages', old_message => [
       ...old_message,
       ...messages,
     ]);
   }
-
-  const addChatMessage = ({ id = null, message = {} }) => {
-    id = id || currentChatId();
-    addChatMessages({ id, messages: [message] });
-  };
 
   const clearChatMessages = (id) => {
     id = id || currentChatId();
@@ -220,8 +228,8 @@ export const createAppStore = () => {
     getChatWaiting,
     setChatWaiting,
     getChatMessages,
-    addChatMessages,
     addChatMessage,
+    addChatMessages,
     clearChatMessages,
     getChatCode,
     setChatCode,

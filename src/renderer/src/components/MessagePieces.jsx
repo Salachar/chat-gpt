@@ -3,12 +3,7 @@ import { styled } from 'solid-styled-components';
 
 export const MessagePieces = (props) => {
   return (
-    <StyledMessagePieces
-      isUser={props.role === "user"}
-      isAssistant={props.role === "assistant"}
-      isGenerator={props.role === "generator"}
-      isError={props.role === "error"}
-    >
+    <StyledMessagePieces>
       <For each={props.pieces}>
         {(piece) => (
           <>
@@ -43,9 +38,9 @@ const StyledItalics = styled.span`
 `;
 
 const StyledBacktick = styled.span`
-  color: var(--color-orange-spice);
-  background-color: rgba(0, 0, 0, 0.25);
-  padding: 0.2rem 0.4em;
+  color: #f8c555;
+  background-color: #262433 !important;
+  padding: 0.2em 0.4em;
   border-radius: 4px;
 `;
 
