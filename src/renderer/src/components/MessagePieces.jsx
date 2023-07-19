@@ -3,7 +3,7 @@ import { styled } from 'solid-styled-components';
 
 export const MessagePieces = (props) => {
   return (
-    <StyledMessagePieces>
+    <>
       <For each={props.pieces}>
         {(piece) => (
           <>
@@ -25,7 +25,7 @@ export const MessagePieces = (props) => {
           </>
         )}
       </For>
-    </StyledMessagePieces>
+    </>
   );
 };
 
@@ -47,5 +47,3 @@ const StyledBacktick = styled.span`
 const StyledBold = styled.span`
   font-weight: 800;
 `;
-
-const StyledMessagePieces = styled.span``;

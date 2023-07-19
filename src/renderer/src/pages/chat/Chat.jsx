@@ -34,7 +34,6 @@ export const Chat = () => {
   };
 
   const onChatEvent = (event, data = {}) => {
-    console.log(data);
     const { chatId, message } = data;
     store.setChatWaiting({
       id: chatId,
@@ -85,12 +84,21 @@ export const Chat = () => {
         content: "No API key was found in the .env file.",
       }, {
         role: "assistant",
-        parsed_sub_messages: [{
+        content: [{
           type: "text",
-          split_content: ["Please add an API key, it is required to use this application."]
-        }, {
-          type: "text",
-          split_content: ["You might have to create an `.env` file in the root of the application."]
+          lines: [{
+            type: "text",
+            pieces: [{
+              type: "text",
+              piece: "Please add an API key, it is required to use this application.",
+            }],
+          }, {
+            type: "text",
+            pieces: [{
+              type: "text",
+              piece: "You might have to create an `.env` file in the root of the application.",
+            }],
+          }],
         }, {
           type: "code",
           language: ".env",
@@ -121,7 +129,7 @@ export const Chat = () => {
           }],
         }, {
           type: "code",
-          language: ["src/main/chat_managers/main.js"],
+          language: "src/main/chat_managers/main.js",
           code_snippet: ABOUT_SNIPPET,
         }]
       }],

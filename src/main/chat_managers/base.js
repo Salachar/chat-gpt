@@ -23,8 +23,6 @@ export default class ChatBase {
       onReply = () => {},
     } = opts;
 
-    console.log("Sending message to OpenAI API using model: " + model);
-
     this.openai.createChatCompletion({
       model: model,
       messages: messages,

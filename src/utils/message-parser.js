@@ -3,6 +3,12 @@ class MessageParser {
     message = JSON.parse(JSON.stringify(message));
 
     try {
+      if (Array.isArray(message.content)) {
+        // This is a message that has already been parsed and can be returned
+        console.log("Already parsed");
+        return message;
+      }
+
       const og_content = message.content;
       const split_content = og_content.split(/(```(.*?)\n([\s\S]*?)```)/gs);
       message.content = [];
@@ -28,33 +34,33 @@ class MessageParser {
             language: language || "code",
             code_snippet,
           };
-          // message.content.push(parsed_sub_message);
         } else {
           // For now we consider these just normal text messages
           const subchunks = chunk.split("\n");
 
           let lines = [];
-          // const lines = subchunks.map((line) => {
           for (let j = 0; j < subchunks.length; j++) {
-            const line = subchunks[j];
-            const trimmed_line = line.trim();
+            let line = subchunks[j];
+            let trimmed_line = line.trim();
+
             // Every subchunk is initially just text
             let type = "text";
-            // Check for list items, they start with a dash or asterisk
-            // This ignores numbered lists for now
-            if (trimmed_line.startsWith("-") || trimmed_line.startsWith("*")) {
-              type = "list-item";
+            let indent_count = null;
+
+            // Check for a list type item, starting with hypen or asterisk, or ending with colon
+            if (trimmed_line.match(/^-|^\*|:$/)) {
+              type = trimmed_line.endsWith(":") ? "list-header" : "list-item";
+              indent_count = line.match(/^\s*/)[0].length;
+              // if (indent_count < 2) indent_count = 2;
+              if (trimmed_line.startsWith("-")) {
+                line = line.trim().replace(/^-/, "").trim();
+              } else if (trimmed_line.startsWith("*")) {
+                line = line.trim().replace(/^\*/, "").trim();
+              }
             }
-            // Check for list headers, they end with a colon
-            // Check for headers after items, sometimes they start with a dash or asterisk
-            if (trimmed_line.endsWith(":")) {
-              type = "list-header";
-            }
+
             // Spacers are just empty lines
-            if (!trimmed_line) {
-              continue;
-              // type = "spacer";
-            }
+            if (!trimmed_line) continue;
 
             // The initial pieces is the entire line
             let pieces = [{
@@ -70,11 +76,55 @@ class MessageParser {
             // asterisks are used for lists and bold
             // pieces = this.checkStyles(pieces, "italics", "*");
 
-            lines.push({
+            const line_data = {
               type,
               content: line,
               pieces,
-            });
+            }
+            // We want to make sure we capture 0 indent counts
+            if (typeof indent_count === "number") line_data.indent_count = indent_count;
+
+            lines.push(line_data);
+          }
+
+          let first_indent_found = false;
+          let indent_divisor_mod = 1;
+          let indent_mod_buffer = 0;
+          for (let j = 0; j < lines.length; j++) {
+            const line = lines[j];
+            const { indent_count, type = "" } = line;
+            // Ignore non-list types
+            if (!type.match(/list-/)) continue;
+
+            if (typeof indent_count === "number" && !first_indent_found) {
+              // We found the first indent, so we can use it as the divisor if
+              // the indent seems set higher than 2.
+              first_indent_found = true;
+              if (indent_count > 2) {
+                // The indent count is too high, so we need to reset it
+                indent_divisor_mod = indent_count / 2;
+              }
+              if (indent_count === 0) {
+                // Set the buffer, which adds whitespace to lists that seemingly have no indent
+                indent_mod_buffer = 2;
+              }
+            }
+
+            // If the item is a list-header and the next line is not a list- type
+            // We want to set it to a text type and ignore it
+            if (type === "list-header") {
+              const next_line = lines[j + 1];
+              // If there is no next line, or the next line is not a list type
+              if (!next_line || next_line.type !== "list-item") {
+                line.type = "text";
+                continue;
+              }
+            }
+
+            // Divide the indent count by the divisor mod
+            line.indent_count = indent_count / indent_divisor_mod;
+            // Add the buffer to the indent count
+            line.indent_count += indent_mod_buffer;
           }
 
           parsed_sub_message = {
@@ -88,7 +138,7 @@ class MessageParser {
         }
       }
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
     return message;
   }

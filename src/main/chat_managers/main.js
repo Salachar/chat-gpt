@@ -15,9 +15,10 @@ const AI_RULES = [
   // Output rules
   // "When outputing lists of information, never use nested lists.",
   "Lists must always be bulleted, never numbered.",
-  "Lists must always be indentented with 4 spaces.",
+  "Lists must always be indented with two (2) spaces.",
   "Never use numbered lists like '1.' or '1)', only bulleted lists with '-' or '*'.",
   "List headers should always end with a colon.",
+  "List headers should always have the same indent as the list items.",
   "Mark underline with double underscores, like this: __underline__.",
   // Code rules
   "Route names and endpoints such as '/api/integrations', '/v1/*' should always be formatted with single backticks, not triple backticks, like this: `<info>`.",
@@ -229,11 +230,11 @@ class MainChat extends ChatBase {
           // Go through the entire file and remove any instances of "responses"
           // because it makes the payload too long for now until I have access to better models
           this.removeKeyFromWholeObject(parsed_file, "responses");
+          // this.removeKeyFromWholeObject(parsed_file, "type");
           console.log(JSON.stringify(parsed_file).length);
 
-          const rule_content = parsed_file;
           this.addMessages(chatId, "system", [
-            JSON.stringify(rule_content),
+            JSON.stringify(parsed_file),
             "Prompt context should default to the rules provided above.",
             "Give a very brief description of the rule and what it does.",
             "If there are any endpoints provided, briefly list them all."
@@ -247,7 +248,7 @@ class MainChat extends ChatBase {
       label: 'Sanlo Swagger',
       handler: (event, data) => {
         const { chatId = null } = data;
-        axios.get(" https://app.dev.sanlo.io/api/v3/api-docs").then((response) => {
+        axios.get("https://app.dev.sanlo.io/api/v3/api-docs").then((response) => {
           const parsed_file = response.data;
 
           Object.keys(parsed_file.paths).forEach((path) => {
@@ -257,9 +258,8 @@ class MainChat extends ChatBase {
           // Kill components for now, its huge
           parsed_file.components = {};
 
-          const rule_content = parsed_file;
           this.addMessages(chatId, "system", [
-            JSON.stringify(rule_content),
+            JSON.stringify(parsed_file),
             "Prompt context should default to the rules provided above.",
             "Give a very brief description of the rule and what it does.",
           ]).addMessages(chatId, "user", [
