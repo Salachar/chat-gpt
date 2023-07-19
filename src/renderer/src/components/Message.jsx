@@ -1,5 +1,6 @@
 import { styled } from 'solid-styled-components';
 import { MessagePieces } from './MessagePieces';
+import { ActionsContainer } from './Actions';
 
 export const Message = (props) => {
   return (
@@ -8,6 +9,17 @@ export const Message = (props) => {
       isAssistant={props.role === "assistant"}
       isGenerator={props.role === "generator"}
       isError={props.role === "error"}
+      lowProfileHeader={true}
+      noHeader={props.role === "generator" || props.role === "error"}
+      actions={{
+        "files": {
+          title: "Copy to Clipboard",
+          handler: () => {
+            // Copy the current prompt to the navigator clipboard
+            navigator.clipboard.writeText(props.message.original_content);
+          }
+        },
+      }}
     >
       <For each={props.message.lines}>
         {(line) => (
@@ -34,6 +46,14 @@ export const Message = (props) => {
   );
 };
 
+const StyledMessage = styled(ActionsContainer)`
+  display: block;
+  padding: 0.5em 1em;
+  font-size: 0.9em;
+  ${({ lowProfileHeader }) => lowProfileHeader && `
+    padding-right: 2rem;
+  `}
+`;
 
 const StyledLine = styled.span`
   display: block;
@@ -53,10 +73,4 @@ const StyledListItem = styled.ul`
   display: block;
   padding-left: ${(props) => (props.indentCount * 1)}em;
   margin: 0.4em 0;
-`;
-
-const StyledMessage = styled.div`
-  display: block;
-  padding: 0.5em 1em;
-  font-size: 0.9em;
 `;

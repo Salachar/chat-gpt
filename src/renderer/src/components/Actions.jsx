@@ -1,4 +1,4 @@
-import { For } from 'solid-js';
+import { For, Show } from 'solid-js';
 import { styled } from 'solid-styled-components';
 
 const StyledActionsContainer = styled.div`
@@ -15,6 +15,15 @@ const StyledHeader = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  ${({ lowProfileHeader }) => lowProfileHeader && `
+    background-color: transparent;
+    padding: 0 0 0.25rem 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem;
+  `}
 `;
 
 const StyledLabel = styled.span`
@@ -47,6 +56,10 @@ const StyledIconWrapper = styled.div`
 const StyledIcon = styled.i`
   font-size: 1rem;
   color: var(--color-orange-spice);
+  ${({ lowProfileHeader }) => lowProfileHeader && `
+    font-size: 0.8rem;
+    opacity: 0.8;
+  `}
 `;
 
 const StyledContent = styled.div`
@@ -62,22 +75,30 @@ export const ActionsContainer = (props) => {
       onClick={props.onClick}
       disabled={props.disabled}
     >
-      <StyledHeader>
-        <StyledLabel>{props.label}</StyledLabel>
-        <StyledActions>
-          <For each={Object.entries(props.actions)}>
-            {([icon, action]) => (
-              <StyledIconWrapper
-                title={action.title}
-                onClick={action.handler}
-              >
-                <StyledIcon class={`icss-${icon}`} />
-              </StyledIconWrapper>
-            )}
-          </For>
-        </StyledActions>
-      </StyledHeader>
-      <StyledContent>
+      <Show when={!props.noHeader}>
+        <StyledHeader lowProfileHeader={props.lowProfileHeader}>
+          {!props.lowProfileHeader && (
+            <StyledLabel>{props.label}</StyledLabel>
+          )}
+          {/* <StyledLabel>{props.label}</StyledLabel> */}
+          <StyledActions>
+            <For each={Object.entries(props.actions)}>
+              {([icon, action]) => (
+                <StyledIconWrapper
+                  title={action.title}
+                  onClick={action.handler}
+                >
+                  <StyledIcon
+                    class={`icss-${icon}`}
+                    lowProfileHeader={props.lowProfileHeader}
+                  />
+                </StyledIconWrapper>
+              )}
+            </For>
+          </StyledActions>
+        </StyledHeader>
+      </Show>
+      <StyledContent lowProfileHeader={props.lowProfileHeader}>
         {props.children}
       </StyledContent>
     </StyledActionsContainer>

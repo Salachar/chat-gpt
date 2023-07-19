@@ -129,6 +129,7 @@ class MessageParser {
 
           parsed_sub_message = {
             type: "text",
+            original_content: chunk.trim(),
             lines,
           };
         }
