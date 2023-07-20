@@ -2,6 +2,46 @@ import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 import { Button } from './Button';
+import { Snippy } from './Snippy';
+
+export const ChatList = (props) => {
+  return (
+    <StyledContainer class={props.class}>
+      <Snippy />
+
+      <For each={store.chats}>
+        {(chat) => {
+          return (
+            <StyledTab>
+              <StyledClose
+                isCurrent={store.currentChatId() === chat.id}
+                isWaiting={chat.waiting}
+                onClick={() => {
+                  store.removeChat(chat.id);
+                }}
+              >
+                <i class="icss-x" />
+              </StyledClose>
+              <StyledName
+                label={chat.name}
+                isCurrent={store.currentChatId() === chat.id}
+                isWaiting={chat.waiting}
+                onClick={() => {
+                  store.setCurrentChatId(chat.id);
+                }}
+              />
+            </StyledTab>
+          );
+        }}
+      </For>
+      <StyledAddButton
+        onClick={() => {
+          store.addChat();
+        }}
+      />
+    </StyledContainer>
+  );
+}
 
 const StyledContainer = styled.div`
   position: relative;
@@ -111,40 +151,3 @@ const StyledName = styled(Button)`
     background-color: var(--color-orange-spice);
   `}
 `;
-
-export const ChatList = (props) => {
-  return (
-    <StyledContainer class={props.class}>
-      <For each={store.chats}>
-        {(chat) => {
-          return (
-            <StyledTab>
-              <StyledClose
-                isCurrent={store.currentChatId() === chat.id}
-                isWaiting={chat.waiting}
-                onClick={() => {
-                  store.removeChat(chat.id);
-                }}
-              >
-                <i class="icss-x" />
-              </StyledClose>
-              <StyledName
-                label={chat.name}
-                isCurrent={store.currentChatId() === chat.id}
-                isWaiting={chat.waiting}
-                onClick={() => {
-                  store.setCurrentChatId(chat.id);
-                }}
-              />
-            </StyledTab>
-          );
-        }}
-      </For>
-      <StyledAddButton
-        onClick={() => {
-          store.addChat();
-        }}
-      />
-    </StyledContainer>
-  );
-}

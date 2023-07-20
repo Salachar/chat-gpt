@@ -10,7 +10,7 @@ const StyledTextInput = styled.input`
   resize: vertical;
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   vertical-align: top;
   white-space: nowrap;
 

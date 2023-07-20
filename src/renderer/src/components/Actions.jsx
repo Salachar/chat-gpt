@@ -10,7 +10,7 @@ const StyledActionsContainer = styled.div`
 const StyledHeader = styled.div`
   position: relative;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem;
+  padding: 0.35rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -18,11 +18,10 @@ const StyledHeader = styled.div`
 
   ${({ lowProfileHeader }) => lowProfileHeader && `
     background-color: transparent;
-    padding: 0 0 0.25rem 0;
     position: absolute;
     top: 0;
     right: 0;
-    padding: 0.25rem;
+    padding: 0.25rem 0.5rem 0.25rem 0;
   `}
 `;
 
@@ -48,17 +47,25 @@ const StyledIconWrapper = styled.div`
   &:active {
     filter: brightness(0.8);
   }
+
   &:not(:last-child) {
     margin-right: 1.25rem;
   }
+  ${({ lowProfileHeader }) => lowProfileHeader && `
+    &:not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  `}
 `;
 
 const StyledIcon = styled.i`
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--color-orange-spice);
+
   ${({ lowProfileHeader }) => lowProfileHeader && `
     font-size: 0.8rem;
     opacity: 0.8;
+    color: var(--color-light-blue);
   `}
 `;
 
@@ -87,6 +94,7 @@ export const ActionsContainer = (props) => {
                 <StyledIconWrapper
                   title={action.title}
                   onClick={action.handler}
+                  lowProfileHeader={props.lowProfileHeader}
                 >
                   <StyledIcon
                     class={`icss-${icon}`}

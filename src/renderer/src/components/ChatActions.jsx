@@ -148,7 +148,7 @@ const StyledTokenData = styled.div`
 const StyledTokenPiece = styled.div`
   color: white;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   &:not(:last-child) {
     margin-bottom: 0.25rem;
   }

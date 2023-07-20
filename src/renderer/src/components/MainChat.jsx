@@ -9,7 +9,7 @@ import { MainChatHeader } from './MainChatHeader';
 export const MainChat = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <StyledMainChatHeader />
+      {/* <StyledMainChatHeader /> */}
 
       <StyledChatHistory />
 
@@ -122,9 +122,9 @@ const StyledContainer = styled.div`
   padding: 1rem 0;
 `;
 
-const StyledMainChatHeader = styled(MainChatHeader)`
-  height: 3rem;
-`;
+// const StyledMainChatHeader = styled(MainChatHeader)`
+//   height: 3rem;
+// `;
 
 const StyledChatHistory = styled(ChatHistory)`
   height: 100%;

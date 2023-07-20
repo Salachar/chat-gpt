@@ -100,6 +100,11 @@ export const createAppStore = () => {
     setChats(chat => chat.id === id, 'waiting', waiting);
   };
 
+  const getFirstWaiting = () => {
+    const chat = chats.find(chat => chat.waiting);
+    return chat ? chat.id : null;
+  };
+
   const getChatMessages = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
@@ -226,6 +231,7 @@ export const createAppStore = () => {
     setChatName,
     checkChatName,
     getChatWaiting,
+    getFirstWaiting,
     setChatWaiting,
     getChatMessages,
     addChatMessage,

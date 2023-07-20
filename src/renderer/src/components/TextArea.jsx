@@ -9,8 +9,7 @@ const StyledTextArea = styled.textarea`
   outline: 0;
   resize: vertical;
   color: white;
-  font-size: 0.9rem;
-  /* font-weight: 600; */
+  font-size: 0.85rem;
   vertical-align: top;
 
   &::placeholder {

@@ -125,7 +125,7 @@ export const ChatHistory = (props) => {
 };
 
 const StyledMessageContainer = styled.div`
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.1rem;
   font-size: 0.85rem;
 
@@ -135,17 +135,15 @@ const StyledMessageContainer = styled.div`
 
   ${({ isAssistant }) => isAssistant && `
     color: var(--color-dark-white);
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--color-main);
   `}
 
   ${({ isGenerator }) => isGenerator && `
     color: #6ed86e;
-    font-weight: 600;
   `}
 
   ${({ isError }) => isError && `
     color: #FF5C79;
-    font-weight: 600;
     background-color: rgba(0, 0, 0, 0.25);
   `}
 `;

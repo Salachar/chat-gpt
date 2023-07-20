@@ -1,6 +1,7 @@
 import { styled } from 'solid-styled-components';
 import { MessagePieces } from './MessagePieces';
 import { ActionsContainer } from './Actions';
+import { store } from '@store';
 
 export const Message = (props) => {
   return (
@@ -19,6 +20,28 @@ export const Message = (props) => {
             navigator.clipboard.writeText(props.message.original_content);
           }
         },
+        "expand": {
+          title: "Open in new chat",
+          handler: () => {
+            const newChatId = store.addChat();
+            store.setChatCode({
+              id: newChatId,
+              code: props.message.original_content
+            });
+            store.setChatName({
+              id: newChatId,
+              name: "Chat"
+            });
+          }
+        },
+        "quotation-l": {
+          title: "Copy to Snippet Section",
+          handler: () => {
+            store.setChatCode({
+              code: props.message.original_content
+            });
+          }
+        }
       }}
     >
       <For each={props.message.lines}>
@@ -51,7 +74,7 @@ const StyledMessage = styled(ActionsContainer)`
   padding: 0.5em 1em;
   font-size: 0.9em;
   ${({ lowProfileHeader }) => lowProfileHeader && `
-    padding-right: 2rem;
+    padding-right: 6em;
   `}
 `;
 

@@ -1,5 +1,20 @@
 import { styled, keyframes } from 'solid-styled-components';
 
+export const Eyes = (props) => {
+  return (
+    <StyledContainer class={props.class}>
+      <div>
+        <StyledEyesLoader />
+        <StyledEyesLoader />
+      </div>
+      <StyledStache
+        animate={props.animate_mustache}
+        class="icss-mustache"
+      />
+    </StyledContainer>
+  );
+}
+
 const eyeShade = keyframes`
   0% {
     transform: translateY(0);
@@ -43,6 +58,7 @@ const eyeMove = keyframes`
 `;
 
 const StyledContainer = styled.div`
+  position: relative;
   font-size: 1rem; /* Set base size */
 `;
 
@@ -58,9 +74,9 @@ const StyledEyesLoader = styled.div`
   box-sizing: border-box;
   display: inline-block;
 
-  margin-left: 1em;
+  /* margin-left: 1em; */
   &:last-child {
-    margin-left: 0.21875em; /* 3.5px */
+    margin-left: 0.4em; /* 3.5px */
   }
 
   &:after {
@@ -93,11 +109,29 @@ const StyledEyesLoader = styled.div`
   }
 `;
 
-export const Eyes = (props) => {
-  return (
-    <StyledContainer class={props.class}>
-      <StyledEyesLoader />
-      <StyledEyesLoader />
-    </StyledContainer>
-  );
-}
+const shakeAnimation = keyframes`
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px) rotate(3deg); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(2px) rotate(-3deg); }
+  100% { transform: translateX(0); }
+`;
+
+const talkAnimation = keyframes`
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+`;
+
+const StyledStache = styled.i`
+  color: var(--color-orange-spice);
+  position: absolute !important;
+  bottom: -15px;
+  z-index: 100;
+  left: 11px;
+  font-size: 4rem;
+  ${({ animate }) => animate && `
+    animation: ${talkAnimation} 2s linear infinite,
+             ${shakeAnimation} 0.5s ease-in-out infinite;
+  `}
+`;
