@@ -3,9 +3,11 @@ import { store } from '@store';
 
 import { ActionsContainer } from './Actions';
 import { TextArea } from './TextArea';
-import { Show } from 'solid-js';
 
 export const CodeSection = (props) => {
+  let textAreaRef;
+  let preRef;
+
   return (
     <StyledContainer
       class={props.class}
@@ -22,14 +24,12 @@ export const CodeSection = (props) => {
           title: "Word Wrap",
           toggled: store.getChatCodeWrap(),
           handler: () => {
-            // Controls word wrap of the code section
             store.toggleChatCodeWrap();
           },
         },
         "files": {
           title: "Copy to Clipboard",
           handler: () => {
-            // Copy code to navigator clipboard
             navigator.clipboard.writeText(store.getChatCode());
           },
         },
@@ -54,7 +54,6 @@ export const CodeSection = (props) => {
         "x": {
           title: "Clear the Snippet Section",
           handler: () => {
-            // Clear the code section
             store.setChatCode({
               code: ""
             });
@@ -67,19 +66,23 @@ export const CodeSection = (props) => {
         wordwrap={store.getChatCodeWrap()}
         codeformat={store.getChatCodeFormat()}
         value={store.getChatCode()}
+        ref={textAreaRef}
+        onScroll={(e) => {
+          if (textAreaRef && preRef) {
+            preRef.scrollTop = textAreaRef.scrollTop;
+          }
+        }}
         onChange={(value) => {
           store.setChatCode({
             code: value
           });
         }}
       />
-      <Show when={store.getChatCodeFormat()}>
-        <StyledPre>
-          <code class="language-javascript" innerHTML={
-            Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
-          }></code>
-        </StyledPre>
-      </Show>
+      <StyledPre codeformat={store.getChatCodeFormat()} ref={preRef}>
+        <code class="language-javascript" innerHTML={
+          Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
+        }></code>
+      </StyledPre>
     </StyledContainer>
   );
 };
@@ -95,13 +98,13 @@ const StyledCodeTextArea = styled(TextArea)`
   padding: 0.5rem 0.75rem !important;
   resize: none;
 
-  ${({ codeformat }) => codeformat && `
-    font-family: "Fira Code", monospace !important;
-    font-weight: 400 !important;
-    font-size: 1em !important;
-    line-height: 1em !important;
-    letter-spacing: 0.05em !important;
+  font-family: "Fira Code", monospace !important;
+  font-weight: 400 !important;
+  font-size: 1em !important;
+  line-height: 1.2em !important;
+  letter-spacing: 0.05em !important;
 
+  ${({ codeformat }) => codeformat && `
     position: absolute;
     white-space: nowrap !important;
     background-color: transparent !important;
@@ -124,13 +127,19 @@ const StyledPre = styled.pre`
   font-family: "Fira Code", monospace !important;
   font-weight: 400 !important;
   font-size: 1em !important;
-  line-height: 1em !important;
+  line-height: 1.2em !important;
   letter-spacing: 0.05em !important;
+
   * {
     font-family: "Fira Code", monospace !important;
     font-weight: 400 !important;
     font-size: 1em !important;
-    line-height: 1em !important;
+    line-height: 1.2em !important;
     letter-spacing: 0.05em !important;
   }
+
+  visibility: hidden;
+  ${({ codeformat }) => codeformat && `
+    visibility: visible;
+  `}
 `;

@@ -7,6 +7,10 @@ export const Eyes = (props) => {
         <StyledEyesLoader />
         <StyledEyesLoader />
       </div>
+      <StyledStacheBG
+        animate={props.animate_mustache}
+        class="icss-mustache"
+      />
       <StyledStache
         animate={props.animate_mustache}
         class="icss-mustache"
@@ -130,6 +134,20 @@ const StyledStache = styled.i`
   z-index: 100;
   left: 11px;
   font-size: 4rem;
+  ${({ animate }) => animate && `
+    animation: ${talkAnimation} 2s linear infinite,
+             ${shakeAnimation} 0.5s ease-in-out infinite;
+  `}
+`;
+
+
+const StyledStacheBG = styled.i`
+  color: var(--color-orange-spice-dark);
+  position: absolute !important;
+  bottom: -17px;
+  z-index: 100;
+  left: 2px;
+  font-size: 4.8rem;
   ${({ animate }) => animate && `
     animation: ${talkAnimation} 2s linear infinite,
              ${shakeAnimation} 0.5s ease-in-out infinite;
