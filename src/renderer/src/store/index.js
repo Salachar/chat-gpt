@@ -2,6 +2,7 @@ import { createEffect, createSignal } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { uuid, copy } from '@utils';
 import MessageParser from '../../../utils/message-parser';
+import Prism from 'prismjs';
 
 const CHAT_SCHEMA = {
   id: null,
@@ -11,6 +12,7 @@ const CHAT_SCHEMA = {
   code: "",
   code_langugage: "javascript",
   code_wrap: true,
+  code_format: false,
   prompt: "",
   token_data: {
     completion_tokens: 0,
@@ -184,7 +186,33 @@ export const createAppStore = () => {
   const toggleChatCodeWrap = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    setChats(chat => chat.id === id, 'code_wrap', !chat.code_wrap);
+    const new_code_wrap = !chat.code_wrap;
+    if (new_code_wrap) {
+      setChats(chat => chat.id === id, 'code_format', false);
+    }
+    setChats(chat => chat.id === id, 'code_wrap', new_code_wrap);
+  };
+
+  const getChatCodeFormat = (id) => {
+    id = id || currentChatId();
+    const chat = getChat(id);
+    return chat.code_format;
+  };
+
+  const setChatCodeFormat = ({ id = null, code_format = false }) => {
+    id = id || currentChatId();
+    setChats(chat => chat.id === id, 'code_format', code_format);
+  };
+
+  const toggleChatCodeFormat = (id) => {
+    id = id || currentChatId();
+    const chat = getChat(id);
+    const new_code_format = !chat.code_format;
+    if (new_code_format) {
+      setChats(chat => chat.id === id, 'code_wrap', false);
+    }
+    setChats(chat => chat.id === id, 'code_format', new_code_format);
+    Prism.highlightAll();
   };
 
   const getChatPrompt = (id) => {
@@ -241,9 +269,14 @@ export const createAppStore = () => {
     setChatCode,
     getChatCodeLanguage,
     setChatCodeLanguage,
+
     getChatCodeWrap,
     setChatCodeWrap,
     toggleChatCodeWrap,
+    getChatCodeFormat,
+    setChatCodeFormat,
+    toggleChatCodeFormat,
+
     getChatPrompt,
     setChatPrompt,
     getChatTokenData,

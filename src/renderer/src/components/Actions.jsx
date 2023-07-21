@@ -51,10 +51,19 @@ const StyledIconWrapper = styled.div`
   &:not(:last-child) {
     margin-right: 1.25rem;
   }
+
   ${({ lowProfileHeader }) => lowProfileHeader && `
     &:not(:last-child) {
       margin-right: 0.5rem;
     }
+  `}
+
+  ${({ togglable }) => togglable && `
+    opacity: 0.4;
+  `}
+
+  ${({ toggled }) => toggled && `
+    opacity: 1;
   `}
 `;
 
@@ -87,7 +96,6 @@ export const ActionsContainer = (props) => {
           {!props.lowProfileHeader && (
             <StyledLabel>{props.label}</StyledLabel>
           )}
-          {/* <StyledLabel>{props.label}</StyledLabel> */}
           <StyledActions>
             <For each={Object.entries(props.actions)}>
               {([icon, action]) => (
@@ -95,6 +103,8 @@ export const ActionsContainer = (props) => {
                   title={action.title}
                   onClick={action.handler}
                   lowProfileHeader={props.lowProfileHeader}
+                  togglable={typeof action.toggled === "boolean"}
+                  toggled={action.toggled}
                 >
                   <StyledIcon
                     class={`icss-${icon}`}

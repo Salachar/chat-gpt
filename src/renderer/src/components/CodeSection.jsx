@@ -3,6 +3,7 @@ import { store } from '@store';
 
 import { ActionsContainer } from './Actions';
 import { TextArea } from './TextArea';
+import { Show } from 'solid-js';
 
 export const CodeSection = (props) => {
   return (
@@ -10,8 +11,16 @@ export const CodeSection = (props) => {
       class={props.class}
       label="Snippet Section"
       actions={{
+        "visual-code": {
+          title: "Code Format",
+          toggled: store.getChatCodeFormat(),
+          handler: () => {
+            store.toggleChatCodeFormat();
+          }
+        },
         "text-justify": {
           title: "Word Wrap",
+          toggled: store.getChatCodeWrap(),
           handler: () => {
             // Controls word wrap of the code section
             store.toggleChatCodeWrap();
@@ -56,6 +65,7 @@ export const CodeSection = (props) => {
       <StyledCodeTextArea
         spellcheck="false"
         wordwrap={store.getChatCodeWrap()}
+        codeformat={store.getChatCodeFormat()}
         value={store.getChatCode()}
         onChange={(value) => {
           store.setChatCode({
@@ -63,11 +73,13 @@ export const CodeSection = (props) => {
           });
         }}
       />
-      {/* <StyledPre wordwrap={store.getChatCodeWrap()}>
-        <code class="language-javascript" innerHTML={
-          Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
-        }></code>
-      </StyledPre> */}
+      <Show when={store.getChatCodeFormat()}>
+        <StyledPre>
+          <code class="language-javascript" innerHTML={
+            Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
+          }></code>
+        </StyledPre>
+      </Show>
     </StyledContainer>
   );
 };
@@ -75,24 +87,28 @@ export const CodeSection = (props) => {
 const StyledContainer = styled(ActionsContainer)``;
 
 const StyledCodeTextArea = styled(TextArea)`
-  /* position: absolute; */
   white-space: nowrap;
   width: 100%;
   height: 100%;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
   padding: 0.5rem 0.75rem !important;
-
-  font-family: "Fira Code", monospace !important;
-  font-weight: 400 !important;
-  font-size: 1em !important;
-  line-height: 1em !important;
-  letter-spacing: 0.05em !important;
-
-  /* background-color: transparent !important; */
   resize: none;
-  /* color: transparent !important; */
-  /* z-index: 10; */
+
+  ${({ codeformat }) => codeformat && `
+    font-family: "Fira Code", monospace !important;
+    font-weight: 400 !important;
+    font-size: 1em !important;
+    line-height: 1em !important;
+    letter-spacing: 0.05em !important;
+
+    position: absolute;
+    white-space: nowrap !important;
+    background-color: transparent !important;
+    color: transparent !important;
+    caret-color: white !important;
+    z-index: 10;
+  `}
 `;
 
 const StyledPre = styled.pre`
@@ -102,16 +118,14 @@ const StyledPre = styled.pre`
   height: 100%;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  padding: 0.25rem 0.5em !important;
+  padding: 0.5rem 0.75rem !important;
+  z-index: 5;
 
   font-family: "Fira Code", monospace !important;
   font-weight: 400 !important;
   font-size: 1em !important;
   line-height: 1em !important;
   letter-spacing: 0.05em !important;
-
-  z-index: 5;
-
   * {
     font-family: "Fira Code", monospace !important;
     font-weight: 400 !important;
@@ -119,9 +133,4 @@ const StyledPre = styled.pre`
     line-height: 1em !important;
     letter-spacing: 0.05em !important;
   }
-
-  ${({ wordwrap }) => wordwrap && `
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
-  `}
 `;

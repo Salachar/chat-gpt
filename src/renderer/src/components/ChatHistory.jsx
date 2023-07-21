@@ -131,6 +131,7 @@ const StyledMessageContainer = styled.div`
 
   ${({ isUser }) => isUser && `
     color: var(--color-dark-white);
+    border-left: 0.5rem solid var(--color-main-light);
   `}
 
   ${({ isAssistant }) => isAssistant && `

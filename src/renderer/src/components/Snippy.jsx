@@ -1,13 +1,59 @@
+import { Show, createSignal } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
 import { Eyes } from './Eyes';
 import { SpeechBubble } from './SpeechBubble';
 
+const ICONS = [
+  'coffee-maker',
+  'coffee-pot',
+  'whiskey-jug',
+  'glass-umbrella',
+  'orangeade',
+  'tea-cup',
+  'coffee',
+  'cheese',
+  'snowflake',
+  'tortoise',
+  'gamepad',
+  'billiard',
+  'poolroom',
+  'bowling',
+  'flask',
+  'scroll',
+  'rocket',
+  'color',
+];
+
 export const Snippy = () => {
+  // We want the thought bubble to randomly appear every 5-10 seconds
+  // const
+  // const [thoughtBubble, setThoughtBubble] = createSignal(false);
+
+  // const showThoughtBubble = () => {
+  //   setThoughtBubble(true);
+
+  // }
+
+  // setInterval(() => {
+  //   setThoughtBubble(true);
+  //   // Make the thought bubble disappear 3 seconds after it appears
+  //   setTimeout(() => {
+  //     setThoughtBubble(false);
+  //   }, 3000);
+
+  //   // const five_to_ten_seconds = Math.floor(Math.random() * 5000) + 5000;
+  //   const fifteen_to_twenty_seconds = Math.floor(Math.random() * 15000) + 5000;
+  // }, fifteen_to_twenty_seconds);
+
   return (
     <StyledSnippy title="This is Snippy, the Code Snippet AI Bot">
-      {/* <StyleThoughtBubble /> */}
+      {/* <Show when={thoughtBubble()}>
+        <StyledThoughtBubble>
+          <i class={`icss-${ICONS[Math.floor(Math.random() * ICONS.length)]}`} />
+        </StyledThoughtBubble>
+      </Show> */}
       {store.getFirstWaiting() && (
         <StyledSpeechBubble />
       )}
@@ -16,7 +62,7 @@ export const Snippy = () => {
   );
 }
 
-const StyleThoughtBubble = styled.div`
+const StyledThoughtBubble = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -58,14 +104,13 @@ const StyledSnippy = styled.div`
 `;
 
 const StyledEyes = styled(Eyes)`
-  margin-right: 0.5rem;
   font-size: 0.9rem;
   white-space: nowrap;
   background-color: var(--color-light-blue);
   padding: 0.5rem;
   border-radius: 1rem;
   display: inline-block;
-  margin-top: 4.5rem;
+  margin: 4.5rem 0 0 0.5rem;
 `;
 
 const StyledSpeechBubble = styled(SpeechBubble)`
