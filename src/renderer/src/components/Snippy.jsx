@@ -1,4 +1,4 @@
-import { Show, createSignal } from 'solid-js';
+import { createSignal, onCleanup, onMount } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
@@ -24,36 +24,50 @@ const ICONS = [
   'scroll',
   'rocket',
   'color',
+  'banjo',
 ];
 
+const getRandom = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const getRandomSeconds = (min, max) => {
+  return getRandom(min, max) * 1000;
+};
+
+const getRandomIcon = () => {
+  return ICONS[getRandom(0, ICONS.length - 1)];
+};
+
 export const Snippy = () => {
-  // We want the thought bubble to randomly appear every 5-10 seconds
-  // const
-  // const [thoughtBubble, setThoughtBubble] = createSignal(false);
+  let thoughtBubbleInterval;
 
-  // const showThoughtBubble = () => {
-  //   setThoughtBubble(true);
+  const [thoughtBubble, setThoughtBubble] = createSignal(false);
+  const [thoughtBubbleIcon, setThoughtBubbleIcon] = createSignal(getRandomIcon());
 
-  // }
+  onMount(() => {
+    // Start the thought bubble interval
+    thoughtBubbleInterval = setInterval(() => {
+      // Set the icon to a random icon
+      setThoughtBubbleIcon(getRandomIcon());
+      // Make the thought bubble appear
+      setThoughtBubble(true);
+      // Make the thought bubble disappear 3 seconds after it appears
+      setTimeout(() => {
+        setThoughtBubble(false);
+      }, getRandomSeconds(5, 7));
+    }, getRandomSeconds(15, 20));
+  });
 
-  // setInterval(() => {
-  //   setThoughtBubble(true);
-  //   // Make the thought bubble disappear 3 seconds after it appears
-  //   setTimeout(() => {
-  //     setThoughtBubble(false);
-  //   }, 3000);
-
-  //   // const five_to_ten_seconds = Math.floor(Math.random() * 5000) + 5000;
-  //   const fifteen_to_twenty_seconds = Math.floor(Math.random() * 15000) + 5000;
-  // }, fifteen_to_twenty_seconds);
+  onCleanup(() => {
+    clearInterval(thoughtBubbleInterval);
+  });
 
   return (
     <StyledSnippy title="This is Snippy, the Code Snippet AI Bot">
-      {/* <Show when={thoughtBubble()}>
-        <StyledThoughtBubble>
-          <i class={`icss-${ICONS[Math.floor(Math.random() * ICONS.length)]}`} />
-        </StyledThoughtBubble>
-      </Show> */}
+      <StyledThoughtBubble visible={thoughtBubble()}>
+        <StyledThoughtBubbleIcon class={`icss-${thoughtBubbleIcon()}`} />
+      </StyledThoughtBubble>
       {store.getFirstWaiting() && (
         <StyledSpeechBubble />
       )}
@@ -62,6 +76,11 @@ export const Snippy = () => {
   );
 }
 
+const StyledThoughtBubbleIcon = styled.i`
+  font-size: 1.75rem;
+  color: white;
+`;
+
 const StyledThoughtBubble = styled.div`
   position: absolute;
   top: 0;
@@ -69,9 +88,16 @@ const StyledThoughtBubble = styled.div`
   width: 3rem;
   height: 3rem;
   background-color: var(--color-light-blue);
-  opacity: 0.5;
+  opacity: 0;
   border-radius: 1rem;
   margin: 1rem;
+  text-align: center;
+  line-height: 3rem;
+  transition: all 1s ease;
+
+  ${({ visible }) => visible && `
+    opacity: 0.5;
+  `}
 
   &:before {
     content: "";

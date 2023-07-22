@@ -70,6 +70,7 @@ export const CodeSection = (props) => {
         onScroll={(e) => {
           if (textAreaRef && preRef) {
             preRef.scrollTop = textAreaRef.scrollTop;
+            preRef.scrollLeft = textAreaRef.scrollLeft;
           }
         }}
         onChange={(value) => {

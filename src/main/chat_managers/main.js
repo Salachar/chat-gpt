@@ -10,8 +10,8 @@ const DEFAULT_MODEL = "gpt-3.5-turbo-16k";
 const AI_RULES = [
   "You are Snippy, the Code Snippet AI, and are a helpful assistant to developers.",
   // Main stack rules
-  "When working with Javascript, the primary development stack is: React, ChakraUI, Cypress, Jest, Storybook.",
-  "When working with Java, the primary development stack is: Java 11, Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok.",
+  "When working with Javascript, the primary client development stack is: React, ChakraUI, Cypress, Jest, Storybook.",
+  "When working with Java, the primary services development stack is: Java 11, Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok.",
   // Output rules
   // "When outputing lists of information, never use nested lists.",
   "Lists must always be bulleted, never numbered.",
@@ -76,7 +76,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null } = data;
         this.addMessages(chatId, "system", [
-          "Try to avoid generating examples similar to ones that have already been generated.",
+          "Avoid generating examples similar to ones that have already been generated.",
         ]).addMessages(chatId, "user", [
           "Generate an example javascript function.",
         ]).sendChat(chatId, event);
@@ -87,7 +87,7 @@ class MainChat extends ChatBase {
       handler: (event, data) => {
         const { chatId = null } = data;
         this.addMessages(chatId, "system", [
-          "Try to avoid generating examples similar to ones that have already been generated.",
+          "Avoid generating examples similar to ones that have already been generated.",
           "Example JSON should be medium sized, showing various types of data.",
           "The test data should look realistic, but not be real data.",
         ]).addMessages(chatId, "user", [
@@ -106,50 +106,6 @@ class MainChat extends ChatBase {
         ], code).sendChat(chatId, event);
       }
     }, {
-      event: 'to-javascript',
-      label: 'To Javascript',
-      handler: (event, data) => {
-        const { chatId = null, code } = data;
-        this.addMessages(chatId, "system", [
-          // javascript rules,
-        ]).addMessages(chatId, "user", [
-          "Convert the code or description in the following message to JavaScript.",
-        ], code).sendChat(chatId, event);
-      }
-    }, {
-      event: 'to-react-chakra',
-      label: 'To React/Chakra',
-      handler: (event, data) => {
-        const { chatId = null, code } = data;
-        this.addMessages(chatId, "system", [
-          CHAKRA_OUTPUT_RULES,
-        ]).addMessages(chatId, "user", [
-          "Using the following code or description, write Javascript code to satisfy it using React and ChakraUI when applicable.",
-        ], code).sendChat(chatId, event);
-      }
-    }, {
-      event: 'to-react-native',
-      label: 'To React Native',
-      handler: (event, data) => {
-        const { chatId = null, code } = data;
-        this.addMessages(chatId, "system", [
-          // react native rules,
-        ]).addMessages(chatId, "user", [
-          "Using the following code or description, write React Native code for a mobile application to satisfy it.",
-        ], code).sendChat(chatId, event);
-      }
-    }, {
-      event: 'To Java',
-      label: 'to-java',
-      handler: (event, data) => {
-        const { chatId = null, code } = data;
-        this.addMessages(chatId, "system", [
-          "Java stack is based on Java 11 and uses Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok",
-        ]).addMessages(chatId, "user", [
-          "Using the following code or description, write code using the Java stack to satisfy it.",
-        ], code).sendChat(chatId, event);
-      }
-    }, {
       event: 'chakratize',
       label: 'Chakratize',
       handler: (event, data) => {
@@ -161,8 +117,30 @@ class MainChat extends ChatBase {
         ], code).sendChat(chatId, event);
       }
     }, {
-      event: 'styled-components',
-      label: 'Styled Comp',
+      event: 'to-javascript',
+      label: 'To Javascript',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addMessages(chatId, "system", [
+          // javascript rules,
+        ]).addMessages(chatId, "user", [
+          "Convert the code or description in the following message to JavaScript.",
+        ], code).sendChat(chatId, event);
+      }
+    }, {
+      event: 'to-client-stack',
+      label: 'To Client Stack',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addMessages(chatId, "system", [
+          CHAKRA_OUTPUT_RULES,
+        ]).addMessages(chatId, "user", [
+          "Using the following code or description, write code for it that satisfies the defined client/javascript stack.",
+        ], code).sendChat(chatId, event);
+      }
+    }, {
+      event: 'to-styled-components',
+      label: 'To Styled Comps',
       handler: (event, data) => {
         const { chatId = null, code } = data;
         this.addMessages(chatId, "system", [
@@ -170,6 +148,17 @@ class MainChat extends ChatBase {
         ]).addMessages(chatId, "user", [
           "Convert the following code or snippet to use styled-components.",
           "If there are any `px` values, convert them to `em` values based off of a default 1rem of 16px.",
+        ], code).sendChat(chatId, event);
+      }
+    }, {
+      event: 'to-server-stack',
+      label: 'To Server Stack',
+      handler: (event, data) => {
+        const { chatId = null, code } = data;
+        this.addMessages(chatId, "system", [
+          // server rules,
+        ]).addMessages(chatId, "user", [
+          "Using the following code or description, write code for it that satisfies the defined services/java stack.",
         ], code).sendChat(chatId, event);
       }
     }, {
@@ -197,6 +186,7 @@ class MainChat extends ChatBase {
         ], code).sendChat(chatId, event);
       }
     }, {
+      disabled: true,
       event: 'cypress-tests',
       label: 'Cypress Tests',
       handler: (event, data) => {
@@ -209,6 +199,7 @@ class MainChat extends ChatBase {
         ], code).sendChat(chatId, event);
       }
     }, {
+      disabled: true,
       event: 'storybook',
       label: 'Storybook',
       handler: (event, data) => {
@@ -244,6 +235,7 @@ class MainChat extends ChatBase {
         });
       }
     }, {
+      disabled: true,
       event: 'sanlo-swagger',
       label: 'Sanlo Swagger',
       handler: (event, data) => {
@@ -351,13 +343,9 @@ class MainChat extends ChatBase {
     // using the events array above.
     ipcMain.on('onload', async (event) => {
       event.reply('onload', actions.map((event) => {
-        return {
-          label: event.label,
-          event: event.event,
-          non_action: event.non_action,
-          non_refresh: event.non_refresh,
-          non_waiting: event.non_waiting,
-        };
+        // return the entire event minus the handler function
+        const { handler, ...rest } = event;
+        return rest;
       }));
     });
 

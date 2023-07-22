@@ -11,8 +11,8 @@ const CHAT_SCHEMA = {
   messages: [],
   code: "",
   code_langugage: "javascript",
-  code_wrap: true,
-  code_format: false,
+  code_wrap: false,
+  code_format: true,
   prompt: "",
   token_data: {
     completion_tokens: 0,
