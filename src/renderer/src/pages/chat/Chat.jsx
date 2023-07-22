@@ -13,13 +13,13 @@ const ABOUT_SNIPPET =
       event: 'your-custom-action',
       label: 'Your Custom Action Label',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           GENERIC_CODE_OUTPUT_RULES, // You'll probably always want to keep these
           "One of your custom rules here for the system",
         ]).addMessages(chatId, "user", [
           "The "user's prompt" to trigger the generation",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }];
   }

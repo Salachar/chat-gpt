@@ -24,9 +24,9 @@ export const Message = (props) => {
           title: "Open in new chat",
           handler: () => {
             const newChatId = store.addChat();
-            store.setChatCode({
+            store.setChatSnippet({
               id: newChatId,
-              code: props.message.original_content
+              snippet: props.message.original_content
             });
             store.setChatName({
               id: newChatId,
@@ -37,8 +37,8 @@ export const Message = (props) => {
         "quotation-l": {
           title: "Copy to Snippet Section",
           handler: () => {
-            store.setChatCode({
-              code: props.message.original_content
+            store.setChatSnippet({
+              snippet: props.message.original_content
             });
           }
         }

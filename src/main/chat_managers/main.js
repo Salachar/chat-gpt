@@ -97,117 +97,117 @@ class MainChat extends ChatBase {
       event: 'analyze',
       label: 'Analyze',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // analysis rules,
         ]).addMessages(chatId, "user", [
           "Analyze the following code snippet, look for any errors and potential improvements.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'chakratize',
       label: 'Chakratize',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           CHAKRA_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Convert all following possible code using inline ChakraUI components.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'to-javascript',
       label: 'To Javascript',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // javascript rules,
         ]).addMessages(chatId, "user", [
           "Convert the code or description in the following message to JavaScript.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'to-client-stack',
       label: 'To Client Stack',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           CHAKRA_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write code for it that satisfies the defined client/javascript stack.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'to-styled-components',
       label: 'To Styled Comps',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // Styled Components rules,
         ]).addMessages(chatId, "user", [
           "Convert the following code or snippet to use styled-components.",
           "If there are any `px` values, convert them to `em` values based off of a default 1rem of 16px.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'to-server-stack',
       label: 'To Server Stack',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // server rules,
         ]).addMessages(chatId, "user", [
           "Using the following code or description, write code for it that satisfies the defined services/java stack.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'utils-check',
       label: 'Utils Check',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // Utils rules,
         ]).addMessages(chatId, "user", [
           "Analyze the following code and suggest any utility functions that can be created to reduce the logic in the component.",
           "Return a new snippet implementing the suggestions as best as possible with comments.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'unit-tests',
       label: 'Unit Tests',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // Utils rules,
         ]).addMessages(chatId, "user", [
           "Do your best to create a full unit test suite for the following code snippet, try to use the framework provided for the stack being used.",
           "If applicable to the framework, and the test uses an element that does not have a 'data-testid', suggest one and use it in the test.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       disabled: true,
       event: 'cypress-tests',
       label: 'Cypress Tests',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // Cypress rules,
           CYPRESS_OUTPUT_RULES,
         ]).addMessages(chatId, "user", [
           "Create a full Cypress (Javascript Test Library) test suite for the following code snippet.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       disabled: true,
       event: 'storybook',
       label: 'Storybook',
       handler: (event, data) => {
-        const { chatId = null, code } = data;
+        const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
           // Storybook rules,
         ]).addMessages(chatId, "user", [
           "Create a full Storybook (React UI Component Library) story for the following code snippet.",
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       }
     }, {
       event: 'glaium-swagger',
@@ -292,7 +292,7 @@ class MainChat extends ChatBase {
     });
   }
 
-  addMessages (chatId, role, messages = [], code) {
+  addMessages (chatId, role, messages = [], snippet) {
     if (!this.__chats[chatId]) {
       this.__chats[chatId] = {
         id: chatId,
@@ -305,8 +305,8 @@ class MainChat extends ChatBase {
     }
     const message_content = messages.join(" ");
     let prompt_content = "";
-    if (code) {
-      prompt_content = `${message_content} Code: \`\`\`${code}\`\`\``;
+    if (snippet) {
+      prompt_content = `${message_content} Code: \`\`\`${snippet}\`\`\``;
     } else {
       prompt_content = `${message_content}`;
     }
@@ -367,10 +367,10 @@ class MainChat extends ChatBase {
 
     ipcMain.on('chat', async (event, data) => {
       try {
-        const { chatId, prompt = "", code = "" } = data;
+        const { chatId, prompt = "", snippet = "" } = data;
         this.addMessages(chatId, "user", [
           prompt,
-        ], code).sendChat(chatId, event);
+        ], snippet).sendChat(chatId, event);
       } catch (e) {
         event.reply('error', {
           chatId: data.chatId,

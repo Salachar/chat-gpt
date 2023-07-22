@@ -15,22 +15,22 @@ export const ChatSnippet = (props) => {
       actions={{
         "visual-code": {
           title: "Code Format",
-          toggled: store.getChatCodeFormat(),
+          toggled: store.getChatSnippetFormat() === "code",
           handler: () => {
             store.toggleChatCodeFormat();
           }
         },
         "text-justify": {
           title: "Word Wrap",
-          toggled: store.getChatCodeWrap(),
+          toggled: store.getChatSnippetWrap(),
           handler: () => {
-            store.toggleChatCodeWrap();
+            store.toggleChatSnippetWrap();
           },
         },
         "files": {
           title: "Copy to Clipboard",
           handler: () => {
-            navigator.clipboard.writeText(store.getChatCode());
+            navigator.clipboard.writeText(store.getChatSnippet());
           },
         },
         "expand": {
@@ -38,9 +38,9 @@ export const ChatSnippet = (props) => {
           handler: () => {
             const currentChatId = store.currentChatId();
             const newChatId = store.addChat();
-            store.setChatCode({
+            store.setChatSnippet({
               id: newChatId,
-              code: store.getChatCode(currentChatId),
+              snippet: store.getChatSnippet(currentChatId),
             });
             store.setChatCodeLanguage({
               code_language: store.getChatCodeLanguage(currentChatId),
@@ -54,8 +54,8 @@ export const ChatSnippet = (props) => {
         "x": {
           title: "Clear the Snippet Section",
           handler: () => {
-            store.setChatCode({
-              code: ""
+            store.setChatSnippet({
+              snippet: ""
             });
           }
         }
@@ -63,9 +63,9 @@ export const ChatSnippet = (props) => {
     >
       <StyledCodeTextArea
         spellcheck="false"
-        wordwrap={store.getChatCodeWrap()}
-        codeformat={store.getChatCodeFormat()}
-        value={store.getChatCode()}
+        wordwrap={store.getChatSnippetWrap()}
+        codeformat={store.getChatSnippetFormat() === "code"}
+        value={store.getChatSnippet()}
         ref={textAreaRef}
         onScroll={(e) => {
           if (textAreaRef && preRef) {
@@ -74,14 +74,17 @@ export const ChatSnippet = (props) => {
           }
         }}
         onChange={(value) => {
-          store.setChatCode({
-            code: value
+          store.setChatSnippet({
+            snippet: value
           });
         }}
       />
-      <StyledPre codeformat={store.getChatCodeFormat()} ref={preRef}>
+      <StyledPre
+        ref={preRef}
+        codeformat={store.getChatSnippetFormat() === "code"}
+      >
         <code class="language-javascript" innerHTML={
-          Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
+          Prism.highlight(store.getChatSnippet(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
         }></code>
       </StyledPre>
     </ActionsContainer>

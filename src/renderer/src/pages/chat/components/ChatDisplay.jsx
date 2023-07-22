@@ -23,7 +23,6 @@ export const ChatDisplay = (props) => {
           "server": {
             title: "Send prompt with Snippet Section attached",
             handler: () => {
-              // Send the prompt and the code together
               store.setChatWaiting({
                 waiting: true
               });
@@ -36,7 +35,7 @@ export const ChatDisplay = (props) => {
               IPC.send('chat', {
                 chatId: store.currentChatId(),
                 prompt: store.getChatPrompt(),
-                code: store.getChatCode(),
+                snippet: store.getChatSnippet(),
               });
               setTimeout(() => {
                 store.setChatPrompt({
@@ -80,7 +79,7 @@ export const ChatDisplay = (props) => {
               // Check if the trimmed prompt ends with a semicolon
               // and if so attach the code to the payload
               if (trimmed_prompt.endsWith(";")) {
-                payload.code = store.getChatCode();
+                payload.snippet = store.getChatSnippet();
               }
 
               store.addChatMessage({

@@ -66,7 +66,7 @@ export const ChatActions = (props) => {
                   }
                   IPC.send(action.event, {
                     chatId: store.currentChatId(),
-                    code: store.getChatCode(),
+                    snippet: store.getChatSnippet(),
                   });
                 }}
               />
@@ -103,7 +103,7 @@ export const ChatActions = (props) => {
                     }
                     IPC.send(action.event, {
                       chatId: store.currentChatId(),
-                      code: store.getChatCode(),
+                      snippet: store.getChatSnippet(),
                     });
                   }}
                 >

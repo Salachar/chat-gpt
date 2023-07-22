@@ -9,10 +9,10 @@ const CHAT_SCHEMA = {
   name: "Chat",
   waiting: false,
   messages: [],
-  code: "",
+  snippet: "",
   code_langugage: "javascript",
-  code_wrap: false,
-  code_format: true,
+  snippet_wrap: false,
+  snippet_format: "code",
   prompt: "",
   model: "",
   token_data: {
@@ -61,7 +61,7 @@ export const createAppStore = () => {
     // Clear the whole chat
     id = id || currentChatId();
     clearChatMessages(id);
-    setChatCode({ id, code: "" });
+    setChatSnippet({ id, snippet: "" });
     setChatPrompt({ id, prompt: "" });
     setChatWaiting({ id, waiting: false });
   }
@@ -76,6 +76,7 @@ export const createAppStore = () => {
       setCurrentChatId(filtered_chats[0].id);
     }
   }
+
 
   const getChatName = (id) => {
     id = id || currentChatId();
@@ -100,6 +101,7 @@ export const createAppStore = () => {
       }
     }
   }
+
 
   const getChatModel = (id) => {
     id = id || currentChatId();
@@ -182,15 +184,15 @@ export const createAppStore = () => {
     });
   };
 
-  const getChatCode = (id) => {
+  const getChatSnippet = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    return chat.code;
+    return chat.snippet;
   };
 
-  const setChatCode = ({ id = null, code = "" }) => {
+  const setChatSnippet = ({ id = null, snippet = "" }) => {
     id = id || currentChatId();
-    setChats(chat => chat.id === id, 'code', code);
+    setChats(chat => chat.id === id, 'snippet', snippet);
   };
 
   const getChatCodeLanguage = (id) => {
@@ -204,46 +206,48 @@ export const createAppStore = () => {
     setChats(chat => chat.id === id, 'code_langugage', code_langugage);
   };
 
-  const getChatCodeWrap = (id) => {
+  const getChatSnippetWrap = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    return chat.code_wrap;
+    return chat.snippet_wrap;
   };
 
-  const setChatCodeWrap = ({ id = null, code_wrap = false }) => {
+  const setChatSnippetWrap = ({ id = null, snippet_wrap = false }) => {
     id = id || currentChatId();
-    setChats(chat => chat.id === id, 'code_wrap', code_wrap);
+    setChats(chat => chat.id === id, 'snippet_wrap', snippet_wrap);
   };
 
-  const toggleChatCodeWrap = (id) => {
+  const toggleChatSnippetWrap = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    const new_code_wrap = !chat.code_wrap;
-    if (new_code_wrap) {
-      setChats(chat => chat.id === id, 'code_format', false);
+    const new_snippet_wrap = !chat.snippet_wrap;
+    if (new_snippet_wrap) {
+      setChats(chat => chat.id === id, 'snippet_format', "text");
     }
-    setChats(chat => chat.id === id, 'code_wrap', new_code_wrap);
+    setChats(chat => chat.id === id, 'snippet_wrap', new_snippet_wrap);
   };
 
-  const getChatCodeFormat = (id) => {
+  const getChatSnippetFormat = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    return chat.code_format;
+    return chat.snippet_format;
   };
 
-  const setChatCodeFormat = ({ id = null, code_format = false }) => {
+  const setChatSnippetFormat = ({ id = null, snippet_format = "text" }) => {
     id = id || currentChatId();
-    setChats(chat => chat.id === id, 'code_format', code_format);
+    setChats(chat => chat.id === id, 'snippet_format', snippet_format);
   };
 
   const toggleChatCodeFormat = (id) => {
+    // Toggle between code and text format.
     id = id || currentChatId();
     const chat = getChat(id);
-    const new_code_format = !chat.code_format;
-    if (new_code_format) {
-      setChats(chat => chat.id === id, 'code_wrap', false);
+    // Non-code snippets always go to code, code snippets always go to text.
+    const new_snippet_format = chat.snippet_format !== "code" ? "code" : "text";
+    if (new_snippet_format === "code") {
+      setChats(chat => chat.id === id, 'snippet_wrap', false);
     }
-    setChats(chat => chat.id === id, 'code_format', new_code_format);
+    setChats(chat => chat.id === id, 'snippet_format', new_snippet_format);
     Prism.highlightAll();
   };
 
@@ -304,16 +308,16 @@ export const createAppStore = () => {
     addChatMessage,
     addChatMessages,
     clearChatMessages,
-    getChatCode,
-    setChatCode,
+    getChatSnippet,
+    setChatSnippet,
     getChatCodeLanguage,
     setChatCodeLanguage,
 
-    getChatCodeWrap,
-    setChatCodeWrap,
-    toggleChatCodeWrap,
-    getChatCodeFormat,
-    setChatCodeFormat,
+    getChatSnippetWrap,
+    setChatSnippetWrap,
+    toggleChatSnippetWrap,
+    getChatSnippetFormat,
+    setChatSnippetFormat,
     toggleChatCodeFormat,
 
     getChatPrompt,

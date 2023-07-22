@@ -1,4 +1,4 @@
-import { createEffect, For, Show } from 'solid-js'
+import { createEffect, For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
@@ -56,9 +56,6 @@ export const ChatHistory = (props) => {
                 {(sub_message) => (
                   <>
                     {sub_message.type === "text" && (
-                      // <For each={sub_message.lines}>
-                      //   {(line) => <Line role={message.role} line={line} />}
-                      // </For>
                       <Message role={message.role} message={sub_message} />
                     )}
                     {sub_message.type === "code" && (
@@ -68,7 +65,6 @@ export const ChatHistory = (props) => {
                           "files": {
                             title: "Copy to Clipboard",
                             handler: () => {
-                              // Copy code snippet to navigator clipboard
                               navigator.clipboard.writeText(sub_message.code_snippet);
                             },
                           },
@@ -76,15 +72,13 @@ export const ChatHistory = (props) => {
                             title: "Open in new chat",
                             handler: () => {
                               const newChatId = store.addChat();
-                              store.setChatCode({
+                              store.setChatSnippet({
                                 id: newChatId,
-                                code: sub_message.code_snippet
+                                snippet: sub_message.code_snippet
                               });
-                              // Set the language
                               store.setChatCodeLanguage({
                                 code_language: sub_message.language
                               });
-                              // Set the name of the new chat to the language or "Chat"
                               store.setChatName({
                                 id: newChatId,
                                 name: sub_message.language || "Chat"
@@ -94,9 +88,8 @@ export const ChatHistory = (props) => {
                           "quotation-l": {
                             title: "Copy to Snippet Section",
                             handler: () => {
-                              // Copy code snippet to code section
-                              store.setChatCode({
-                                code: sub_message.code_snippet
+                              store.setChatSnippet({
+                                snippet: sub_message.code_snippet
                               });
                               // Set the language
                               store.setChatCodeLanguage({
