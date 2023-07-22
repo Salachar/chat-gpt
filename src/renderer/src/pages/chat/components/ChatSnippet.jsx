@@ -1,15 +1,15 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { ActionsContainer } from './Actions';
-import { TextArea } from './TextArea';
+import { ActionsContainer } from '../../../components/Actions';
+import { TextArea } from '../../../components/TextArea';
 
-export const CodeSection = (props) => {
+export const ChatSnippet = (props) => {
   let textAreaRef;
   let preRef;
 
   return (
-    <StyledContainer
+    <ActionsContainer
       class={props.class}
       label="Snippet Section"
       actions={{
@@ -84,11 +84,9 @@ export const CodeSection = (props) => {
           Prism.highlight(store.getChatCode(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
         }></code>
       </StyledPre>
-    </StyledContainer>
+    </ActionsContainer>
   );
 };
-
-const StyledContainer = styled(ActionsContainer)``;
 
 const StyledCodeTextArea = styled(TextArea)`
   white-space: nowrap;

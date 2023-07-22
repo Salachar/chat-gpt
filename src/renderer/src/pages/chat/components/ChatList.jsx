@@ -1,8 +1,8 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
-import { Button } from './Button';
-import { Snippy } from './Snippy';
+import { Button } from '../../../components/Button';
+import { Snippy } from '../../../components/Snippy';
 
 export const ChatList = (props) => {
   return (

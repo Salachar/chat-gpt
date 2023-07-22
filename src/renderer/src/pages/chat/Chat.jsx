@@ -2,10 +2,10 @@ import { onMount, onCleanup } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { ChatList } from '../../components/ChatList';
-import { ChatActions } from '../../components/ChatActions';
-import { MainChat } from '../../components/MainChat';
-import { CodeSection } from '../../components/CodeSection';
+import { ChatList } from './components/ChatList';
+import { ChatActions } from './components/ChatActions';
+import { ChatDisplay } from './components/ChatDisplay';
+import { ChatSnippet } from './components/ChatSnippet';
 
 const ABOUT_SNIPPET =
 ` getActions () {
@@ -165,8 +165,8 @@ export const Chat = () => {
   return (
     <StyledContainer>
       <StyledChatList />
-      <StyledMainChat />
-      <StyledCodeSection />
+      <StyledChatDisplay />
+      <StyledChatSnippet />
       <StyledChatActions />
     </StyledContainer>
   );
@@ -180,22 +180,22 @@ const StyledContainer = styled.div`
   height: 100%;
   grid-template-columns: 12rem 1fr 0.75fr 11rem;
   grid-template-rows: 1fr;
-  grid-template-areas: "tabs chatdisplay codesection chatactions";
+  grid-template-areas: "chatlist chatdisplay chatsnippet chatactions";
 `;
 
 const StyledChatList = styled(ChatList)`
-  grid-area: tabs;
+  grid-area: chatlist;
   border-right: 1rem solid var(--color-main-light);
 `;
 
-const StyledMainChat = styled(MainChat)`
+const StyledChatDisplay = styled(ChatDisplay)`
   grid-area: chatdisplay;
   display: flex;
   flex-direction: column;
 `;
 
-const StyledCodeSection = styled(CodeSection)`
-  grid-area: codesection;
+const StyledChatSnippet = styled(ChatSnippet)`
+  grid-area: chatsnippet;
   padding: 1rem 0 1rem 1rem;
 `;
 

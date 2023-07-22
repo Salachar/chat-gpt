@@ -1,11 +1,11 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { ActionsContainer } from './Actions';
-import { ChatHistory } from './ChatHistory';
-import { TextArea } from './TextArea';
+import { ActionsContainer } from '../../../components/Actions';
+import { ChatHistory } from '../../../components/ChatHistory';
+import { TextArea } from '../../../components/TextArea';
 
-export const MainChat = (props) => {
+export const ChatDisplay = (props) => {
   return (
     <StyledContainer class={props.class}>
       <StyledChatHistory />
