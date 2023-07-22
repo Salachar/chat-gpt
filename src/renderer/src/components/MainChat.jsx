@@ -4,13 +4,10 @@ import { store } from '@store';
 import { ActionsContainer } from './Actions';
 import { ChatHistory } from './ChatHistory';
 import { TextArea } from './TextArea';
-import { MainChatHeader } from './MainChatHeader';
 
 export const MainChat = (props) => {
   return (
     <StyledContainer class={props.class}>
-      {/* <StyledMainChatHeader /> */}
-
       <StyledChatHistory />
 
       <StyledPromptContainer
@@ -121,10 +118,6 @@ const StyledContainer = styled.div`
   overflow: hidden;
   padding: 1rem 0;
 `;
-
-// const StyledMainChatHeader = styled(MainChatHeader)`
-//   height: 3rem;
-// `;
 
 const StyledChatHistory = styled(ChatHistory)`
   height: 100%;

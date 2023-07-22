@@ -4,9 +4,6 @@ import yaml from 'js-yaml';
 
 import ChatBase from './base';
 
-// const DEFAULT_MODEL = "gpt-3.5-turbo";
-const DEFAULT_MODEL = "gpt-3.5-turbo-16k";
-
 const AI_RULES = [
   "You are Snippy, the Code Snippet AI, and are a helpful assistant to developers.",
   // Main stack rules
@@ -52,8 +49,10 @@ const CYPRESS_OUTPUT_RULES = [
 ].join(" ");
 
 class MainChat extends ChatBase {
-  constructor (openai, parent, opts) {
-    super(openai, parent, opts);
+  constructor (openai, opts) {
+    super(openai, opts);
+    const { default_model } = opts;
+    this.default_model = default_model;
 
     this.__chats = {};
 
@@ -221,8 +220,6 @@ class MainChat extends ChatBase {
           // Go through the entire file and remove any instances of "responses"
           // because it makes the payload too long for now until I have access to better models
           this.removeKeyFromWholeObject(parsed_file, "responses");
-          // this.removeKeyFromWholeObject(parsed_file, "type");
-          console.log(JSON.stringify(parsed_file).length);
 
           this.addMessages(chatId, "system", [
             JSON.stringify(parsed_file),
@@ -299,7 +296,7 @@ class MainChat extends ChatBase {
     if (!this.__chats[chatId]) {
       this.__chats[chatId] = {
         id: chatId,
-        model: DEFAULT_MODEL,
+        model: this.default_model,
         messages: [{ // Add the AI rules to the chat as a system message.
           role: "system",
           content: AI_RULES,
@@ -354,7 +351,7 @@ class MainChat extends ChatBase {
       if (!this.__chats[chatId]) {
         this.__chats[chatId] = {
           id: chatId,
-          model: DEFAULT_MODEL,
+          model: this.default_model,
           messages: [{ // Add the AI rules to the chat as a system message.
             role: "system",
             content: AI_RULES,
@@ -374,6 +371,19 @@ class MainChat extends ChatBase {
         this.addMessages(chatId, "user", [
           prompt,
         ], code).sendChat(chatId, event);
+      } catch (e) {
+        event.reply('error', {
+          chatId: data.chatId,
+          chat: this.__chats[data.chatId],
+          error: e.message,
+        });
+      }
+    });
+
+    ipcMain.on('chat-model-change', async (event, data) => {
+      try {
+        const { chatId, model } = data;
+        this.__chats[chatId].model = model;
       } catch (e) {
         event.reply('error', {
           chatId: data.chatId,

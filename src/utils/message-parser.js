@@ -5,7 +5,8 @@ class MessageParser {
     try {
       if (Array.isArray(message.content)) {
         // This is a message that has already been parsed and can be returned
-        console.log("Already parsed");
+        // Messages coming from the server are already parsed
+        // Messages coming from the client are not
         return message;
       }
 
@@ -139,7 +140,7 @@ class MessageParser {
         }
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
     return message;
   }

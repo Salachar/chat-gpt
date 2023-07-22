@@ -6,6 +6,27 @@ import { Button } from './Button';
 export const ChatActions = (props) => {
   return (
     <StyledContainer class={props.class}>
+      <StyledModelDropdownWrapper>
+        <StyledModelDropdown
+          onChange={(e) => {
+            store.setChatModel({
+              model: e.currentTarget.value
+            });
+          }}
+        >
+          <For each={store.models()}>
+            {(model) => (
+              <StyledModelDropdownOption
+                value={model}
+                selected={model === store.getDropdownModel()}
+              >
+                {model}
+              </StyledModelDropdownOption>
+            )}
+          </For>
+        </StyledModelDropdown>
+      </StyledModelDropdownWrapper>
+
       <StyledTokenData>
         <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
         <StyledTokenPiece>Completion: {JSON.stringify(store.getChatTokenData().completion_tokens)}</StyledTokenPiece>
@@ -96,6 +117,29 @@ export const ChatActions = (props) => {
     </StyledContainer>
   );
 }
+
+const StyledModelDropdownWrapper = styled.div`
+  width: 100%;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+`;
+
+// Model dropdown
+const StyledModelDropdown = styled.select`
+  width: 100%;
+  text-overflow: ellipsis;
+  padding: 0.35rem;
+  border-radius: 0.25rem;
+  background-color: var(--color-main-light);
+  color: white;
+  outline: none;
+  cursor: pointer;
+  border: none;
+`;
+
+const StyledModelDropdownOption = styled.option`
+
+`;
 
 const StyledContainer = styled.div`
   position: relative;

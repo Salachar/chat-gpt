@@ -4,7 +4,11 @@ class AIManager {
   constructor (openai) {
     this.openai = openai;
 
-    this.main_chat = new MainChat(openai, this);
+    this.default_model = "gpt-3.5-turbo";
+
+    this.main_chat = new MainChat(openai, {
+      default_model: this.default_model,
+    });
 
     this.listModels();
 
@@ -19,13 +23,15 @@ class AIManager {
         }).map((model) => {
           return model.id;
         });
-        console.log(models);
-        global.shared.mainWindow.webContents.send('model-list', models);
+        global.shared.mainWindow.webContents.send('model-list', {
+          default_model: this.default_model,
+          models: models,
+        });
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }).catch((e) => {
-      console.log(e);
+      // console.log(e);
       // Nothing needs to be sent, the default model is still set
     });
   }

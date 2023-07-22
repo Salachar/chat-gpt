@@ -3,30 +3,30 @@ import MessageParser from "../../utils/message-parser";
 const TOKEN_LIMIT = 4096;
 
 export default class ChatBase {
-  constructor (openai, parent, opts = {}) {
-    const {
-      temperature = 1,
-      model = "gpt-3.5-turbo-16k",
-    } = opts;
-
+  constructor (openai) {
     this.openai = openai;
-    this.parent = parent;
-
-    this.temperature = temperature;
-    this.model = model;
   }
 
   send (opts = {}) {
     const {
-      model = this.model,
+      model,
       messages = [],
       onReply = () => {},
     } = opts;
 
+    if (!model) {
+      onReply({
+        error: "There was no model for this chat.",
+      });
+      return;
+    }
+
+    console.log("Sending message to OpenAI API using model: ", model);
+
     this.openai.createChatCompletion({
       model: model,
       messages: messages,
-      temperature: this.temperature,
+      temperature: 1,
     }).then((res) => {
       try {
         const {
@@ -51,8 +51,6 @@ export default class ChatBase {
         };
 
         const message = choices[0].message;
-
-        // const parsed_message = this.parseMessage(message);
         const parsed_message = MessageParser.parse(message);
 
         parsed_message.token_data = token_data;

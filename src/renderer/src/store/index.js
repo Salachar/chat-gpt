@@ -14,6 +14,7 @@ const CHAT_SCHEMA = {
   code_wrap: false,
   code_format: true,
   prompt: "",
+  model: "",
   token_data: {
     completion_tokens: 0,
     prompt_tokens: 0,
@@ -23,11 +24,21 @@ const CHAT_SCHEMA = {
 };
 
 export const createAppStore = () => {
+  // The list of models for the openai api.
+  const [defaultModel, setDefaultModel] = createSignal(null);
+  const [models, setModels] = createSignal([]);
   // The list of the actions used to create buttons.
   const [events, setEvents] = createSignal([]);
 
   const [chats, setChats] = createStore([]);
   const [currentChatId, setCurrentChatId] = createSignal(null);
+
+  const getNewChat = () => {
+    const new_chat = copy(CHAT_SCHEMA);
+    new_chat.id = uuid();
+    new_chat.model = defaultModel();
+    return new_chat;
+  };
 
   const getChat = (id) => {
     id = id || currentChatId();
@@ -36,12 +47,11 @@ export const createAppStore = () => {
         return chat;
       }
     });
-    return chat || copy(CHAT_SCHEMA);
+    return chat || getNewChat();
   };
 
   const addChat = () => {
-    const new_chat = copy(CHAT_SCHEMA);
-    new_chat.id = uuid();
+    const new_chat = getNewChat();
     setChats(chats => [...chats, new_chat]);
     setCurrentChatId(new_chat.id);
     return new_chat.id;
@@ -90,6 +100,28 @@ export const createAppStore = () => {
       }
     }
   }
+
+  const getChatModel = (id) => {
+    id = id || currentChatId();
+    const chat = getChat(id);
+    return chat.model;
+  };
+
+  const setChatModel = ({ id = null, model = "" }) => {
+    id = id || currentChatId();
+    setChats(chat => chat.id === id, 'model', model);
+    IPC.send('chat-model-change', {
+      chatId: id,
+      model: model,
+    });
+  };
+
+  const getDropdownModel = (id) => {
+    id = id || currentChatId();
+    const chat = getChat(id);
+    const model = models().find(model => model === chat.model);
+    return model || defaultModel();
+  };
 
   const getChatWaiting = (id) => {
     id = id || currentChatId();
@@ -241,6 +273,11 @@ export const createAppStore = () => {
   };
 
   return {
+    defaultModel,
+    setDefaultModel,
+    getDropdownModel,
+    models,
+    setModels,
     events,
     setEvents,
 
@@ -255,6 +292,8 @@ export const createAppStore = () => {
     clearChat,
     removeChat,
 
+    getChatModel,
+    setChatModel,
     getChatName,
     setChatName,
     checkChatName,

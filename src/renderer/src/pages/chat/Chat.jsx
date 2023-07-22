@@ -2,12 +2,10 @@ import { onMount, onCleanup } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import {
-  ChatList,
-  ChatActions,
-  MainChat,
-  CodeSection,
-} from '@components';
+import { ChatList } from '../../components/ChatList';
+import { ChatActions } from '../../components/ChatActions';
+import { MainChat } from '../../components/MainChat';
+import { CodeSection } from '../../components/CodeSection';
 
 const ABOUT_SNIPPET =
 ` getActions () {
@@ -34,7 +32,8 @@ export const Chat = () => {
   };
 
   const onChatEvent = (event, data = {}) => {
-    const { chatId, message } = data;
+    const { chatId, chat, message } = data;
+    console.log(chat);
     store.setChatWaiting({
       id: chatId,
       waiting: false
@@ -137,8 +136,8 @@ export const Chat = () => {
   };
 
   const onModelListEvent = (event, data) => {
-    console.log(event, data);
-    // store.setModels(data);
+    store.setDefaultModel(data.default_model);
+    store.setModels(data.models);
   };
 
   onMount(() => {
@@ -202,5 +201,5 @@ const StyledCodeSection = styled(CodeSection)`
 
 const StyledChatActions = styled(ChatActions)`
   grid-area: chatactions;
-  padding: 2rem 1rem 1rem 0;
+  padding: 1rem 1rem 1rem 0;
 `;
