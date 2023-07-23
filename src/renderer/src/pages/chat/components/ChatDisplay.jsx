@@ -11,7 +11,7 @@ export const ChatDisplay = (props) => {
       <StyledChatHistory />
 
       <StyledPromptContainer
-        label="Send prompts with the Snippet Section by ending with a semicolon;"
+        label="Send prompts with the Snippet by ending with a semicolon;"
         actions={{
           "files": {
             title: "Copy to Clipboard",
@@ -21,7 +21,7 @@ export const ChatDisplay = (props) => {
             }
           },
           "server": {
-            title: "Send prompt with Snippet Section attached",
+            title: "Send prompt with Snippet attached",
             handler: () => {
               store.setChatWaiting({
                 waiting: true

@@ -3,10 +3,12 @@ require('dotenv').config();
 import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.png?asset';
+import dock_icon from '../../resources/snippy_clear.png?asset';
 import contextMenu from 'electron-context-menu';
 
-// const OPENAI_API_KEY = null;
+app.dock.setIcon(dock_icon);
+
 const OPENAI_API_KEY = process.env.OPENAI;
 
 import { Configuration, OpenAIApi } from "openai";
@@ -35,7 +37,7 @@ function createWindow() {
     y: 60,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: join(__dirname, icon),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       // sandbox: false
@@ -46,7 +48,7 @@ function createWindow() {
     }
   })
   global.shared.mainWindow = mainWindow;
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
@@ -85,7 +87,7 @@ app.whenReady().then(() => {
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
-  })
+  });
 
   createWindow();
 
@@ -93,7 +95,7 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
+  });
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

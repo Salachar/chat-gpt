@@ -35,7 +35,7 @@ export const Message = (props) => {
           }
         },
         "quotation-l": {
-          title: "Copy to Snippet Section",
+          title: "Copy to Snippet",
           handler: () => {
             store.setChatSnippet({
               snippet: props.message.original_content

@@ -33,9 +33,6 @@ export const ChatHistory = (props) => {
             store.addChatMessages({
               messages: [{
                 role: "generator",
-                content: "Clearing chat history...",
-              }, {
-                role: "assistant",
                 content: "Chat history has been cleared.",
               }]
             });
@@ -86,7 +83,7 @@ export const ChatHistory = (props) => {
                             }
                           },
                           "quotation-l": {
-                            title: "Copy to Snippet Section",
+                            title: "Copy to Snippet",
                             handler: () => {
                               store.setChatSnippet({
                                 snippet: sub_message.code_snippet

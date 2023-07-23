@@ -28,7 +28,6 @@ export const ChatActions = (props) => {
       </StyledModelDropdownWrapper>
 
       <StyledTokenData>
-        <StyledTokenPiece>Token Data: 4096</StyledTokenPiece>
         <StyledTokenPiece>Completion: {JSON.stringify(store.getChatTokenData().completion_tokens)}</StyledTokenPiece>
         <StyledTokenPiece>Prompt: {JSON.stringify(store.getChatTokenData().prompt_tokens)}</StyledTokenPiece>
         <StyledTokenPiece>Remaining: {JSON.stringify(store.getChatTokenData().tokens_left)}</StyledTokenPiece>
@@ -83,9 +82,6 @@ export const ChatActions = (props) => {
                       store.addChatMessages({
                         messages: [{
                           role: "generator",
-                          content: "Clearing chat history...",
-                        }, {
-                          role: "assistant",
                           content: "Chat history has been cleared.",
                         }, {
                           role: "generator",

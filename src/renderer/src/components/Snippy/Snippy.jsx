@@ -126,7 +126,7 @@ const StyledSnippy = styled.div`
   grid-area: snippy;
   padding-bottom: 0.25rem;
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
 `;
 
 const StyledEyes = styled(Eyes)`
