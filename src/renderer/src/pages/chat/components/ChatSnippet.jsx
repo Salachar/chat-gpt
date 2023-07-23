@@ -36,18 +36,9 @@ export const ChatSnippet = (props) => {
         "expand": {
           title: "Open in new chat",
           handler: () => {
-            const currentChatId = store.currentChatId();
-            const newChatId = store.addChat();
-            store.setChatSnippet({
-              id: newChatId,
-              snippet: store.getChatSnippet(currentChatId),
-            });
-            store.setChatCodeLanguage({
-              code_language: store.getChatCodeLanguage(currentChatId),
-            });
-            store.setChatName({
-              id: newChatId,
-              name: "Code Section",
+            store.addChat({
+              snippet: store.getChatSnippet(),
+              code_language: store.getChatCodeLanguage(),
             });
           },
         },

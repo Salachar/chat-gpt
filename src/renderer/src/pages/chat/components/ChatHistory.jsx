@@ -69,18 +69,10 @@ export const ChatHistory = (props) => {
                           "expand": {
                             title: "Open in new chat",
                             handler: () => {
-                              const newChatId = store.addChat();
-                              store.setChatSnippet({
-                                id: newChatId,
-                                snippet: sub_message.code_snippet
-                              });
-                              store.setChatCodeLanguage({
-                                code_language: sub_message.language
-                              });
-                              store.setChatName({
-                                id: newChatId,
-                                name: sub_message.language || "Chat"
-                              });
+                              store.addChat({
+                                snippet: sub_message.code_snippet,
+                                code_language: sub_message.language,
+                              })
                             }
                           },
                           "quotation-l": {
@@ -89,7 +81,6 @@ export const ChatHistory = (props) => {
                               store.setChatSnippet({
                                 snippet: sub_message.code_snippet
                               });
-                              // Set the language
                               store.setChatCodeLanguage({
                                 code_language: sub_message.language
                               });

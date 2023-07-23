@@ -33,10 +33,14 @@ export const createAppStore = () => {
   const [chats, setChats] = createStore([]);
   const [currentChatId, setCurrentChatId] = createSignal(null);
 
-  const getNewChat = () => {
-    const new_chat = copy(CHAT_SCHEMA);
+  const getNewChat = (chat_props = {}) => {
+    let new_chat = copy(CHAT_SCHEMA);
     new_chat.id = uuid();
     new_chat.model = defaultModel();
+    new_chat = {
+      ...new_chat,
+      ...chat_props,
+    };
     return new_chat;
   };
 
@@ -50,8 +54,8 @@ export const createAppStore = () => {
     return chat || getNewChat();
   };
 
-  const addChat = () => {
-    const new_chat = getNewChat();
+  const addChat = (chat_props = {}) => {
+    const new_chat = getNewChat(chat_props);
     setChats(chats => [...chats, new_chat]);
     setCurrentChatId(new_chat.id);
     return new_chat.id;
@@ -77,11 +81,8 @@ export const createAppStore = () => {
     }
   }
 
-
   const getChatName = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.name;
+    return getChat(id).name;
   };
 
   const setChatName = ({ id = null, name = "Chat" }) => {
@@ -101,7 +102,6 @@ export const createAppStore = () => {
       }
     }
   }
-
 
   const getChatModel = (id) => {
     id = id || currentChatId();
@@ -126,9 +126,7 @@ export const createAppStore = () => {
   };
 
   const getChatWaiting = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.waiting;
+    return getChat(id).waiting;
   };
 
   const setChatWaiting = ({ id = null, waiting = false }) => {
@@ -137,14 +135,11 @@ export const createAppStore = () => {
   };
 
   const getFirstWaiting = () => {
-    const chat = chats.find(chat => chat.waiting);
-    return chat ? chat.id : null;
+    return chats.find(chat => chat.waiting) || null;
   };
 
   const getChatMessages = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.messages;
+    return getChat(id).messages;
   };
 
   const addChatMessage = ({ id = null, message = {} }) => {
@@ -153,17 +148,11 @@ export const createAppStore = () => {
   };
 
   const addChatMessages = ({ id = null, messages = [] }) => {
+    id = id || currentChatId();
     if (!Array.isArray(messages)) {
       messages = [messages];
     }
-    id = id || currentChatId();
-
-    // parse the incoming messages
-    messages = messages.map(message => {
-      const parsed_message = MessageParser.parse(message);
-      return parsed_message;
-    });
-
+    messages = messages.map(message => MessageParser.parse(message));
     setChats(chat => chat.id === id, 'messages', old_message => [
       ...old_message,
       ...messages,
@@ -185,9 +174,7 @@ export const createAppStore = () => {
   };
 
   const getChatSnippet = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.snippet;
+    return getChat(id).snippet;
   };
 
   const setChatSnippet = ({ id = null, snippet = "" }) => {
@@ -196,9 +183,7 @@ export const createAppStore = () => {
   };
 
   const getChatCodeLanguage = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.code_langugage;
+    return getChat(id).code_langugage || "javascript";
   };
 
   const setChatCodeLanguage = ({ id = null, code_langugage = "javascript" }) => {
@@ -207,9 +192,7 @@ export const createAppStore = () => {
   };
 
   const getChatSnippetWrap = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.snippet_wrap;
+    return getChat(id).snippet_wrap;
   };
 
   const setChatSnippetWrap = ({ id = null, snippet_wrap = false }) => {
@@ -218,19 +201,16 @@ export const createAppStore = () => {
   };
 
   const toggleChatSnippetWrap = (id) => {
-    id = id || currentChatId();
     const chat = getChat(id);
     const new_snippet_wrap = !chat.snippet_wrap;
     if (new_snippet_wrap) {
-      setChats(chat => chat.id === id, 'snippet_format', "text");
+      setChats(c => c.id === chat.id, 'snippet_format', "text");
     }
-    setChats(chat => chat.id === id, 'snippet_wrap', new_snippet_wrap);
+    setChats(c => c.id === chat.id, 'snippet_wrap', new_snippet_wrap);
   };
 
   const getChatSnippetFormat = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.snippet_format;
+    return getChat(id).snippet_format;
   };
 
   const setChatSnippetFormat = ({ id = null, snippet_format = "text" }) => {
@@ -239,22 +219,18 @@ export const createAppStore = () => {
   };
 
   const toggleChatCodeFormat = (id) => {
-    // Toggle between code and text format.
-    id = id || currentChatId();
     const chat = getChat(id);
     // Non-code snippets always go to code, code snippets always go to text.
     const new_snippet_format = chat.snippet_format !== "code" ? "code" : "text";
     if (new_snippet_format === "code") {
-      setChats(chat => chat.id === id, 'snippet_wrap', false);
+      setChats(c => c.id === chat.id, 'snippet_wrap', false);
     }
-    setChats(chat => chat.id === id, 'snippet_format', new_snippet_format);
+    setChats(c => c.id === chat.id, 'snippet_format', new_snippet_format);
     Prism.highlightAll();
   };
 
   const getChatPrompt = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.prompt;
+    return getChat(id).prompt;
   };
 
   const setChatPrompt = ({ id = null, prompt = "" }) => {
@@ -263,9 +239,7 @@ export const createAppStore = () => {
   };
 
   const getChatTokenData = (id) => {
-    id = id || currentChatId();
-    const chat = getChat(id);
-    return chat.token_data;
+    return getChat(id).token_data;
   };
 
   const setChatTokenData = ({ id = null, token_data = {} }) => {

@@ -16,22 +16,15 @@ export const Message = (props) => {
         "files": {
           title: "Copy to Clipboard",
           handler: () => {
-            // Copy the current prompt to the navigator clipboard
             navigator.clipboard.writeText(props.message.original_content);
           }
         },
         "expand": {
           title: "Open in new chat",
           handler: () => {
-            const newChatId = store.addChat();
-            store.setChatSnippet({
-              id: newChatId,
-              snippet: props.message.original_content
-            });
-            store.setChatName({
-              id: newChatId,
-              name: "Chat"
-            });
+            store.addChat({
+              snippet: props.message.original_content,
+            })
           }
         },
         "quotation-l": {
