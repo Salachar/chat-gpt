@@ -134,7 +134,6 @@ const StyledModelDropdown = styled.select`
 `;
 
 const StyledModelDropdownOption = styled.option`
-
 `;
 
 const StyledContainer = styled.div`

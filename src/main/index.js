@@ -18,7 +18,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 import AIManager from './ai-manager';
-new AIManager(openai);
+const ai_manager = new AIManager(openai);
 
 global.shared = {
   mainWindow: null,
@@ -58,7 +58,7 @@ function createWindow() {
       mainWindow.webContents.send('no-openai-api-key');
     }
 
-    // ai_manager.onWindowReady();
+    ai_manager.onWindowReady();
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

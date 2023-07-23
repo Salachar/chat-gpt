@@ -146,7 +146,7 @@ class MessageParser {
   }
 
   static checkStyles(pieces, type = "", indicator = "") {
-        // Pieces is an array of word pieces that make up a line, typically a sentence
+    // Pieces is an array of word pieces that make up a line, typically a sentence
     // We need to go through pieces and check for styles like backticks, bold, italics, etc.
     if (!indicator) return pieces;
 
