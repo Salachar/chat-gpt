@@ -25,6 +25,8 @@ const ICONS = [
   'rocket',
   'color',
   'banjo',
+  'soccer',
+  'headphone',
 ];
 
 const getRandom = (min, max) => {

@@ -3,8 +3,8 @@ import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store';
 
-import { ActionsContainer } from './Actions';
-import { Message } from './Message';
+import { ActionsContainer } from '../../../components/Actions';
+import { Message } from '../../../components/Message';
 
 export const ChatHistory = (props) => {
   // Create a ref for your scrollable element
@@ -24,7 +24,8 @@ export const ChatHistory = (props) => {
   return (
     <StyledContainer
       class={props.class}
-      label="Clearing the chat will reset token data"
+      // label="Clear the chat to reset tokens"
+      label={`${store.getChatName()} - ${store.getChatModel()} - Clear the chat to reset tokens`}
       actions={{
         "x": {
           title: "Clear chat messages",

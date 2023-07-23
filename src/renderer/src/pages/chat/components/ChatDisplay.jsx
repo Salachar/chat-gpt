@@ -2,7 +2,7 @@ import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
 import { ActionsContainer } from '../../../components/Actions';
-import { ChatHistory } from '../../../components/ChatHistory';
+import { ChatHistory } from './ChatHistory';
 import { TextArea } from '../../../components/TextArea';
 
 export const ChatDisplay = (props) => {
@@ -11,17 +11,16 @@ export const ChatDisplay = (props) => {
       <StyledChatHistory />
 
       <StyledPromptContainer
-        label="Send prompts with the Snippet by ending with a semicolon;"
+        label="Attach Snippet by ending prompt with a semicolon;"
         actions={{
           "files": {
             title: "Copy to Clipboard",
             handler: () => {
-              // Copy the current prompt to the navigator clipboard
               navigator.clipboard.writeText(store.getChatPrompt());
             }
           },
           "server": {
-            title: "Send prompt with Snippet attached",
+            title: "Send prompt with Snippet",
             handler: () => {
               store.setChatWaiting({
                 waiting: true
@@ -57,7 +56,6 @@ export const ChatDisplay = (props) => {
               // If waiting, don't send another prompt
               if (store.getChatWaiting()) {
                 e.preventDefault();
-                // Add an assistant message saying to wait
                 store.addChatMessage({
                   message: {
                     role: "assistant",

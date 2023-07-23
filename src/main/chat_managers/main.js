@@ -383,7 +383,18 @@ class MainChat extends ChatBase {
     ipcMain.on('chat-model-change', async (event, data) => {
       try {
         const { chatId, model } = data;
-        this.__chats[chatId].model = model;
+        if (!this.__chats[chatId]) {
+          this.__chats[chatId] = {
+            id: chatId,
+            model,
+            messages: [{
+              role: "system",
+              content: AI_RULES,
+            }],
+          };
+        } else {
+          this.__chats[chatId].model = model;
+        }
       } catch (e) {
         event.reply('error', {
           chatId: data.chatId,

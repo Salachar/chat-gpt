@@ -106,7 +106,7 @@ export const createAppStore = () => {
   const getChatModel = (id) => {
     id = id || currentChatId();
     const chat = getChat(id);
-    return chat.model;
+    return chat.model || defaultModel();
   };
 
   const setChatModel = ({ id = null, model = "" }) => {
