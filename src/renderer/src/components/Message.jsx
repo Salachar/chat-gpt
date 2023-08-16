@@ -16,19 +16,21 @@ export const Message = (props) => {
         "files": {
           title: "Copy to Clipboard",
           handler: () => {
+            navigator.clipboard.readText().then((clipText) => {
+              // If item is already in clipboard, copy it to the prompt
+              if (clipText === props.message.original_content) {
+                store.setChatPrompt({
+                  prompt: props.message.original_content,
+                });
+              }
+            }).catch(err => {
+              console.error("Failed to read clipboard contents: ", err);
+            });
             navigator.clipboard.writeText(props.message.original_content);
           }
         },
-        "expand": {
-          title: "Open in new chat",
-          handler: () => {
-            store.addChat({
-              snippet: props.message.original_content,
-            })
-          }
-        },
         "quotation-l": {
-          title: "Copy to Snippet",
+          title: "Copy to Notepad",
           handler: () => {
             store.setChatSnippet({
               snippet: props.message.original_content
@@ -67,7 +69,7 @@ const StyledMessage = styled(ActionsContainer)`
   padding: 0.5em 1em;
   font-size: 0.9em;
   ${({ lowProfileHeader }) => lowProfileHeader && `
-    padding-right: 6em;
+    padding-right: 4em;
   `}
 `;
 

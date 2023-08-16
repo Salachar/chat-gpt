@@ -7,8 +7,8 @@ import { ChatActions } from './components/ChatActions';
 import { ChatDisplay } from './components/ChatDisplay';
 import { ChatSnippet } from './components/ChatSnippet';
 
-const ABOUT_SNIPPET =
-` getActions () {
+const ABOUT_SNIPPET = `
+ getActions () {
     return [{
       event: 'your-custom-action',
       label: 'Your Custom Action Label',
@@ -26,11 +26,6 @@ const ABOUT_SNIPPET =
 `;
 
 export const Chat = () => {
-  const onLoadEvent = (event, events = []) => {
-    if (!Array.isArray(events)) events = [];
-    store.setEvents(events);
-  };
-
   const onChatEvent = (event, data = {}) => {
     const { chatId, chat, message } = data;
     console.log(chat);
@@ -135,30 +130,19 @@ export const Chat = () => {
     });
   };
 
-  const onModelListEvent = (event, data) => {
-    store.setDefaultModel(data.default_model);
-    store.setModels(data.models);
-  };
-
   onMount(() => {
-    store.addChat();
+    // Only add a chat if there are no chats
+    if (store.chats.length === 0) store.addChat();
+    if (store.noAPIKey()) onNoAPIKey();
 
-    IPC.on('onload', onLoadEvent);
-    IPC.on('model-list', onModelListEvent);
     IPC.on('chat', onChatEvent);
     IPC.on('error', onErrorMessage);
-    IPC.on('no-openai-api-key', onNoAPIKey);
     IPC.on('about', onAbout);
-
-    IPC.send('onload');
   });
 
   onCleanup(() => {
-    IPC.removeListener('onload', onLoadEvent);
-    IPC.removeListener('model-list', onModelListEvent);
     IPC.removeListener('chat', onChatEvent);
     IPC.removeListener('error', onErrorMessage);
-    IPC.removeListener('no-openai-api-key', onNoAPIKey);
     IPC.removeListener('about', onAbout);
   });
 
@@ -185,7 +169,6 @@ const StyledContainer = styled.div`
 
 const StyledChatList = styled(ChatList)`
   grid-area: chatlist;
-  border-right: 1rem solid var(--color-main-light);
 `;
 
 const StyledChatDisplay = styled(ChatDisplay)`

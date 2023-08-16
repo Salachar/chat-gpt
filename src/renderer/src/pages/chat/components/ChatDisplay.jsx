@@ -11,7 +11,7 @@ export const ChatDisplay = (props) => {
       <StyledChatHistory />
 
       <StyledPromptContainer
-        label="Attach Snippet by ending prompt with a semicolon;"
+        label="Attach Notepad by ending prompt with a >"
         actions={{
           "files": {
             title: "Copy to Clipboard",
@@ -19,8 +19,8 @@ export const ChatDisplay = (props) => {
               navigator.clipboard.writeText(store.getChatPrompt());
             }
           },
-          "server": {
-            title: "Send prompt with Snippet",
+          "chevron-r": {
+            title: "Send prompt with Notepad",
             handler: () => {
               store.setChatWaiting({
                 waiting: true
@@ -74,9 +74,9 @@ export const ChatDisplay = (props) => {
               const payload = {
                 prompt: trimmed_prompt,
               }
-              // Check if the trimmed prompt ends with a semicolon
-              // and if so attach the code to the payload
-              if (trimmed_prompt.endsWith(";")) {
+              // Check if the trimmed prompt ends with a >
+              // and if so attach the notepad to the payload
+              if (trimmed_prompt.endsWith(">")) {
                 payload.snippet = store.getChatSnippet();
               }
 
@@ -128,7 +128,7 @@ const StyledPromptContainer = styled(ActionsContainer)`
 const StyledPrompt = styled(TextArea)`
   resize: none;
   background-color: var(--color-main-light);
-  overflow: hidden;
+  /* overflow: hidden; */
   border-bottom-right-radius: 0.5rem;
   width: 100%;
   height: 100%;

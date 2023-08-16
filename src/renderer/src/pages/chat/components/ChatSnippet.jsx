@@ -11,7 +11,7 @@ export const ChatSnippet = (props) => {
   return (
     <ActionsContainer
       class={props.class}
-      label="Snippet"
+      label="Notepad"
       actions={{
         "visual-code": {
           title: "Code Format",
@@ -43,7 +43,7 @@ export const ChatSnippet = (props) => {
           },
         },
         "x": {
-          title: "Clear the Snippet",
+          title: "Clear the Notepad",
           handler: () => {
             store.setChatSnippet({
               snippet: ""

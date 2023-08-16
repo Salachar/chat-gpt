@@ -126,9 +126,10 @@ const StyledThoughtBubble = styled.div`
 
 const StyledSnippy = styled.div`
   grid-area: snippy;
-  padding-bottom: 0.25rem;
+  padding: 0 0 0.25rem 1rem;
   width: 100%;
   margin-bottom: 2.5rem;
+  position: relative;
 `;
 
 const StyledEyes = styled(Eyes)`
@@ -138,7 +139,7 @@ const StyledEyes = styled(Eyes)`
   padding: 0.5rem;
   border-radius: 1rem;
   display: inline-block;
-  margin: 4.5rem 0 0 0.5rem;
+  margin: 5.5rem 0 0 0.5rem;
 `;
 
 const StyledSpeechBubble = styled(SpeechBubble)`

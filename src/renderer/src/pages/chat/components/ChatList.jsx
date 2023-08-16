@@ -1,56 +1,69 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
+
+import { Sidebar } from '../../../components/Sidebar';
 import { Button } from '../../../components/Button';
-import { Snippy } from '../../../components/Snippy';
 
 export const ChatList = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <Snippy />
-
-      <For each={store.chats}>
-        {(chat) => {
-          return (
-            <StyledTab>
-              <StyledClose
-                isCurrent={store.currentChatId() === chat.id}
-                isWaiting={chat.waiting}
-                onClick={() => {
-                  store.removeChat(chat.id);
-                }}
-              >
-                <i class="icss-x" />
-              </StyledClose>
-              <StyledName
-                label={chat.name}
-                isCurrent={store.currentChatId() === chat.id}
-                isWaiting={chat.waiting}
-                onClick={() => {
-                  store.setCurrentChatId(chat.id);
-                }}
-              />
-            </StyledTab>
-          );
-        }}
-      </For>
-      <StyledAddButton
-        onClick={() => {
-          store.addChat();
-        }}
-      />
+      <Sidebar>
+        <StyledTabs>
+          <For each={store.chats}>
+            {(chat) => {
+              return (
+                <StyledTab>
+                  <StyledClose
+                    isCurrent={store.currentChatId() === chat.id}
+                    isWaiting={chat.waiting}
+                    onClick={() => {
+                      store.removeChat(chat.id);
+                    }}
+                  >
+                    <i class="icss-x" />
+                  </StyledClose>
+                  <StyledName
+                    label={chat.name}
+                    isCurrent={store.currentChatId() === chat.id}
+                    isWaiting={chat.waiting}
+                    onClick={() => {
+                      store.setCurrentChatId(chat.id);
+                    }}
+                  />
+                </StyledTab>
+              );
+            }}
+          </For>
+          <StyledAddButton
+            onClick={() => {
+              store.addChat();
+            }}
+          />
+        </StyledTabs>
+      </Sidebar>
     </StyledContainer>
   );
 }
 
 const StyledContainer = styled.div`
   position: relative;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* justify-content: unset; */
+  /* align-items: end; */
+  background-color: var(--color-main-dark);
+  /* padding: 1rem 0 0 1rem; */
+`;
+
+const StyledTabs = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: unset;
   align-items: end;
-  background-color: var(--color-main-dark);
-  padding: 1rem 0 0 1rem;
+  padding: 0rem 0 0 1rem;
+  width: 100%;
 `;
 
 const StyledTab = styled.div`

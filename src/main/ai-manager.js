@@ -4,7 +4,7 @@ class AIManager {
   constructor (openai) {
     this.openai = openai;
 
-    this.default_model = "gpt-3.5-turbo";
+    this.default_model = "gpt-3.5-turbo-16k";
 
     this.main_chat = new MainChat(openai, {
       default_model: this.default_model,

@@ -11,8 +11,8 @@ const CHAT_SCHEMA = {
   messages: [],
   snippet: "",
   code_langugage: "javascript",
-  snippet_wrap: false,
-  snippet_format: "code",
+  snippet_wrap: true,
+  snippet_format: "text",
   prompt: "",
   model: "",
   token_data: {
@@ -26,6 +26,7 @@ const CHAT_SCHEMA = {
 export const createAppStore = () => {
   // The list of models for the openai api.
   const [defaultModel, setDefaultModel] = createSignal(null);
+  const [noAPIKey, setNoAPIKey] = createSignal(false);
   const [models, setModels] = createSignal([]);
   // The list of the actions used to create buttons.
   const [events, setEvents] = createSignal([]);
@@ -253,6 +254,8 @@ export const createAppStore = () => {
   return {
     defaultModel,
     setDefaultModel,
+    noAPIKey,
+    setNoAPIKey,
     getDropdownModel,
     models,
     setModels,

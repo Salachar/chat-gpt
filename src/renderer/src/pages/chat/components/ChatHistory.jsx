@@ -63,6 +63,16 @@ export const ChatHistory = (props) => {
                           "files": {
                             title: "Copy to Clipboard",
                             handler: () => {
+                              navigator.clipboard.readText().then((clipText) => {
+                                // If item is already in clipboard, copy it to the prompt
+                                if (clipText === sub_message.code_snippet) {
+                                  store.setChatPrompt({
+                                    prompt: sub_message.code_snippet,
+                                  });
+                                }
+                              }).catch(err => {
+                                console.error("Failed to read clipboard contents: ", err);
+                              });
                               navigator.clipboard.writeText(sub_message.code_snippet);
                             },
                           },
@@ -76,7 +86,7 @@ export const ChatHistory = (props) => {
                             }
                           },
                           "quotation-l": {
-                            title: "Copy to Snippet",
+                            title: "Copy to Notepad",
                             handler: () => {
                               store.setChatSnippet({
                                 snippet: sub_message.code_snippet

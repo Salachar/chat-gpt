@@ -5,15 +5,14 @@ import yaml from 'js-yaml';
 import ChatBase from './base';
 
 const AI_RULES = [
-  "You are Snippy, the Code Snippet AI, and are a helpful assistant to developers.",
+  "You are Snippy, the Snippet AI, and are a generically helpful assistant.",
+  "One of your primary functions is to help developers with their code.",
+  "Another is to assist DMS with table top role playing games like D&D.",
   // Main stack rules
-  "When working with Javascript, the primary client development stack is: React, ChakraUI, Cypress, Jest, Storybook.",
-  "When working with Java, the primary services development stack is: Java 11, Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok.",
+  // "Your default and primary language is Javascript, and assume the stack is: React, ChakraUI, Cypress, Jest, Storybook.",
+  "Your default and primary language is Javascript, and assume the stack is: Vite, SolidJS, Styled Components, Electron.",
+  // "When working with Java, the primary services development stack is: Java 11, Google Cloud Platform (GCP) SDK, Postgre, Maven, IntelliJ, Lombok.",
   // Output rules
-  // "When outputing lists of information, never use nested lists.",
-  "Lists must always be bulleted, never numbered.",
-  "Lists must always be indented with two (2) spaces.",
-  "Never use numbered lists like '1.' or '1)', only bulleted lists with '-' or '*'.",
   "List headers should always end with a colon.",
   "List headers should always have the same indent as the list items.",
   "Mark underline with double underscores, like this: __underline__.",
@@ -105,6 +104,17 @@ class MainChat extends ChatBase {
         ], snippet).sendChat(chatId, event);
       }
     }, {
+      event: 'to-javascript',
+      label: 'Convert',
+      handler: (event, data) => {
+        const { chatId = null, snippet } = data;
+        this.addMessages(chatId, "system", [
+          // javascript rules,
+        ]).addMessages(chatId, "user", [
+          "Convert the code or description in the following message to JavaScript.",
+        ], snippet).sendChat(chatId, event);
+      }
+    }, {
       event: 'chakratize',
       label: 'Chakratize',
       handler: (event, data) => {
@@ -116,30 +126,8 @@ class MainChat extends ChatBase {
         ], snippet).sendChat(chatId, event);
       }
     }, {
-      event: 'to-javascript',
-      label: 'To Javascript',
-      handler: (event, data) => {
-        const { chatId = null, snippet } = data;
-        this.addMessages(chatId, "system", [
-          // javascript rules,
-        ]).addMessages(chatId, "user", [
-          "Convert the code or description in the following message to JavaScript.",
-        ], snippet).sendChat(chatId, event);
-      }
-    }, {
-      event: 'to-client-stack',
-      label: 'To Client Stack',
-      handler: (event, data) => {
-        const { chatId = null, snippet } = data;
-        this.addMessages(chatId, "system", [
-          CHAKRA_OUTPUT_RULES,
-        ]).addMessages(chatId, "user", [
-          "Using the following code or description, write code for it that satisfies the defined client/javascript stack.",
-        ], snippet).sendChat(chatId, event);
-      }
-    }, {
       event: 'to-styled-components',
-      label: 'To Styled Comps',
+      label: 'Styled-Compize',
       handler: (event, data) => {
         const { chatId = null, snippet } = data;
         this.addMessages(chatId, "system", [
@@ -147,17 +135,6 @@ class MainChat extends ChatBase {
         ]).addMessages(chatId, "user", [
           "Convert the following code or snippet to use styled-components.",
           "If there are any `px` values, convert them to `em` values based off of a default 1rem of 16px.",
-        ], snippet).sendChat(chatId, event);
-      }
-    }, {
-      event: 'to-server-stack',
-      label: 'To Server Stack',
-      handler: (event, data) => {
-        const { chatId = null, snippet } = data;
-        this.addMessages(chatId, "system", [
-          // server rules,
-        ]).addMessages(chatId, "user", [
-          "Using the following code or description, write code for it that satisfies the defined services/java stack.",
         ], snippet).sendChat(chatId, event);
       }
     }, {
