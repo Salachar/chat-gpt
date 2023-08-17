@@ -1,7 +1,7 @@
 import { onMount, onCleanup } from 'solid-js'
 import { SidebarContainer } from '../../components/SidebarContainer';
 
-export const Rooms = () => {
+export const Images = () => {
   onMount(() => {
 
   });
@@ -12,7 +12,7 @@ export const Rooms = () => {
 
   return (
     <SidebarContainer>
-      Rooms
+      Images
     </SidebarContainer>
   );
 };

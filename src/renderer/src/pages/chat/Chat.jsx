@@ -7,6 +7,8 @@ import { ChatActions } from './components/ChatActions';
 import { ChatDisplay } from './components/ChatDisplay';
 import { ChatSnippet } from './components/ChatSnippet';
 
+import { SidebarContainer } from '../../components/SidebarContainer';
+
 const ABOUT_SNIPPET = `
  getActions () {
     return [{
@@ -147,28 +149,25 @@ export const Chat = () => {
   });
 
   return (
-    <StyledContainer>
-      <StyledChatList />
-      <StyledChatDisplay />
-      <StyledChatSnippet />
-      <StyledChatActions />
-    </StyledContainer>
+    <SidebarContainer sidebar={<ChatList />}>
+      <StyledChat>
+        <StyledChatDisplay />
+        <StyledChatSnippet />
+        <StyledChatActions />
+      </StyledChat>
+    </SidebarContainer>
   );
 }
 
-const StyledContainer = styled.div`
+const StyledChat = styled.div`
   font-size: 0.85rem;
   position: relative;
   display: grid;
   box-sizing: border-box;
   height: 100%;
-  grid-template-columns: 12rem 1fr 0.75fr 11rem;
+  grid-template-columns: 1fr 0.75fr 11rem;
   grid-template-rows: 1fr;
-  grid-template-areas: "chatlist chatdisplay chatsnippet chatactions";
-`;
-
-const StyledChatList = styled(ChatList)`
-  grid-area: chatlist;
+  grid-template-areas: "chatdisplay chatsnippet chatactions";
 `;
 
 const StyledChatDisplay = styled(ChatDisplay)`

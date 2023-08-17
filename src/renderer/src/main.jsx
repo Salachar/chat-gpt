@@ -4,7 +4,11 @@ import { store } from '@store';
 
 import { Home } from "./pages/home/Home";
 import { Chat } from "./pages/chat/Chat";
+import { Images } from "./pages/images";
+import { Maps } from "./pages/maps";
+import { Audio } from "./pages/audio";
 import { Rooms } from "./pages/rooms";
+import { NPCs } from "./pages/npcs";
 
 import 'prismjs/themes/prism-tomorrow.css';
 import './assets/index.css';
@@ -19,7 +23,6 @@ export const PAGES = [
   {
     name: "Chat",
     icon: "chat",
-    // icon: "comment",
     path: "/chat",
     element: Chat,
   },
@@ -27,39 +30,31 @@ export const PAGES = [
     name: "Images",
     icon: "image",
     path: "/images",
-    element: Chat,
-    disabled: true,
+    element: Images,
   },
   {
     name: "Maps",
     icon: "map-location",
-    // icon: "map",
     path: "/maps",
-    element: Chat,
-    disabled: true,
+    element: Maps,
   },
   {
     name: "Audio",
-    // icon: "musique-note",
-    // icon: "turntable",
     icon: "radio",
     path: "/audio",
-    element: Chat,
-    disabled: true,
+    element: Audio,
   },
   {
     name: "Rooms",
     icon: "shop",
     path: "/rooms",
     element: Rooms,
-    // disabled: true,
   },
   {
     name: "NPCs",
     icon: "user",
     path: "/npcs",
-    element: Chat,
-    disabled: true,
+    element: NPCs,
   },
 ];
 

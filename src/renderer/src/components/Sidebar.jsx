@@ -5,7 +5,7 @@ import { Snippy } from './Snippy';
 
 export const Sidebar = (props) => {
   return (
-    <StyledSidebar>
+    <StyledSidebar class={props.class}>
       <Navigation />
       <Snippy />
       {props.children}

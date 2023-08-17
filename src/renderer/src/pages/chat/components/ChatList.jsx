@@ -1,14 +1,11 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
-
-import { Sidebar } from '../../../components/Sidebar';
 import { Button } from '../../../components/Button';
 
 export const ChatList = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <Sidebar>
         <StyledTabs>
           <For each={store.chats}>
             {(chat) => {
@@ -41,19 +38,14 @@ export const ChatList = (props) => {
             }}
           />
         </StyledTabs>
-      </Sidebar>
+
     </StyledContainer>
   );
 }
 
 const StyledContainer = styled.div`
   position: relative;
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* justify-content: unset; */
-  /* align-items: end; */
   background-color: var(--color-main-dark);
-  /* padding: 1rem 0 0 1rem; */
 `;
 
 const StyledTabs = styled.div`

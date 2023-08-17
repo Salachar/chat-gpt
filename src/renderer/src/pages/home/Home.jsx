@@ -1,8 +1,5 @@
 import { onMount, onCleanup } from 'solid-js'
-import { styled } from 'solid-styled-components';
-import { store } from '@store';
-
-import { Sidebar } from '../../components/Sidebar';
+import { SidebarContainer } from '../../components/SidebarContainer';
 
 export const Home = () => {
   onMount(() => {
@@ -14,15 +11,8 @@ export const Home = () => {
   });
 
   return (
-    <StyledContainer>
-      <Sidebar />
+    <SidebarContainer>
       Home
-    </StyledContainer>
+    </SidebarContainer>
   );
-}
-
-const StyledContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-`;
+};
