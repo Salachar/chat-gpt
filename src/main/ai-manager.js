@@ -1,4 +1,6 @@
 import MainChat from './chat_managers/main';
+import RoomsChat from './chat_managers/rooms';
+import ImageAI from './image';
 
 class AIManager {
   constructor (openai) {
@@ -9,6 +11,13 @@ class AIManager {
     this.main_chat = new MainChat(openai, {
       default_model: this.default_model,
     });
+
+    this.rooms_chat = new RoomsChat(openai, {
+      temperatute: 1.1,
+    });
+
+    this.image_ai = new ImageAI(openai);
+
 
     this.main_window_ready = false;
     this.models_ready = false;

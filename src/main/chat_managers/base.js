@@ -28,20 +28,14 @@ export default class ChatBase {
   }
 
   send (opts = {}) {
-    const {
-      model,
+    let {
+      model = "",
       messages = [],
       onReply = () => {},
     } = opts;
 
-    if (!model) {
-      onReply({
-        error: "There was no model for this chat.",
-      });
-      return;
-    }
-
-    // console.log("Sending message to OpenAI API using model: ", model);
+    if (!model) model = "gpt-4";
+    console.log("Sending message to OpenAI API using model: ", model);
 
     this.openai.createChatCompletion({
       model: model,

@@ -31,18 +31,21 @@ export const PAGES = [
     icon: "image",
     path: "/images",
     element: Images,
+    disabled: true,
   },
   {
     name: "Maps",
     icon: "map-location",
     path: "/maps",
     element: Maps,
+    disabled: true,
   },
   {
     name: "Audio",
     icon: "radio",
     path: "/audio",
     element: Audio,
+    disabled: true,
   },
   {
     name: "Rooms",
@@ -55,6 +58,7 @@ export const PAGES = [
     icon: "user",
     path: "/npcs",
     element: NPCs,
+    disabled: true,
   },
 ];
 

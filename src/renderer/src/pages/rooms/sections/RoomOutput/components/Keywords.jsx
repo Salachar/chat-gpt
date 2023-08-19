@@ -1,0 +1,42 @@
+import { For } from 'solid-js';
+import { styled } from 'solid-styled-components';
+
+const StyledKeywords = styled.div`
+  display: block;
+`;
+
+const StyledKeyword = styled.span`
+  font-weight: 600;
+  opacity: 0.3;
+  color: var(--color-orange-spice);
+  text-transform: uppercase;
+  margin: 0.5rem;
+  display: inline-block;
+  font-size: 0.9rem;
+
+  &:first-child {
+    margin-left: 0;
+  }
+`;
+
+export const RoomKeywords = (props) => {
+  const getKeywords = () => {
+    return props?.room?.data?.keywords || null;
+  };
+
+  return (
+    <>
+      {getKeywords() && (
+        <StyledKeywords>
+          <For each={getKeywords()}>
+            {(keyword) => {
+              return (
+                <StyledKeyword>{keyword}</StyledKeyword>
+              );
+            }}
+          </For>
+        </StyledKeywords>
+      )}
+    </>
+  );
+}
