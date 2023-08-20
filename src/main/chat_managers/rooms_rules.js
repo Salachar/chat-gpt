@@ -33,7 +33,7 @@ export default [
   `9) "Traps". Can be "None", "Mundane", or "Complex" or "Mix". Traps, hazards and obstacles, can range from manmade and intentional to accident of nature. If not "None", generate 3 traps and suggest a DC ability check for evading and disarming the trap, with a short flavor text for successful disarm. Excluded from flavor text.`,
   `10) "Puzzles". Can be "None", "Mundane", or "Complex" or "Mix". Puzzles and unintuitive objects to interact with. If not "None", generate 3 puzzles, each with a DC ability check solution. Excluded from flavor text.`,
 
-  `JSON output format, all field names need to be proper strings:`,
+  `JSON output format, all field names need to be proper strings and must not be altered or changed:`,
   `- 'is_room_json': required, boolean, must be present and true. This is used to identify the JSON as a room.`,
   `- 'name': required, string, maps to "Room Name".`,
   `- 'keywords': required, array of strings, based on "Keywords".`,
@@ -52,6 +52,8 @@ export default [
   `- All JSON must be valid, have no errors, and be formatted with 2 spaces.`,
   "- JSON must be in the following format, surrounded by triple backticks: ```<json>``` and marked as json language.",
   `- "generate" from the user is a keyword that indicates room generation request and the response must include valid room JSON according to the specified format.`,
+  `- When prompted to generate, a room must always be generated and returned, regardless of the amount of data provided.`,
+  `- Upon receiving a "generate" command from the user, the assistant must immediately generate a room based on the provided data, without prompting the user for additional information.`,
   `END REQUIRED RULES.`,
   `END ROOM GENERATION RULES.`,
 

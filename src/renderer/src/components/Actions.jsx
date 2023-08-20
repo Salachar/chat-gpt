@@ -5,12 +5,13 @@ const StyledActionsContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  font-size: 0.85rem;
 `;
 
 const StyledHeader = styled.div`
   position: relative;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.35rem;
+  padding: 0.35em;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -28,7 +29,7 @@ const StyledHeader = styled.div`
 const StyledLabel = styled.span`
   font-weight: bold;
   color: rgba(255, 255, 255, 0.3);
-  font-size: 0.7rem;
+  font-size: 0.7em;
 `;
 
 const StyledActions = styled.div`
@@ -49,12 +50,12 @@ const StyledIconWrapper = styled.div`
   }
 
   &:not(:last-child) {
-    margin-right: 1.25rem;
+    margin-right: 1.25em;
   }
 
   ${({ lowProfileHeader }) => lowProfileHeader && `
     &:not(:last-child) {
-      margin-right: 0.5rem;
+      margin-right: 0.5em;
     }
   `}
 
@@ -65,14 +66,20 @@ const StyledIconWrapper = styled.div`
   ${({ toggled }) => toggled && `
     opacity: 1;
   `}
+
+  ${({ disabled }) => disabled && `
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+  `}
 `;
 
 const StyledIcon = styled.i`
-  font-size: 0.9rem;
+  font-size: 0.9em;
   color: var(--color-orange-spice);
 
   ${({ lowProfileHeader }) => lowProfileHeader && `
-    font-size: 0.8rem;
+    font-size: 0.8em;
     opacity: 0.8;
     color: var(--color-light-blue);
   `}
@@ -82,14 +89,13 @@ const StyledContent = styled.div`
   position: relative;
   flex-grow: 1;
   overflow: scroll;
-  /* background-color: var(--color-main-dark); */
-  /* color: white; */
 `;
 
 export const ActionsContainer = (props) => {
   return (
     <StyledActionsContainer
       class={props.class}
+      style={props.style}
       onClick={props.onClick}
       disabled={props.disabled}
     >
@@ -103,10 +109,15 @@ export const ActionsContainer = (props) => {
               {([icon, action]) => (
                 <StyledIconWrapper
                   title={action.title}
-                  onClick={action.handler}
+                  // onClick={action.handler}
+                  onClick={() => {
+                    if (action.disabled) return;
+                    action.handler();
+                  }}
                   lowProfileHeader={props.lowProfileHeader}
                   togglable={typeof action.toggled === "boolean"}
                   toggled={action.toggled}
+                  disabled={action.disabled}
                 >
                   <StyledIcon
                     class={`icss-${icon}`}
@@ -118,9 +129,12 @@ export const ActionsContainer = (props) => {
           </StyledActions>
         </StyledHeader>
       </Show>
-      <StyledContent lowProfileHeader={props.lowProfileHeader}>
+      <StyledContent
+        style={props.contentStyle}
+        lowProfileHeader={props.lowProfileHeader}
+      >
         {props.children}
       </StyledContent>
     </StyledActionsContainer>
   );
-}
+};

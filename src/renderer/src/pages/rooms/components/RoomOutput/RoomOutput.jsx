@@ -31,12 +31,9 @@ const StyledImageLoaderContainer = styled.div`
 
 const StyledRoomDataContainer = styled.div`
   background-color: var(--color-main-dark);
-  height: 100%;
-  padding: 1rem;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  /* color: white; */
-  overflow-y: scroll;
+  padding: 1rem;
   color: wheat;
 `;
 
@@ -47,6 +44,14 @@ export const RoomOutput = (props) => {
     <ActionsContainer
       class={props.class}
       label="Room Output"
+      style={{
+        "font-size": "1.5rem",
+      }}
+      contentStyle={{
+        "background-color": "var(--color-main-dark)",
+        "border-bottom-left-radius": "0.5rem",
+        "border-bottom-right-radius": "0.5rem",
+      }}
       actions={{
         "recycle": {
           title: "Generate Room",
