@@ -13,10 +13,6 @@ import { ActionsContainer } from '@components/Actions';
 import { store } from '@store/roomsStore';
 import { copy } from '@utils';
 
-const StyledActionsContainer = styled(ActionsContainer)`
-  background-color: var(--color-main-dark);
-`;
-
 const StyledImageLoaderContainer = styled.div`
   position: relative;
   display: flex;
@@ -34,19 +30,21 @@ const StyledImageLoaderContainer = styled.div`
 `;
 
 const StyledRoomDataContainer = styled.div`
+  background-color: var(--color-main-dark);
   height: 100%;
   padding: 1rem;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  color: white;
-  /* color: wheat; */
+  /* color: white; */
+  overflow-y: scroll;
+  color: wheat;
 `;
 
 export const RoomOutput = (props) => {
   const room = () => store.getRoom();
 
   return (
-    <StyledActionsContainer
+    <ActionsContainer
       class={props.class}
       label="Room Output"
       actions={{
@@ -101,6 +99,6 @@ export const RoomOutput = (props) => {
           <RoomPuzzles room={room()} />
         </StyledRoomDataContainer>
       )}
-    </StyledActionsContainer>
+    </ActionsContainer>
   );
 };

@@ -8,7 +8,7 @@ const StyledFlavorTextWrapper = styled.div`
 `;
 
 const StyledFlavorText = styled.p`
-  color: rgba(255, 255, 255, 0.6);
+  opacity: 0.6;
   font-size: 0.9rem;
 
   &:first-child {

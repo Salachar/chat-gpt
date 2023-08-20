@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
   height: 100%;
   overflow: hidden;
   grid-template-columns: 32rem 1fr;
-  grid-template-rows: 1fr 23rem;
+  grid-template-rows: 1fr 28rem;
   grid-template-areas:
     "roominputs roomoutput"
     "chat roomoutput";
@@ -27,7 +27,8 @@ const StyledContainer = styled.div`
 const StyledRoomInputs = styled(RoomInputs)`
   position: relative;
   grid-area: roominputs;
-  padding: 1rem 0 0 1rem;
+  /* padding: 1rem 0 0 1rem; */
+  padding-top: 1rem;
   overflow-y: scroll;
 `;
 
@@ -39,7 +40,8 @@ const StyledChat = styled(Chat)`
   position: relative;
   grid-area: chat;
   font-size: 0.65rem !important;
-  margin: 1rem 0;
+  /* margin: 1rem 0; */
+  margin-bottom: 1rem;
   overflow: hidden;
 `;
 

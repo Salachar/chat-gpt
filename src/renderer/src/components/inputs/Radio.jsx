@@ -9,7 +9,7 @@ const StyledContainer = styled.div`
   background-color: var(--color-dark-blue-70);
   height: 2rem;
   line-height: 2rem;
-  border-radius: 0.5rem;
+  /* border-radius: 0.5rem; */
 `;
 
 const StyledLabel = styled.label`
@@ -39,7 +39,7 @@ const StyledRadio = styled.div`
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.6rem;
   font-weight: 600;
-  border-radius: 0.5rem;
+  /* border-radius: 0.5rem; */
   white-space: nowrap;
 
   ${({ isSelected }) => isSelected && `

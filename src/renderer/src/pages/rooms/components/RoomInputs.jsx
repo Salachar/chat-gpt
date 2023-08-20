@@ -9,29 +9,17 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledRadio = styled(Radio)`
-  &:not(:last-child) {
-    margin-bottom: 0.5rem;
-  }
-`;
-
-const StyledTextAreaContainer = styled(ActionsContainer)`
-  margin-bottom: 0.5rem;
-`;
-
-const StyledTextAreaOther = styled(TextArea)`
-  border-bottom-right-radius: 0.5rem;
-  border-bottom-left-radius: 0.5rem;
+const StyledTextArea = styled(TextArea)`
   width: 100%;
   height: 100%;
 
   ${({ size }) => size === 'small' && `
-    height: 2rem;
+    height: 2.25rem;
     resize: none;
   `}
 
   ${({ size }) => size === 'large' && `
-    height: 3rem;
+    height: 3.5rem;
   `}
 `;
 
@@ -136,19 +124,19 @@ export const RoomInputs = (props) => {
   return (
     <StyledContainer class={props.class}>
       {room_text_area_inputs.map((input) => (
-        <StyledTextAreaContainer
+        <ActionsContainer
           label={input.label}
           actions={input.actions}
         >
-          <StyledTextAreaOther
+          <StyledTextArea
             value={input.value}
             placeholder={input.placeholder}
             size={input.size}
             onChange={input.onChange}
           />
-        </StyledTextAreaContainer>
+        </ActionsContainer>
       ))}
-      <StyledRadio
+      <Radio
         label="Trinkets"
         options={['Boring', 'Mundane', 'Magical', 'Mix']}
         onChange={(value) => {
@@ -156,7 +144,7 @@ export const RoomInputs = (props) => {
           setRoomData(getRoomData());
         }}
       />
-      <StyledRadio
+      <Radio
         label="Traps"
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
@@ -164,7 +152,7 @@ export const RoomInputs = (props) => {
           setRoomData(getRoomData());
         }}
       />
-      <StyledRadio
+      <Radio
         label="Puzzles"
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
