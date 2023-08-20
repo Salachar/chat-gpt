@@ -1,23 +1,38 @@
-import { createEffect, createSignal, onMount } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { styled } from 'solid-styled-components';
-import { TextArea, Text, Radio } from '@inputs';
+import { Radio } from '@inputs';
+import { TextArea as OtherTextArea } from '@components/TextArea';
+import { ActionsContainer } from '@components/Actions';
+import { store } from '@store/roomsStore';
 
 const StyledContainer = styled.div`
   position: relative;
-`;
-
-const StyledText = styled(Text)`
-  margin-bottom: 0.5rem;
-`;
-
-const StyledTextArea = styled(TextArea)`
-  margin-bottom: 0.5rem;
 `;
 
 const StyledRadio = styled(Radio)`
   &:not(:last-child) {
     margin-bottom: 0.5rem;
   }
+`;
+
+const StyledTextAreaContainer = styled(ActionsContainer)`
+  margin-bottom: 0.5rem;
+`;
+
+const StyledTextAreaOther = styled(OtherTextArea)`
+  border-bottom-right-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  width: 100%;
+  height: 100%;
+
+  ${({ size }) => size === 'small' && `
+    height: 2rem;
+    resize: none;
+  `}
+
+  ${({ size }) => size === 'large' && `
+    height: 3rem;
+  `}
 `;
 
 export const RoomInputs = (props) => {
@@ -45,62 +60,100 @@ export const RoomInputs = (props) => {
     };
   }
 
+  const setRoomData = (room_data) => {
+    store.setRoom("input_data", room_data);
+  }
+
+  const room_text_area_inputs = [
+    {
+      label: "World setting",
+      actions: {},
+      value: "Dungeons & Dragons style magical medieval fanstasy",
+      placeholder: 'Medieval high fantasy or dystopian steampunk',
+      size: 'small',
+      onChange: (value) => {
+        setWorld(value);
+        setRoomData(getRoomData());
+      }
+    },
+    {
+      label: "Any additional information",
+      actions: {},
+      value: "",
+      placeholder: 'In a magically suppressed city or the building is falling apart',
+      size: 'large',
+      onChange: (value) => {
+        setAdditional(value);
+        setRoomData(getRoomData());
+      }
+    },
+    {
+      label: "Pre-existing description: if provided the generated output will enhance this",
+      actions: {},
+      value: "",
+      placeholder: 'In a magically suppressed city or the building is falling apart',
+      size: 'large',
+      onChange: (value) => {
+        setPreFlavor(value);
+        setRoomData(getRoomData());
+      }
+    },
+    {
+      label: "Name of the room",
+      actions: {},
+      value: "",
+      placeholder: 'Laboratory',
+      size: 'small',
+      onChange: (value) => {
+        setName(value);
+        setRoomData(getRoomData());
+      }
+    },
+    {
+      label: "Keywords or aspects of the room",
+      actions: {},
+      value: "",
+      placeholder: 'Alchemy, Tidy, Well-stocked',
+      size: 'small',
+      onChange: (value) => {
+        setKeywords(value);
+        setRoomData(getRoomData());
+      }
+    },
+    {
+      label: "Length of room flavor text",
+      actions: {},
+      value: "",
+      placeholder: '2 paragraphs of 3 to 5 sentences',
+      size: 'small',
+      onChange: (value) => {
+        setFlavor(value);
+        setRoomData(getRoomData());
+      }
+    },
+  ];
+
   return (
     <StyledContainer class={props.class}>
-      <StyledTextArea
-        description='World setting'
-        value="Dungeons & Dragons style magical medieval fanstasy"
-        placeholder='Medieval high fantasy or dystopian steampunk'
-        onChange={(value) => {
-          setWorld(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
-      <StyledTextArea
-        description='Any additional information'
-        placeholder='In a magically suppressed city or the building is falling apart'
-        onChange={(value) => {
-          setAdditional(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
-      <StyledTextArea
-        description='Pre-existing description: if provided the generated output will enhance this'
-        onChange={(value) => {
-          setPreFlavor(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
-      <StyledText
-        description='Name of the room'
-        placeholder='Laboratory'
-        onChange={(value) => {
-          setName(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
-      <StyledText
-        description='Keywords or aspects of the room'
-        placeholder='Alchemy, Tidy, Well-stocked'
-        onChange={(value) => {
-          setKeywords(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
-      <StyledText
-        description='Length of room flavor text'
-        placeholder='2 paragraphs of 3 to 5 sentences'
-        onChange={(value) => {
-          setFlavor(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
-        }}
-      />
+      {room_text_area_inputs.map((input) => (
+        <StyledTextAreaContainer
+          label={input.label}
+          actions={input.actions}
+        >
+          <StyledTextAreaOther
+            value={input.value}
+            placeholder={input.placeholder}
+            size={input.size}
+            onChange={input.onChange}
+          />
+        </StyledTextAreaContainer>
+      ))}
       <StyledRadio
         label="Trinkets"
         options={['Boring', 'Mundane', 'Magical', 'Mix']}
         onChange={(value) => {
           setTrinkets(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
+          setRoomData(getRoomData());
         }}
       />
       <StyledRadio
@@ -108,7 +161,7 @@ export const RoomInputs = (props) => {
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
           setTraps(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
+          setRoomData(getRoomData());
         }}
       />
       <StyledRadio
@@ -116,9 +169,10 @@ export const RoomInputs = (props) => {
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
           setPuzzles(value);
-          if (props.onUpdate) props.onUpdate(getRoomData());
+          setRoomData(getRoomData());
         }}
       />
     </StyledContainer>
   );
 }
+

@@ -82,6 +82,8 @@ const StyledContent = styled.div`
   position: relative;
   flex-grow: 1;
   overflow: scroll;
+  /* background-color: var(--color-main-dark); */
+  /* color: white; */
 `;
 
 export const ActionsContainer = (props) => {

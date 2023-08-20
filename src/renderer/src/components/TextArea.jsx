@@ -1,27 +1,5 @@
 import { styled } from 'solid-styled-components';
 
-const StyledTextArea = styled.textarea`
-  border: none;
-  box-shadow: none;
-  background-color: var(--color-main-dark);
-  padding: 0.5rem;
-  box-sizing: border-box;
-  outline: 0;
-  resize: vertical;
-  color: white;
-  font-size: 0.85rem;
-  vertical-align: top;
-
-  &::placeholder {
-    color: #4f5886;
-  }
-
-  ${({ wordwrap }) => wordwrap && `
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
-  `}
-`;
-
 const handleTab = (e) => {
   const textarea = e.currentTarget;
   const tabCharacter = '\t';
@@ -82,7 +60,6 @@ const handleTab = (e) => {
   }
 };
 
-
 const indent = (line) => {
   // Add tab character at the beginning of the line
   // return '\t' + line;
@@ -97,32 +74,80 @@ const unindent = (line) => {
 
 export const TextArea = (props) => {
   return (
-    <StyledTextArea
-      ref={props.ref}
-      value={props.value || ""}
-      class={props.class}
-      wordwrap={props.wordwrap}
-      spellcheck={props.spellcheck || true}
-      placeholder={props.placeholder}
-      onScroll={(e) => {
-        if (props.onScroll) {
-          props.onScroll(e);
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Tab') {
-          e.preventDefault(); // Prevent default focus switching behavior
-          handleTab(e);
-        }
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
-      }}
-      onKeyUp={(e) => {
-        if (props.onChange) {
-          props.onChange(e.currentTarget.value, e);
-        }
-      }}
-    />
+    <>
+      {props.description && (
+        <StyledDescription>
+          {props.description}
+        </StyledDescription>
+      )}
+
+      <StyledTextArea
+        ref={props.ref}
+        value={props.value || ""}
+        class={props.class}
+        wordwrap={props.wordwrap}
+        spellcheck={props.spellcheck || true}
+        placeholder={props.placeholder}
+        hasDescription={Boolean(props.description)}
+        onScroll={(e) => {
+          if (props.onScroll) {
+            props.onScroll(e);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Tab') {
+            e.preventDefault(); // Prevent default focus switching behavior
+            handleTab(e);
+          }
+          if (props.onKeyDown) {
+            props.onKeyDown(e);
+          }
+        }}
+        onKeyUp={(e) => {
+          if (props.onChange) {
+            props.onChange(e.currentTarget.value, e);
+          }
+        }}
+      />
+    </>
   );
 }
+
+const StyledTextArea = styled.textarea`
+  border: none;
+  box-shadow: none;
+  background-color: var(--color-main-dark);
+  padding: 0.5rem;
+  box-sizing: border-box;
+  outline: 0;
+  resize: vertical;
+  color: white;
+  font-size: 0.85rem;
+  vertical-align: top;
+
+  &::placeholder {
+    color: #4f5886;
+  }
+
+  ${({ wordwrap }) => wordwrap && `
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  `}
+
+  ${({ hasDescription }) => hasDescription && `
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  `}
+`;
+
+const StyledDescription = styled.p`
+  margin: 0;
+  position: relative;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: var(--color-dark-blue-70);
+  padding: 0.5rem 0.5rem 0 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 0.5rem;
+`;

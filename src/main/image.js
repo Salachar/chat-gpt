@@ -8,7 +8,11 @@ class ImageAI {
   }
 
   setIPCEvents () {
-    ipcMain.on('image-create', async (event, prompt) => {
+    ipcMain.on('image-create', async (event, data) => {
+      const {
+        id = "",
+        prompt = "",
+      } = data;
       const response = await this.openai.createImage({
         prompt,
         size: "512x512", // "256x256" | "1024x1024"
@@ -16,7 +20,10 @@ class ImageAI {
       });
       try {
         const images = response?.data?.data || [];
-        event.reply('image-created', images);
+        event.reply('image-created', {
+          id,
+          images
+        });
       } catch (e) {
         console.log(e);
       }

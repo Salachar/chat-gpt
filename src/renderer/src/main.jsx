@@ -10,6 +10,12 @@ import { Audio } from "./pages/audio";
 import { Rooms } from "./pages/rooms";
 import { NPCs } from "./pages/npcs";
 
+import ChatIPCEvents from "./ipc/chat";
+const chatIPCEvents = new ChatIPCEvents();
+
+import RoomIPCEvents from "./ipc/rooms";
+const roomIPCEvents = new RoomIPCEvents();
+
 import 'prismjs/themes/prism-tomorrow.css';
 import './assets/index.css';
 
@@ -73,7 +79,6 @@ IPC.on('onload', (event, events = []) => {
 });
 
 IPC.on('no-openai-api-key', (event, data) => {
-  console.log('st')
   store.setNoAPIKey(true);
 });
 

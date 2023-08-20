@@ -41,7 +41,7 @@ const getRandomIcon = () => {
   return ICONS[getRandom(0, ICONS.length - 1)];
 };
 
-export const Snippy = () => {
+export const Snippy = (props) => {
   let thoughtBubbleInterval;
 
   const [thoughtBubble, setThoughtBubble] = createSignal(false);
@@ -70,10 +70,10 @@ export const Snippy = () => {
       <StyledThoughtBubble visible={thoughtBubble()}>
         <StyledThoughtBubbleIcon class={`icss-${thoughtBubbleIcon()}`} />
       </StyledThoughtBubble>
-      {store.getFirstWaiting() && (
+      {props.animate && (
         <StyledSpeechBubble />
       )}
-      <StyledEyes animate_mustache={store.getFirstWaiting()} />
+      <StyledEyes animate_mustache={props.animate} />
     </StyledSnippy>
   );
 }

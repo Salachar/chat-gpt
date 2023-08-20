@@ -1,182 +1,102 @@
-import { createSignal, onMount, onCleanup } from 'solid-js'
+import { onMount } from 'solid-js'
+import { styled } from 'solid-styled-components';
 import { useParams } from "@solidjs/router";
 import html2canvas from 'html2canvas';
 import { store, createNewRoom } from '@store/roomsStore';
 import { SidebarContainer } from '../../components/SidebarContainer';
+import { RoomInputs, RoomList, RoomOutput } from './sections';
+import { Chat } from './sections/Chat';
 
-import {
-  StyledContainer,
-  StyledRoomInputs,
-  StyledRoomList,
-  StyledChat,
-  StyledActions,
-  StyledActionButton,
-  StyledRoomOutput,
-} from './Rooms.styled';
+const StyledContainer = styled.div`
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  grid-template-columns: 32rem 1fr;
+  grid-template-rows: 1fr 23rem;
+  grid-template-areas:
+    "roominputs roomoutput"
+    "chat roomoutput";
+`;
+
+const StyledRoomInputs = styled(RoomInputs)`
+  position: relative;
+  grid-area: roominputs;
+  padding: 1rem 0 0 1rem;
+  overflow-y: scroll;
+`;
+
+const StyledRoomList = styled(RoomList)`
+  grid-area: roomlist;
+`;
+
+const StyledChat = styled(Chat)`
+  position: relative;
+  grid-area: chat;
+  font-size: 0.65rem !important;
+  margin: 1rem 0;
+  overflow: hidden;
+`;
+
+const StyledRoomOutput = styled(RoomOutput)`
+  position: relative;
+  grid-area: roomoutput;
+  margin: 1rem;
+  overflow-y: scroll;
+`;
 
 export const Rooms = () => {
   const params = useParams();
 
-  // The volatile inputs data, don't care if not saved between pages
-  const [getRoomInputsData, setRoomInputsData] = createSignal({});
-
-  const addMessages = (messages = []) => {
-    if (!Array.isArray(messages)) {
-      messages = [messages];
-    }
-    store.setRoom("messages", [
-      ...store.getRoom().messages,
-      ...messages,
-    ]);
-  };
-
-  // const onRoomEvent = (event, message = {}) => {
-  //   store.setIsGeneratingRoom(false);
-  //   if (message.room) {
-  //     store.setRoom("data", message.room);
-  //   }
-  //   addMessages(message);
-  // };
-
-  const onRoomEvent = (event, room_json) => {
-    console.log("Room event: ", room_json);
-    console.log(JSON.stringify(room_json, null, 2));
-    store.setIsGeneratingRoom(false);
-    if (room_json) {
-      store.setRoom("data", room_json);
-    }
-  };
-
-  const onRoomInitEvent = (event) => {
-    setTimeout(() => {
-      store.setIsInitingRoom(false);
-    }, 500);
-  };
-
-  const onImageCreateEvent = (event, images) => {
-    store.setIsGeneratingImages(false);
-    store.setRoom("images", images);
-  };
-
   onMount(() => {
-    IPC.on('room', onRoomEvent);
-    IPC.on('room-init', onRoomInitEvent);
-    IPC.on('image-created', onImageCreateEvent);
-
     const id = params.id || store.getRoom().id;
     if (id) {
       console.log(`Setting room ID on mount: ${id}`)
       store.setCurrentRoomId(id);
     } else {
-      store.setIsInitingRoom(true);
-      console.log('stuff')
       const new_room = createNewRoom();
       store.setCurrentRoomId(new_room.id);
       store.setRooms([
         ...store.rooms,
         new_room,
       ]);
-      console.log(new_room)
       IPC.send('room-init', {
         id: new_room.id,
       });
     }
   });
 
-  onCleanup(() => {
-    IPC.removeListener('room', onRoomEvent);
-    IPC.removeListener('room-init', onRoomInitEvent);
-    IPC.removeListener('image-created', onImageCreateEvent);
-  });
-
   return (
-    <SidebarContainer sidebar={
-      <StyledRoomList
-        onAddNewRoom={() => {
-          if (store.isGenerating()) return;
-          store.setIsInitingRoom(true);
-          const new_room = createNewRoom();
-          store.setCurrentRoomId(new_room.id);
-          store.setRooms([
-            ...store.rooms,
-            new_room,
-          ]);
-          IPC.send('room-init', {
-            id: new_room.id,
-          });
-        }}
-      />
-    }>
+    <SidebarContainer
+      sidebar={<StyledRoomList />}
+      animateSnippy={store.isAnyRoomWaiting()}
+    >
       <StyledContainer>
-        <StyledRoomInputs
-          onUpdate={(room_data) => {
-            setRoomInputsData(room_data);
-          }}
-        />
-        <StyledChat
-          omitCode={true}
-          messages={store.getRoom().messages}
-          onEnter={(prompt) => {
-            if (store.isInitingRoom()) {
-              return addMessages([{
-                role: "assistant",
-                content: "Please wait until I'm ready.",
-              }]);
-            }
-            if (store.isGeneratingRoom()) {
-              return addMessages([{
-                role: "generator",
-                content: prompt,
-              }, {
-                role: "assistant",
-                content: "Please give me a moment to generate your room.",
-              }]);
-            }
-            addMessages({
-              role: "user",
-              content: prompt,
-            })
-            IPC.send('room-chat', {
-              id: store.getRoom().id,
-              prompt,
-            });
-          }}
-        >
-          <StyledActions>
-            <StyledActionButton
-              label="Generate"
-              disabled={store.isGenerating()}
-              onClick={() => {
-                if (store.isGenerating()) return;
-                store.setIsGeneratingRoom(true);
-                addMessages({
-                  role: "generator",
-                  content: 'Generating room...',
-                })
-                IPC.send('room-request', {
-                  id: store.getRoom().id,
-                  input_data: getRoomInputsData(),
-                });
-              }}
-            />
-          </StyledActions>
-        </StyledChat>
+        <StyledRoomInputs />
+        <StyledChat />
         <StyledRoomOutput
           mouseState={store.roomListMouseState()}
           onGenerateImage={(room) => {
             const image_prompt = room?.data?.image_prompt;
-            if (!image_prompt || store.isGenerating()) return;
-            store.setIsGeneratingImages(true);
+            if (!image_prompt || store.getRoom().waiting) return;
+            store.setRoom("isGeneratingImages", true, { id: room.id });
             const style = "Surrealism handrawn high fantasy illustration style.";
             const full_prompt = `${style} ${image_prompt}`;
-            addMessages({
-              role: "generator",
-              content: `Generating image with prompt: ${full_prompt}`,
-            })
-            IPC.send('image-create', full_prompt);
+            store.addMessage({
+              id: room.id,
+              message: {
+                role: "generator",
+                content: `Generating image with prompt: ${full_prompt}`,
+              }
+            });
+            IPC.send('image-create', {
+              id: room.id,
+              prompt: full_prompt
+            });
           }}
           onExport={(room) => {
-            if (store.isGenerating() || !room?.data?.flavor_text) return;
+            if (store.getRoom().waiting || !room?.data?.flavor_text) return;
             html2canvas(document.getElementById('generated_room_output'), {
               allowTaint: true,
             }).then((canvas) => {

@@ -7,7 +7,7 @@ export const Sidebar = (props) => {
   return (
     <StyledSidebar class={props.class}>
       <Navigation />
-      <Snippy />
+      <Snippy animate={props.animateSnippy} />
       {props.children}
     </StyledSidebar>
   );

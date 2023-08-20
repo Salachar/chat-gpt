@@ -1,21 +1,11 @@
-import { onMount, onCleanup } from 'solid-js'
 import { styled } from 'solid-styled-components';
-import { store } from '@store';
 
 import { Sidebar } from './Sidebar';
 
 export const SidebarContainer = (props) => {
-  onMount(() => {
-
-  });
-
-  onCleanup(() => {
-
-  });
-
   return (
     <StyledContainer>
-      <StyledSidebar>
+      <StyledSidebar animateSnippy={props.animateSnippy}>
         {props.sidebar}
       </StyledSidebar>
       <StyledContent>

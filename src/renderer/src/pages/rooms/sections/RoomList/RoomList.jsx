@@ -1,32 +1,51 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
-import { store } from '@store/roomsStore';
+import { store, createNewRoom } from '@store/roomsStore';
 import { Button } from '@components/Button';
 
 export const RoomList = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <StyledRooms>
+      <StyledTabs>
         <For each={store.rooms}>
           {(room) => {
             return (
-              <StyledRoom
-                label={room?.data?.name}
-                isCurrent={store.getRoom().id === room.id}
-                disabled={store.isGenerating()}
-                onClick={() => {
-                  if (props.isGeneratingRoom) return;
-                  store.setCurrentRoomId(room.id);
-                }}
-              />
+              <StyledTab>
+                <StyledClose
+                  isCurrent={store.getRoom().id === room.id}
+                  isWaiting={room.waiting}
+                  onClick={() => {
+                    store.removeRoom(room.id);
+                  }}
+                >
+                  <i class="icss-x" />
+                </StyledClose>
+                <StyledName
+                  label={room?.data?.name}
+                  isCurrent={store.getRoom().id === room.id}
+                  isWaiting={room.waiting}
+                  onClick={() => {
+                    store.setCurrentRoomId(room.id);
+                  }}
+                />
+              </StyledTab>
             );
           }}
         </For>
         <StyledAddButton
-          disabled={store.isGenerating()}
-          onClick={props.onAddNewRoom}
+          onClick={() => {
+            const new_room = createNewRoom();
+            store.setCurrentRoomId(new_room.id);
+            store.setRooms([
+              ...store.rooms,
+              new_room,
+            ]);
+            IPC.send('room-init', {
+              id: new_room.id,
+            });
+          }}
         />
-      </StyledRooms>
+      </StyledTabs>
     </StyledContainer>
   );
 }
@@ -36,7 +55,7 @@ const StyledContainer = styled.div`
   background-color: var(--color-main-dark);
 `;
 
-const StyledRooms = styled.div`
+const StyledTabs = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -46,16 +65,14 @@ const StyledRooms = styled.div`
   width: 100%;
 `;
 
-const StyledRoom = styled(Button)`
+const StyledTab = styled.div`
   position: relative;
-  padding: 0.5rem;
   color: white;
   font-weight: bold;
-  /* background-color: var(--color-main); */
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
-  margin-bottom: 0.25rem;
-  font-size: 0.7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   width: 100%;
@@ -63,27 +80,10 @@ const StyledRoom = styled(Button)`
   text-overflow: ellipsis;
   cursor: pointer;
   transition: all 0.2s ease;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-
-  &:active {
-    filter: brightness(0.8);
-  }
-
-  ${({ disabled }) => disabled && `
-    cursor: not-allowed;
-    opacity: 0.5;
-  `}
-
-  background-color: var(--color-main);
-  ${({ isCurrent }) => isCurrent && `
-    background-color: var(--color-main-light);
-  `}
-  ${({ isWaiting }) => isWaiting && `
-    background-color: var(--color-orange-spice);
-  `}
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
 `;
 
 const StyledAddButton = styled.div`
@@ -91,7 +91,7 @@ const StyledAddButton = styled.div`
   height: 3rem;
   width: 3rem;
   cursor: pointer;
-  background-color: var(--color-blue);
+  background-color: var(--color-main);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
   transition: all 0.2s ease;
@@ -103,11 +103,6 @@ const StyledAddButton = styled.div`
   &:active {
     filter: brightness(0.8);
   }
-
-  ${({ disabled }) => disabled && `
-    cursor: not-allowed;
-    opacity: 0.5;
-  `}
 
   &:after, &:before {
     content: "";
@@ -131,4 +126,40 @@ const StyledAddButton = styled.div`
     left: 50%;
     transform: translateX(-50%);
   }
+`;
+
+const StyledClose = styled.div`
+  font-size: 0.8rem;
+  line-height: 2rem;
+  height: 2rem;
+  color: var(--color-red);
+  padding: 0 0.5rem 0 0.5rem;
+  transition: all 0.1s ease;
+
+  &:hover { filter: brightness(1.2); }
+  &:active { filter: brightness(0.8); }
+
+  background-color: var(--color-main);
+  ${({ isCurrent }) => isCurrent && `
+    background-color: var(--color-main-light);
+  `}
+  ${({ isWaiting }) => isWaiting && `
+    background-color: var(--color-orange-spice);
+  `}
+`;
+
+const StyledName = styled(Button)`
+  height: 2rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  font-weight: bold;
+  color: white;
+
+  background-color: var(--color-main);
+  ${({ isCurrent }) => isCurrent && `
+    background-color: var(--color-main-light);
+  `}
+  ${({ isWaiting }) => isWaiting && `
+    background-color: var(--color-orange-spice);
+  `}
 `;

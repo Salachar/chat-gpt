@@ -258,7 +258,10 @@ class MainChat extends ChatBase {
             error: data.error,
           });
         } else {
+          // Add the original message to the chat
+          // The parsed message breaks the API
           this.__chats[chatId].messages.push(data.original);
+          // Send the parsed message to the renderer
           event.reply(event_type, {
             chatId,
             chat: this.__chats[chatId],

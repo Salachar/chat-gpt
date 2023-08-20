@@ -4,15 +4,6 @@ import ruleset from './rooms_rules';
 
 import ChatBase from './base';
 
-// const BASE_MESSAGES = [
-//   "You are a helpful assistant for a fantasy RPG room generator.",
-//   "Room generation will only occur when explicitly requested by the user, it should never happen automatically or without the users intention.",
-//   "All room generation output is JSON only.",
-//   "JSON: All JSON must be valid and have no errors.",
-//   "JSON: All JSON must be formatted with 2 spaces.",
-//   "Required: JSON must be in the following format, surrounded by triple backticks: ```<json>```.",
-// ].join(" ");
-
 const BASE_MESSAGE_SET = [{
   role: "system",
   content: ruleset,
@@ -34,27 +25,31 @@ class RoomsChat extends ChatBase {
   setIPCEvents () {
     ipcMain.on('room-init', async (event, data) => {
       const { id = "" } = data;
-
-      console.log('thing');
-
-      if (this.rooms[id]) {
-        console.log("Room already exists, exiting init");
-        return;
-      }
+      if (this.rooms[id]) return;
 
       this.rooms[id] = {
-        messages: JSON.parse(JSON.stringify(BASE_MESSAGE_SET)), // messages should never pre-exist here
+        messages: [{
+          role: "system",
+          content: ruleset,
+        }],
       };
-
-      console.log('sending')
 
       this.send({
         messages: this.rooms[id].messages,
         onReply: (data) => {
-          console.log(JSON.stringify(data, null, 2));
+          if (data.error) {
+            event.reply('room-error', {
+              id,
+              error: data.error,
+            });
+            return;
+          }
+
           this.rooms[id].messages.push(data.original);
-          event.reply('room', data.parsed);
-          event.reply('room-init');
+          event.reply('room', {
+            id,
+            message: data.parsed
+          });
         },
       });
     });
@@ -74,10 +69,45 @@ class RoomsChat extends ChatBase {
 
       this.send({
         messages: this.rooms[id].messages,
-        onReply: (message) => {
-          this.rooms[id].messages.push(message.original);
-          if (message.parsed.json) message.parsed.room = message.parsed.json;
-          event.reply('room', message.parsed);
+        onReply: (data) => {
+          if (data.error) {
+            event.reply('room-error', {
+              id,
+              error: data.error,
+            });
+            return;
+          }
+
+          // Push the original message to the openai messages
+          this.rooms[id].messages.push(data.original);
+          // Find any JSON sent back from the room request
+          let room_json = null;
+          for (let i = 0; i < data.parsed.content.length; i++) {
+            const message = data.parsed.content[i];
+            if (message.type === "code" && message.language === "json") {
+              try {
+                const json = JSON.parse(message.code_snippet);
+                if (json.is_room_json) {
+                  room_json = json;
+                }
+              } catch (e) {
+                console.log(e);
+              }
+              break;
+            }
+          }
+          // Send the parsed message to the renderer
+          event.reply('room', {
+            id,
+            message: data.parsed
+          });
+          // Send the room json to the renderer
+          if (room_json) {
+            event.reply('room-generation', {
+              id,
+              roomJSON: room_json
+            });
+          }
         },
       });
     });
@@ -98,29 +128,44 @@ class RoomsChat extends ChatBase {
       this.send({
         messages: this.rooms[id].messages,
         onReply: (data) => {
-          console.log(JSON.stringify(data, null, 2));
-          // Go through the parsed messages and find the first code block, its the room json
-          // const json = data.parsed.content.find((message) => {
+          if (data.error) {
+            event.reply('room-error', {
+              id,
+              error: data.error,
+            });
+            return;
+          }
+
+          // Push the original message to the openai messages
+          this.rooms[id].messages.push(data.original);
+          // Find any JSON sent back from the room request
           let room_json = null;
           for (let i = 0; i < data.parsed.content.length; i++) {
             const message = data.parsed.content[i];
-            // "type": "code",
-            // "language": "json",
-            // "code_snippet": "{\n  \"name\":
             if (message.type === "code" && message.language === "json") {
               try {
-                room_json = JSON.parse(message.code_snippet);
+                const json = JSON.parse(message.code_snippet);
+                if (json.is_room_json) {
+                  room_json = json;
+                }
               } catch (e) {
                 console.log(e);
               }
               break;
             }
           }
-
-          // this.rooms[id].messages.push(message.original);
-          // if (message.parsed.json) message.parsed.room = message.parsed.json;
-          // event.reply('room', message.parsed);
-          event.reply('room', room_json);
+          // Send the parsed message to the renderer
+          event.reply('room', {
+            id,
+            message: data.parsed
+          });
+          // Send the room json to the renderer
+          if (room_json) {
+            event.reply('room-generation', {
+              id,
+              roomJSON: room_json
+            });
+          }
         },
       })
     });
