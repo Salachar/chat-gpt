@@ -23,9 +23,12 @@ export const ChatHistory = (props) => {
   });
 
   return (
-    <StyledContainer
+    <ActionsContainer
       class={props.class}
-      label="Something"
+      label="Room Chat"
+      style={{
+        "font-size": "1.25rem",
+      }}
       actions={{}}
     >
       <StyledHistory ref={scrollable}>
@@ -44,7 +47,7 @@ export const ChatHistory = (props) => {
                       <Message role={message.role} message={sub_message} />
                     )}
                     {sub_message.type === "code" && (
-                      <StyledCodeMessageContainer
+                      <ActionsContainer
                         label={sub_message.language}
                         actions={{
                           "files": {
@@ -68,7 +71,7 @@ export const ChatHistory = (props) => {
                             Prism.highlight(sub_message.code_snippet, Prism.languages.javascript, 'javascript')
                           }></code>
                         </StyledPre>
-                      </StyledCodeMessageContainer>
+                      </ActionsContainer>
                     )}
                   </>
                 )}
@@ -77,7 +80,7 @@ export const ChatHistory = (props) => {
           )}
         </For>
       </StyledHistory>
-    </StyledContainer>
+    </ActionsContainer>
   );
 };
 
@@ -106,19 +109,11 @@ const StyledMessageContainer = styled.div`
   `}
 `;
 
-const StyledContainer = styled(ActionsContainer)`
-  position: relative;
-`;
-
 const StyledHistory = styled.div`
   position: relative;
   background-color: var(--color-main-dark);
   overflow-y: scroll;
   height: 100%;
-`;
-
-const StyledCodeMessageContainer = styled(ActionsContainer)`
-  position: relative;
 `;
 
 const StyledPre = styled.pre`
