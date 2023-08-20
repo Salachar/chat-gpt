@@ -2,10 +2,14 @@ import { onMount } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { useParams } from "@solidjs/router";
 import html2canvas from 'html2canvas';
+
+import { SidebarContainer } from '@components/SidebarContainer';
+import { RoomInputs } from './components/RoomInputs';
+import { RoomList } from './components/RoomList';
+import { RoomOutput } from './components/RoomOutput';
+import { Chat } from './components/Chat';
+
 import { store, createNewRoom } from '@store/roomsStore';
-import { SidebarContainer } from '../../components/SidebarContainer';
-import { RoomInputs, RoomList, RoomOutput } from './sections';
-import { Chat } from './sections/Chat';
 
 const StyledContainer = styled.div`
   position: relative;

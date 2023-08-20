@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { Radio } from '@inputs';
-import { TextArea as OtherTextArea } from '@components/TextArea';
+import { TextArea } from '@inputs';
 import { ActionsContainer } from '@components/Actions';
 import { store } from '@store/roomsStore';
 
@@ -19,7 +19,7 @@ const StyledTextAreaContainer = styled(ActionsContainer)`
   margin-bottom: 0.5rem;
 `;
 
-const StyledTextAreaOther = styled(OtherTextArea)`
+const StyledTextAreaOther = styled(TextArea)`
   border-bottom-right-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
   width: 100%;

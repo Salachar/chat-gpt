@@ -1,9 +1,9 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { ActionsContainer } from '../../../components/Actions';
+import { ActionsContainer } from '@components/Actions';
+import { TextArea } from '@inputs';
 import { ChatHistory } from './ChatHistory';
-import { TextArea } from '../../../components/TextArea';
 
 export const ChatDisplay = (props) => {
   return (

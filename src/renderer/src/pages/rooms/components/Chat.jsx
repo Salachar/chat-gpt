@@ -1,9 +1,9 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store/roomsStore';
 
-import { ActionsContainer } from '../../../components/Actions';
+import { ActionsContainer } from '@components/Actions';
 import { ChatHistory } from './ChatHistory';
-import { TextArea } from '../../../components/TextArea';
+import { TextArea } from '@inputs';
 import { copy } from "@utils";
 
 export const Chat = (props) => {

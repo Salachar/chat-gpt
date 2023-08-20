@@ -1,7 +1,7 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { store, createNewRoom } from '@store/roomsStore';
-import { Button } from '@components/Button';
+import { Button } from '@inputs';
 
 export const RoomList = (props) => {
   return (

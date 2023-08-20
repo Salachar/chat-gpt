@@ -1,8 +1,8 @@
 import { styled } from 'solid-styled-components';
 import { store } from '@store';
 
-import { ActionsContainer } from '../../../components/Actions';
-import { TextArea } from '../../../components/TextArea';
+import { ActionsContainer } from '@components/Actions';
+import { TextArea } from '@inputs';
 
 export const ChatSnippet = (props) => {
   let textAreaRef;
