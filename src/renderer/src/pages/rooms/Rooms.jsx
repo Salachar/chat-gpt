@@ -12,44 +12,34 @@ import { Chat } from './components/Chat';
 import { store, createNewRoom } from '@store/roomsStore';
 
 const StyledContainer = styled.div`
-  position: relative;
-  display: grid;
-  width: 100%;
+  display: flex;
+  flex-direction: row;
   height: 100%;
-  overflow: hidden;
-  grid-template-columns: 32rem 1fr;
-  grid-template-rows: 1fr 28rem;
-  grid-template-areas:
-    "roominputs roomoutput"
-    "chat roomoutput";
+`;
+
+const StyledInputsContainer = styled.div`
+  display: flex;
+  width: 32rem;
+  flex-direction: column;
 `;
 
 const StyledRoomInputs = styled(RoomInputs)`
-  position: relative;
-  grid-area: roominputs;
-  /* padding: 1rem 0 0 1rem; */
   padding-top: 1rem;
   overflow-y: scroll;
-`;
-
-const StyledRoomList = styled(RoomList)`
-  grid-area: roomlist;
+  flex: 0 1 auto;
 `;
 
 const StyledChat = styled(Chat)`
-  position: relative;
-  grid-area: chat;
   font-size: 0.65rem !important;
-  /* margin: 1rem 0; */
   margin-bottom: 1rem;
   overflow: hidden;
+  flex: 1 0 28rem;
 `;
 
 const StyledRoomOutput = styled(RoomOutput)`
-  position: relative;
-  grid-area: roomoutput;
   margin: 1rem;
   overflow-y: scroll;
+  flex-grow: 1;
 `;
 
 export const Rooms = () => {
@@ -75,12 +65,14 @@ export const Rooms = () => {
 
   return (
     <SidebarContainer
-      sidebar={<StyledRoomList />}
+      sidebar={<RoomList />}
       animateSnippy={store.isAnyRoomWaiting()}
     >
       <StyledContainer>
-        <StyledRoomInputs />
-        <StyledChat />
+        <StyledInputsContainer>
+          <StyledRoomInputs />
+          <StyledChat />
+        </StyledInputsContainer>
         <StyledRoomOutput
           mouseState={store.roomListMouseState()}
           onGenerateImage={(room) => {
