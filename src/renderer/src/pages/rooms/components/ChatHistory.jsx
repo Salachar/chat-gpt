@@ -44,10 +44,9 @@ export const ChatHistory = (props) => {
                 content: 'Generating room...',
               }
             });
-            const input_data = copy(store.getRoom().input_data);
             IPC.send('room', {
               id: store.getRoom().id,
-              input_data,
+              input_data: store.getAllReadableInputData(),
             });
           },
         }

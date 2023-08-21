@@ -51,7 +51,7 @@ export const Chat = (props) => {
               IPC.send('room', {
                 id,
                 prompt,
-                input_data,
+                input_data: store.getAllReadableInputData(),
               });
 
               setTimeout(() => {

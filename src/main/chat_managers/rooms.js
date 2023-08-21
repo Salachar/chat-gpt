@@ -1,13 +1,7 @@
 import { ipcMain } from 'electron'
-import { roomToRules } from '../rules';
 import ruleset from './rooms_rules';
 
 import ChatBase from './base';
-
-const BASE_MESSAGE_SET = [{
-  role: "system",
-  content: ruleset,
-}];
 
 class RoomsChat extends ChatBase {
   constructor (openai, opts) {
@@ -55,14 +49,7 @@ class RoomsChat extends ChatBase {
     });
 
     ipcMain.on('room', async (event, data = {}) => {
-      let { id = "", prompt = "", input_data } = data;
-
-      // Ensure input_data is an object
-      if (!input_data || typeof input_data !== "object") {
-        input_data = {};
-      }
-
-      const input_data_valid = Object.keys(input_data).length > 0;
+      let { id = "", prompt = "", input_data = " "} = data;
 
       if (!id) {
         console.log("Could not find an id for the room, exiting");
@@ -70,12 +57,12 @@ class RoomsChat extends ChatBase {
       }
 
       let prompt_content = "";
-      if (prompt && input_data_valid) {
-        prompt_content = prompt + "\n\n" + roomToRules(input_data);
+      if (prompt && input_data) {
+        prompt_content = prompt + "\n\n" + input_data;
       } else if (prompt) {
         prompt_content = prompt;
-      } else if (input_data_valid) {
-        prompt_content = roomToRules(input_data);
+      } else if (input_data) {
+        prompt_content = input_data;
       }
 
       this.rooms[id].messages.push({

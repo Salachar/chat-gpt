@@ -15,20 +15,15 @@ const ROOM_SCHEMA = {
   // Images
   images: [],
   // Room input data
-  input_data: {
-    world: "Dungeons & Dragons style magical medieval fanstasy",
-    name: "",
-    keywords: "",
-    flavor: "",
-    pre_flavor: "",
-    additional: "",
-    trinkets: "",
-    traps: "",
-    puzzles: "",
-  },
+  input_data: {},
   // Chat data
   messages: [],
   prompt: "",
+};
+
+const makeInputAIReadable = (key, value) => {
+  const readable = `"${key}" value is: ${value}.`;
+  return readable;
 };
 
 export const createNewRoom = () => {
@@ -57,6 +52,28 @@ export const createRoomsStore = () => {
     const { id = null } = opts;
     const room_id = id || currentRoomId();
     setRooms(room => room.id === room_id, 'input_data', field, data);
+  };
+
+  const getAllReadableInputData = () => {
+    const room = getRoom();
+    const { input_data = {} } = room;
+
+    // if input data is empty, return empty string
+    if (Object.keys(input_data).length === 0) return "";
+
+    const input_data_readable = [];
+    input_data_readable.push("Please generate a room:");
+
+    Object.entries(input_data).forEach(([key, value]) => {
+      const readable = makeInputAIReadable(key, value);
+      input_data_readable.push(readable);
+    });
+
+    let joined = input_data_readable.join(" ");
+    joined = joined.replace(/\.\./g, '.');
+    console.log("joined", joined);
+
+    return joined;
   };
 
   const removeRoom = (id) => {
@@ -98,6 +115,7 @@ export const createRoomsStore = () => {
     getRoom,
     setRoom,
     setRoomInputData,
+    getAllReadableInputData,
     removeRoom,
     addMessage,
     addMessages,
