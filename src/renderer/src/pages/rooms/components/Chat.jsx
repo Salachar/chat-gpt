@@ -33,6 +33,13 @@ export const Chat = (props) => {
 
               store.setRoom("waiting", true);
 
+              let input_data = null;
+              // We don't always want to attach the input data, keying
+              // off the word generate is a good heuristic
+              if (prompt.includes("generate")) {
+                input_data = copy(store.getRoom().input_data);
+              }
+
               store.addMessage({
                 message: {
                   role: "user",
@@ -41,7 +48,11 @@ export const Chat = (props) => {
               });
 
               const id = copy(store.getRoom().id);
-              IPC.send('room-chat', { id, prompt });
+              IPC.send('room', {
+                id,
+                prompt,
+                input_data,
+              });
 
               setTimeout(() => {
                 store.setRoom("prompt", "");

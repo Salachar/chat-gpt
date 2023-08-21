@@ -53,25 +53,6 @@ export const RoomOutput = (props) => {
         "border-bottom-right-radius": "0.5rem",
       }}
       actions={{
-        "recycle": {
-          title: "Generate Room",
-          disabled: room()?.waiting,
-          handler: () => {
-            if (room()?.waiting) return;
-            store.setRoom("waiting", true);
-            store.addMessage({
-              message: {
-                role: "generator",
-                content: 'Generating room...',
-              }
-            });
-            const input_data = copy(store.getRoom().input_data);
-            IPC.send('room-request', {
-              id: store.getRoom().id,
-              input_data,
-            });
-          },
-        },
         "image": {
           title: "Generate Images",
           disabled: !room()?.data?.image_prompt,

@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js'
+import { Index } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import { Radio } from '@inputs';
 import { TextArea } from '@inputs';
@@ -24,140 +24,113 @@ const StyledTextArea = styled(TextArea)`
 `;
 
 export const RoomInputs = (props) => {
-  const [getWorld, setWorld] = createSignal('');
-  const [getName, setName] = createSignal('');
-  const [getKeywords, setKeywords] = createSignal("");
-  const [getFlavor, setFlavor] = createSignal("");
-  const [getPreFlavor, setPreFlavor] = createSignal("");
-  const [getAdditional, setAdditional] = createSignal("");
-  const [getTrinkets, setTrinkets] = createSignal("");
-  const [getTraps, setTraps] = createSignal("");
-  const [getPuzzles, setPuzzles] = createSignal("");
-
-  const getRoomData = () => {
-    return {
-      world: getWorld(),
-      name: getName(),
-      keywords: getKeywords(),
-      flavor: getFlavor(),
-      pre_flavor: getPreFlavor(),
-      additional: getAdditional(),
-      trinkets: getTrinkets(),
-      traps: getTraps(),
-      puzzles: getPuzzles(),
-    };
-  }
-
-  const setRoomData = (room_data) => {
-    store.setRoom("input_data", room_data);
-  }
-
-  const room_text_area_inputs = [
+  const room_text_area_inputs = () => [
     {
+      key: "world",
       label: "World setting",
       actions: {},
-      value: "Dungeons & Dragons style magical medieval fanstasy",
+      value: store.getRoom().input_data?.world || "",
       placeholder: 'Medieval high fantasy or dystopian steampunk',
       size: 'small',
       onChange: (value) => {
-        setWorld(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("world", value);
       }
     },
     {
+      key: "additional",
       label: "Any additional information",
       actions: {},
-      value: "",
+      value: store.getRoom().input_data?.additional || "",
       placeholder: 'In a magically suppressed city or the building is falling apart',
       size: 'large',
       onChange: (value) => {
-        setAdditional(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("additional", value);
       }
     },
     {
+      key: "pre_flavor",
       label: "Pre-existing description: if provided the generated output will enhance this",
       actions: {},
-      value: "",
+      value: store.getRoom().input_data?.pre_flavor || "",
       placeholder: 'In a magically suppressed city or the building is falling apart',
       size: 'large',
       onChange: (value) => {
-        setPreFlavor(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("pre_flavor", value);
       }
     },
     {
+      key: "name",
       label: "Name of the room",
       actions: {},
-      value: "",
+      value: store.getRoom().input_data?.name || "",
       placeholder: 'Laboratory',
       size: 'small',
       onChange: (value) => {
-        setName(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("name", value);
       }
     },
     {
+      key: "keywords",
       label: "Keywords or aspects of the room",
       actions: {},
-      value: "",
+      value: store.getRoom().input_data?.keywords || "",
       placeholder: 'Alchemy, Tidy, Well-stocked',
       size: 'small',
       onChange: (value) => {
-        setKeywords(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("keywords", value);
       }
     },
     {
+      key: "flavor",
       label: "Length of room flavor text",
       actions: {},
-      value: "",
+      value: store.getRoom().input_data?.flavor || "",
       placeholder: '2 paragraphs of 3 to 5 sentences',
       size: 'small',
       onChange: (value) => {
-        setFlavor(value);
-        setRoomData(getRoomData());
+        store.setRoomInputData("flavor", value);
       }
     },
   ];
 
   return (
     <StyledContainer class={props.class}>
-      {room_text_area_inputs.map((input) => (
-        <ActionsContainer
-          label={input.label}
-          actions={input.actions}
-        >
-          <StyledTextArea
-            value={input.value}
-            placeholder={input.placeholder}
-            size={input.size}
-            onChange={input.onChange}
-          />
-        </ActionsContainer>
-      ))}
+      <Index each={room_text_area_inputs()}>
+        {(room_input) => {
+          return (
+            <ActionsContainer
+              label={room_input().label}
+              actions={room_input().actions}
+            >
+              <StyledTextArea
+                value={room_input().value}
+                placeholder={room_input().placeholder}
+                size={room_input().size}
+                onChange={room_input().onChange}
+              />
+            </ActionsContainer>
+          );
+        }}
+      </Index>
       <Radio
         label="Trinkets"
         options={['Boring', 'Mundane', 'Magical', 'Mix']}
         onChange={(value) => {
-          setTrinkets(value);
-          setRoomData(getRoomData());
+          store.setRoomInputData("trinkets", value);
         }}
       />
       <Radio
         label="Traps"
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
-          setTraps(value);
-          setRoomData(getRoomData());
+          store.setRoomInputData("traps", value);
         }}
       />
       <Radio
         label="Puzzles"
         options={['None', 'Mundane', 'Complex', 'Mix']}
         onChange={(value) => {
-          setPuzzles(value);
-          setRoomData(getRoomData());
+          store.setRoomInputData("puzzles", value);
         }}
       />
     </StyledContainer>

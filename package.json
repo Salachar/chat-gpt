@@ -25,6 +25,7 @@
     "electron-context-menu": "^3.6.1",
     "html2canvas": "^1.4.1",
     "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
     "openai": "^3.3.0",
     "prismjs": "^1.29.0",
     "solid-styled-components": "^0.28.5"

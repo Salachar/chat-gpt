@@ -15,7 +15,17 @@ const ROOM_SCHEMA = {
   // Images
   images: [],
   // Room input data
-  input_data: {},
+  input_data: {
+    world: "Dungeons & Dragons style magical medieval fanstasy",
+    name: "",
+    keywords: "",
+    flavor: "",
+    pre_flavor: "",
+    additional: "",
+    trinkets: "",
+    traps: "",
+    puzzles: "",
+  },
   // Chat data
   messages: [],
   prompt: "",
@@ -40,6 +50,13 @@ export const createRoomsStore = () => {
     const { id = null } = opts;
     const room_id = id || currentRoomId();
     setRooms(room => room.id === room_id, field, data);
+  };
+
+  const setRoomInputData = (field, data, opts = {}) => {
+    // Modify a specific field in the input_data object
+    const { id = null } = opts;
+    const room_id = id || currentRoomId();
+    setRooms(room => room.id === room_id, 'input_data', field, data);
   };
 
   const removeRoom = (id) => {
@@ -80,6 +97,7 @@ export const createRoomsStore = () => {
     setRooms,
     getRoom,
     setRoom,
+    setRoomInputData,
     removeRoom,
     addMessage,
     addMessages,

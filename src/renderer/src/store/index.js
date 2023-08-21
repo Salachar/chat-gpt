@@ -1,4 +1,4 @@
-import { createEffect, createSignal } from 'solid-js';
+import { createSignal } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { uuid, copy } from '@utils';
 import MessageParser from '../../../utils/message-parser';

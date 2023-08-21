@@ -15,6 +15,7 @@ const StyledItem = styled.div`
 
 const StyledHeader = styled.h2`
   margin-bottom: 0.5rem;
+  font-size: 0.9em;
 `;
 
 const StyledMeta = styled.div`

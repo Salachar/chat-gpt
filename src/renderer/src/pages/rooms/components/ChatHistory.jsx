@@ -3,8 +3,10 @@ import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
 import { store } from '@store/roomsStore';
 
-import { ActionsContainer } from '../../../components/Actions';
-import { Message } from '../../../components/Message';
+import { ActionsContainer } from '@components/Actions';
+import { Message } from '@components/Message';
+
+import { copy } from "@utils";
 
 export const ChatHistory = (props) => {
   // Create a ref for your scrollable element
@@ -29,7 +31,27 @@ export const ChatHistory = (props) => {
       style={{
         "font-size": "1.25rem",
       }}
-      actions={{}}
+      actions={{
+        "recycle": {
+          title: "Generate Room",
+          disabled: store.getRoom()?.waiting,
+          handler: () => {
+            if (store.getRoom()?.waiting) return;
+            store.setRoom("waiting", true);
+            store.addMessage({
+              message: {
+                role: "generator",
+                content: 'Generating room...',
+              }
+            });
+            const input_data = copy(store.getRoom().input_data);
+            IPC.send('room', {
+              id: store.getRoom().id,
+              input_data,
+            });
+          },
+        }
+      }}
     >
       <StyledHistory ref={scrollable}>
         <For each={store.getRoom().messages}>

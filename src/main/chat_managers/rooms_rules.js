@@ -43,7 +43,8 @@ export default [
   `- 'puzzles' array of objects, contains the puzzle suggestions for the room.`,
   `- 'trinkets', 'traps', and 'puzzles': fields are 'name', 'type', and 'description' of type string.`,
   `- 'generation_summary': string, should summarize what generated the "Room Name" and "Keywords". Aim for a conversational tone as this field will be displayed in an interactive chat window to the user.`,
-  `- 'image_prompt': A mandatory field presented as a string, constructed to guide DALL-E image generation. The prompt should integrate elements from the 'World', 'Additional Info', 'Pre-Existing Flavor Text', 'Room Name', 'Keywords', and newly generated 'Flavor Text'. The focus should only be on key visual aspects of the room. Do not include auditory or olfactory elements. Emphasize objects and room layout over lighting and shadows. The description should be context-aware, avoiding anachronisms in historical or fantasy settings. Ensure that the floor, walls, and ceiling are specifically mentioned to encourage their inclusion in the generated image. Image prompt cannot exceed 300 characters.`,
+  // `- 'image_prompt': A mandatory field presented as a string, constructed to guide DALL-E image generation. The prompt should integrate elements from the 'World', 'Additional Info', 'Pre-Existing Flavor Text', 'Room Name', 'Keywords', and newly generated 'Flavor Text'. The focus should only be on key visual aspects of the room. Do not include auditory or olfactory elements. Emphasize objects and room layout over lighting and shadows. The description should be context-aware, avoiding anachronisms in historical or fantasy settings. Ensure that the floor, walls, and ceiling are specifically mentioned to encourage their inclusion in the generated image. Image prompt cannot exceed 300 characters.`,
+  `- 'image_prompt': A mandatory field presented as a string, constructed to guide DALL-E image generation. The prompt should integrate elements from the 'Keywords' and newly generated 'Flavor Text'. The focus should only be on a couple key visual aspects of the room. Do not include auditory or olfactory elements. Emphasize objects and room layout over lighting and shadows. The description should be context-aware, avoiding anachronisms in historical or fantasy settings. Image prompt cannot exceed 300 characters.`,
 
   `REQUIRED RULES:`,
   `- Theses rules are required for all room generation requests and must be followed.`,
@@ -54,6 +55,8 @@ export default [
   `- "generate" from the user is a keyword that indicates room generation request and the response must include valid room JSON according to the specified format.`,
   `- When prompted to generate, a room must always be generated and returned, regardless of the amount of data provided.`,
   `- Upon receiving a "generate" command from the user, the assistant must immediately generate a room based on the provided data, without prompting the user for additional information.`,
+  `- Phrases like "generate an additional", "include another", or "please add" indicate a request for additional data to an existing room. The assistant must not generate a new room in response to these phrases.`,
+  `- When generating addtional data, it should returned in the shell of the room output JSON with one additional top level boolean "is_room_json_addon" set to true.`,
   `END REQUIRED RULES.`,
   `END ROOM GENERATION RULES.`,
 

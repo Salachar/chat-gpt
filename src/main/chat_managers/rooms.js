@@ -54,17 +54,33 @@ class RoomsChat extends ChatBase {
       });
     });
 
-    ipcMain.on('room-chat', async (event, data = {}) => {
-      const { id = "", prompt = "" } = data;
+    ipcMain.on('room', async (event, data = {}) => {
+      let { id = "", prompt = "", input_data } = data;
+
+      // Ensure input_data is an object
+      if (!input_data || typeof input_data !== "object") {
+        input_data = {};
+      }
+
+      const input_data_valid = Object.keys(input_data).length > 0;
 
       if (!id) {
-        console.log("Could not find an id for the room chat, exiting");
+        console.log("Could not find an id for the room, exiting");
         return;
+      }
+
+      let prompt_content = "";
+      if (prompt && input_data_valid) {
+        prompt_content = prompt + "\n\n" + roomToRules(input_data);
+      } else if (prompt) {
+        prompt_content = prompt;
+      } else if (input_data_valid) {
+        prompt_content = roomToRules(input_data);
       }
 
       this.rooms[id].messages.push({
         role: "user",
-        content: prompt,
+        content: prompt_content,
       });
 
       this.send({
@@ -80,15 +96,20 @@ class RoomsChat extends ChatBase {
 
           // Push the original message to the openai messages
           this.rooms[id].messages.push(data.original);
+
           // Find any JSON sent back from the room request
           let room_json = null;
+          let room_json_addon = null;
+
           for (let i = 0; i < data.parsed.content.length; i++) {
             const message = data.parsed.content[i];
             if (message.type === "code" && message.language === "json") {
               try {
                 const json = JSON.parse(message.code_snippet);
-                if (json.is_room_json) {
+                if (json.is_room_json && !json.is_room_json_addon) {
                   room_json = json;
+                } else if (json.is_room_json_addon) {
+                  room_json_addon = json;
                 }
               } catch (e) {
                 console.log(e);
@@ -101,6 +122,7 @@ class RoomsChat extends ChatBase {
             id,
             message: data.parsed
           });
+
           // Send the room json to the renderer
           if (room_json) {
             event.reply('room-generation', {
@@ -108,66 +130,15 @@ class RoomsChat extends ChatBase {
               roomJSON: room_json
             });
           }
-        },
-      });
-    });
 
-    ipcMain.on('room-request', async (event, data = {}) => {
-      const { id = "", input_data = {} } = data;
-
-      if (!id) {
-        console.log("Could not find an id for the room chat, exiting");
-        return;
-      }
-
-      this.rooms[id].messages.push({
-        role: "user",
-        content: roomToRules(input_data),
-      });
-
-      this.send({
-        messages: this.rooms[id].messages,
-        onReply: (data) => {
-          if (data.error) {
-            event.reply('room-error', {
+          if (room_json_addon) {
+            event.reply('room-generation-addon', {
               id,
-              error: data.error,
-            });
-            return;
-          }
-
-          // Push the original message to the openai messages
-          this.rooms[id].messages.push(data.original);
-          // Find any JSON sent back from the room request
-          let room_json = null;
-          for (let i = 0; i < data.parsed.content.length; i++) {
-            const message = data.parsed.content[i];
-            if (message.type === "code" && message.language === "json") {
-              try {
-                const json = JSON.parse(message.code_snippet);
-                if (json.is_room_json) {
-                  room_json = json;
-                }
-              } catch (e) {
-                console.log(e);
-              }
-              break;
-            }
-          }
-          // Send the parsed message to the renderer
-          event.reply('room', {
-            id,
-            message: data.parsed
-          });
-          // Send the room json to the renderer
-          if (room_json) {
-            event.reply('room-generation', {
-              id,
-              roomJSON: room_json
+              roomJSON: room_json_addon
             });
           }
         },
-      })
+      });
     });
   }
 }

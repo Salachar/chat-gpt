@@ -1,4 +1,7 @@
+import mergeWith from 'lodash/mergeWith';
+import isArray from 'lodash/isArray';
 import { store } from '@store/roomsStore';
+import { copy } from '@utils';
 
 class RoomIPCEvents {
   constructor () {
@@ -45,9 +48,22 @@ class RoomIPCEvents {
     IPC.on('room-generation', (event, data) => {
       this.event_history['room-generation'].push(data);
       const { id, roomJSON } = data;
-      window.last_room_json = roomJSON;
       store.setRoom("waiting", false, { id });
       store.setRoom("data", roomJSON, { id });
+    });
+
+    IPC.on('room-generation-addon', (event, data) => {
+      this.event_history['room-generation'].push(data);
+      const { id, roomJSON } = data;
+      store.setRoom("waiting", false, { id });
+      const existing_data = copy(store.getRoom(id).data);
+      const customizer = (objValue, srcValue) => {
+        if (isArray(objValue)) {
+          return objValue.concat(srcValue);
+        }
+      };
+      var merged_data = mergeWith(existing_data, roomJSON, customizer);
+      store.setRoom("data", merged_data, { id });
     });
 
     IPC.on('image-created', (event, data) => {
