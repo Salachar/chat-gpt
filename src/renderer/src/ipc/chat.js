@@ -99,4 +99,4 @@ class ChatIPCEvents {
   }
 }
 
-export default ChatIPCEvents;
+export default new ChatIPCEvents();

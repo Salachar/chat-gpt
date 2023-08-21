@@ -3,7 +3,7 @@ import isArray from 'lodash/isArray';
 import { store } from '@store/roomsStore';
 import { copy } from '@utils';
 
-class RoomIPCEvents {
+class RoomsIPCEvents {
   constructor () {
     this.initialize();
 
@@ -21,7 +21,62 @@ class RoomIPCEvents {
     return this.event_history;
   }
 
+  sendPrompt (opts = {}) {
+    const {
+      from = "chat",
+    } = opts;
+
+    const prompt = copy(store.getRoom().prompt).trim();
+
+    if (store.getRoom().waiting) {
+      return store.addMessage({
+        message: {
+          role: "assistant",
+          content: "Please wait until I'm ready.",
+        }
+      });
+    }
+
+    if (from === "generate") {
+      store.addMessage({
+        message: {
+          role: "generator",
+          content: 'Generating room...',
+        }
+      });
+    }
+
+    store.setRoom("waiting", true);
+
+    let input_data = null;
+    // We don't always want to attach the input data, keying
+    // off the word generate is a good heuristic
+    if (from === "generate" || prompt.includes("generate")) {
+      input_data = copy(store.getAllReadableInputData());
+    }
+
+    store.addMessage({
+      message: {
+        role: "user",
+        content: prompt,
+      }
+    });
+
+    const id = copy(store.getRoom().id);
+    IPC.send('room', {
+      id,
+      prompt,
+      input_data,
+    });
+
+    setTimeout(() => {
+      store.setRoom("prompt", "");
+    }, 0);
+  }
+
   initialize () {
+    console.log("Initializing room IPC events");
+
     IPC.on('room', (event, data) => {
       this.event_history['room'].push(data);
       const { id, message } = data;
@@ -75,4 +130,4 @@ class RoomIPCEvents {
   }
 }
 
-export default RoomIPCEvents;
+export default new RoomsIPCEvents();

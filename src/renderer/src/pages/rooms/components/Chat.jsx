@@ -1,10 +1,11 @@
 import { styled } from 'solid-styled-components';
-import { store } from '@store/roomsStore';
 
 import { ActionsContainer } from '@components/Actions';
 import { ChatHistory } from './ChatHistory';
 import { TextArea } from '@inputs';
-import { copy } from "@utils";
+
+import { store } from '@store/roomsStore';
+import RoomsIPCEvents from "@ipc/rooms";
 
 export const Chat = (props) => {
   return (
@@ -18,45 +19,10 @@ export const Chat = (props) => {
         <StyledPrompt
           value={store.getRoom().prompt}
           onKeyDown={(e) => {
-            const prompt = copy(store.getRoom().prompt).trim();
-            // Enter potentially sends the prompt or combined with shift
-            // does not send the prompt so a new line can be added
             if (e.key === "Enter") {
-              if (store.getRoom().waiting) {
-                return store.addMessage({
-                  message: {
-                    role: "assistant",
-                    content: "Please wait until I'm ready.",
-                  }
-                });
-              }
-
-              store.setRoom("waiting", true);
-
-              let input_data = null;
-              // We don't always want to attach the input data, keying
-              // off the word generate is a good heuristic
-              if (prompt.includes("generate")) {
-                input_data = copy(store.getRoom().input_data);
-              }
-
-              store.addMessage({
-                message: {
-                  role: "user",
-                  content: prompt,
-                }
+              RoomsIPCEvents.sendPrompt({
+                from: "chat",
               });
-
-              const id = copy(store.getRoom().id);
-              IPC.send('room', {
-                id,
-                prompt,
-                input_data: store.getAllReadableInputData(),
-              });
-
-              setTimeout(() => {
-                store.setRoom("prompt", "");
-              }, 0);
             }
           }}
           onChange={(value) => {

@@ -16,13 +16,14 @@ const ROOM_SCHEMA = {
   images: [],
   // Room input data
   input_data: {},
+  input_data_parsed: {},
   // Chat data
   messages: [],
   prompt: "",
 };
 
 const makeInputAIReadable = (key, value) => {
-  const readable = `"${key}" value is: ${value}.`;
+  const readable = `"${key}" value is: "${value}".`;
   return readable;
 };
 
@@ -49,9 +50,16 @@ export const createRoomsStore = () => {
 
   const setRoomInputData = (field, data, opts = {}) => {
     // Modify a specific field in the input_data object
-    const { id = null } = opts;
+    const {
+      id = null,
+      parser = null,
+    } = opts;
     const room_id = id || currentRoomId();
     setRooms(room => room.id === room_id, 'input_data', field, data);
+    if (parser) {
+      const readable = makeInputAIReadable(field, parser(data));
+      setRooms(room => room.id === room_id, 'input_data_parsed', field, readable);
+    }
   };
 
   const getAllReadableInputData = () => {
@@ -65,13 +73,22 @@ export const createRoomsStore = () => {
     input_data_readable.push("Please generate a room:");
 
     Object.entries(input_data).forEach(([key, value]) => {
+      // If there is a value in input_data_parsed, use it
+      const { input_data_parsed = {} } = room;
+      const parsed_value = input_data_parsed[key];
+      if (parsed_value) {
+        input_data_readable.push(parsed_value);
+        return;
+      }
+      if (!value) return;
+      if (typeof value === "string" && value.toLowerCase() === "none") return;
       const readable = makeInputAIReadable(key, value);
       input_data_readable.push(readable);
     });
 
     let joined = input_data_readable.join(" ");
     joined = joined.replace(/\.\./g, '.');
-    console.log("joined", joined);
+    console.log("Joined: ", joined);
 
     return joined;
   };

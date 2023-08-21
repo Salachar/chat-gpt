@@ -12,6 +12,7 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
+        '@ipc': resolve('src/renderer/src/ipc'),
         '@renderer': resolve('src/renderer/src'),
         '@utils': resolve('src/renderer/src/utils'),
         '@store': resolve('src/renderer/src/store'),

@@ -1,12 +1,12 @@
 import { createEffect, For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
-import { store } from '@store/roomsStore';
 
 import { ActionsContainer } from '@components/Actions';
 import { Message } from '@components/Message';
 
-import { copy } from "@utils";
+import { store } from '@store/roomsStore';
+import RoomsIPCEvents from "@ipc/rooms";
 
 export const ChatHistory = (props) => {
   // Create a ref for your scrollable element
@@ -15,7 +15,6 @@ export const ChatHistory = (props) => {
   // Use createEffect to scroll down whenever data changes
   createEffect(() => {
     // On messages change scroll to bottom if the chat is the current chat
-    // if (store.getChatMessages().length && scrollable) {
     if (store.getRoom().messages.length && scrollable) {
       Prism.highlightAll();
       setTimeout(() => {
@@ -36,17 +35,8 @@ export const ChatHistory = (props) => {
           title: "Generate Room",
           disabled: store.getRoom()?.waiting,
           handler: () => {
-            if (store.getRoom()?.waiting) return;
-            store.setRoom("waiting", true);
-            store.addMessage({
-              message: {
-                role: "generator",
-                content: 'Generating room...',
-              }
-            });
-            IPC.send('room', {
-              id: store.getRoom().id,
-              input_data: store.getAllReadableInputData(),
+            RoomsIPCEvents.sendPrompt({
+              from: "generate"
             });
           },
         }

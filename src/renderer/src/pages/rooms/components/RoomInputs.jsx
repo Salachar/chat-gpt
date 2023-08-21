@@ -82,7 +82,20 @@ export const RoomInputs = (props) => {
       placeholder: 'Alchemy, Tidy, Well-stocked',
       size: 'small',
       onChange: (value) => {
-        store.setRoomInputData("Keywords", value);
+        store.setRoomInputData("Keywords", value, {
+          parser: (value) => {
+            // Try and make the string a proper comma separated list
+            // split on space and rejoined with commas
+            let keywords = value.split(' ').join(', ');
+            // Remove any double commas
+            keywords = keywords.split(',,').join(',');
+            // Remove any leading or trailing commas
+            keywords = keywords.replace(/^,|,$/g, '');
+            // Remove any leading or trailing spaces
+            keywords = keywords.trim();
+            return keywords;
+          }
+        });
       }
     },
     {
