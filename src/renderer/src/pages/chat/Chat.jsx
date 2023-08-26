@@ -10,6 +10,8 @@ import { SimpleChat } from '@components/SimpleChat';
 import { store } from './store';
 import ChatIPCEvents from "./IPC";
 
+import { copyToClipboard } from '@utils';
+
 const StyledChat = styled.div`
   font-size: 0.85rem;
   position: relative;
@@ -132,7 +134,7 @@ export const Chat = () => {
             "files": {
               title: "Copy to Clipboard",
               handler: () => {
-                navigator.clipboard.writeText(store.getChatPrompt());
+                copyToClipboard(store.getChatPrompt());
               }
             },
             "chevron-r": {
@@ -164,17 +166,7 @@ export const Chat = () => {
             "files": {
               title: "Copy to Clipboard",
               handler: (message) => {
-                navigator.clipboard.readText().then((clipText) => {
-                  // If item is already in clipboard, copy it to the prompt
-                  if (clipText === message.original_content) {
-                    store.setChatPrompt({
-                      prompt: message.original_content,
-                    });
-                  }
-                }).catch(err => {
-                  console.error("Failed to read clipboard contents: ", err);
-                });
-                navigator.clipboard.writeText(message.original_content);
+                copyToClipboard(message.original_content);
               }
             },
             "quotation-l": {
@@ -190,17 +182,7 @@ export const Chat = () => {
             "files": {
               title: "Copy to Clipboard",
               handler: (message) => {
-                navigator.clipboard.readText().then((clipText) => {
-                  // If item is already in clipboard, copy it to the prompt
-                  if (clipText === message.code_snippet) {
-                    store.setChatPrompt({
-                      prompt: message.code_snippet,
-                    });
-                  }
-                }).catch(err => {
-                  console.error("Failed to read clipboard contents: ", err);
-                });
-                navigator.clipboard.writeText(message.code_snippet);
+                copyToClipboard(message.code_snippet);
               },
             },
             "expand": {

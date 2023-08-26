@@ -13,6 +13,8 @@ import { store, createNewRoom } from './store';
 import { schema } from './schema';
 import RoomsIPCEvents from "./IPC";
 
+import { copyToClipboard } from '@utils';
+
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -47,21 +49,25 @@ const StyledRoomOutput = styled(RoomOutput)`
 export const Rooms = () => {
   const params = useParams();
 
+  const createRoomAndUpdateState = () => {
+    const new_room = createNewRoom();
+    store.setCurrentRoomId(new_room.id);
+    store.setRooms([
+      ...store.rooms,
+      new_room,
+    ]);
+    IPC.send('room-init', {
+     id: new_room.id,
+    });
+  }
+
   onMount(() => {
     const id = params.id || store.getRoom().id;
     if (id) {
       console.log(`Setting room ID on mount: ${id}`)
       store.setCurrentRoomId(id);
     } else {
-      const new_room = createNewRoom();
-      store.setCurrentRoomId(new_room.id);
-      store.setRooms([
-        ...store.rooms,
-        new_room,
-      ]);
-      IPC.send('room-init', {
-        id: new_room.id,
-      });
+      createRoomAndUpdateState();
     }
   });
 
@@ -71,15 +77,7 @@ export const Rooms = () => {
         items={store.rooms}
         selectedId={store.getRoom().id}
         onAdd={() => {
-          const new_room = createNewRoom();
-          store.setCurrentRoomId(new_room.id);
-          store.setRooms([
-            ...store.rooms,
-            new_room,
-          ]);
-          IPC.send('room-init', {
-            id: new_room.id,
-          });
+          createRoomAndUpdateState();
         }}
         onSelect={(id) => {
           store.setCurrentRoomId(id);
@@ -125,65 +123,17 @@ export const Rooms = () => {
               "files": {
                 title: "Copy to Clipboard",
                 handler: (message) => {
-                  navigator.clipboard.readText().then((clipText) => {
-                    // If item is already in clipboard, copy it to the prompt
-                    if (clipText === message.original_content) {
-                      store.setChatPrompt({
-                        prompt: message.original_content,
-                      });
-                    }
-                  }).catch(err => {
-                    console.error("Failed to read clipboard contents: ", err);
-                  });
-                  navigator.clipboard.writeText(message.original_content);
+                  copyToClipboard(message.original_content);
                 }
               },
-              "quotation-l": {
-                title: "Copy to Notepad",
-                handler: (message) => {
-                  store.setChatSnippet({
-                    snippet: message.original_content
-                  });
-                }
-              }
             }}
             codeActions={{
               "files": {
                 title: "Copy to Clipboard",
                 handler: (message) => {
-                  navigator.clipboard.readText().then((clipText) => {
-                    // If item is already in clipboard, copy it to the prompt
-                    if (clipText === message.code_snippet) {
-                      store.setChatPrompt({
-                        prompt: message.code_snippet,
-                      });
-                    }
-                  }).catch(err => {
-                    console.error("Failed to read clipboard contents: ", err);
-                  });
-                  navigator.clipboard.writeText(message.code_snippet);
+                  copyToClipboard(message.code_snippet);
                 },
               },
-              "expand": {
-                title: "Open in new chat",
-                handler: (message) => {
-                  store.addChat({
-                    snippet: message.code_snippet,
-                    code_language: message.language,
-                  })
-                }
-              },
-              "quotation-l": {
-                title: "Copy to Notepad",
-                handler: (message) => {
-                  store.setChatSnippet({
-                    snippet: message.code_snippet
-                  });
-                  store.setChatCodeLanguage({
-                    code_language: message.language
-                  });
-                }
-              }
             }}
           />
         </StyledInputsContainer>

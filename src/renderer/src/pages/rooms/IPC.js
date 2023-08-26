@@ -3,8 +3,6 @@ import isArray from 'lodash/isArray';
 import { store } from './store';
 import { copy } from '@utils';
 
-const IMAGE_STYLE = "Surrealism handrawn high fantasy illustration style.";
-
 class RoomsIPCEvents {
   constructor () {
     this.initialize();
@@ -102,10 +100,7 @@ class RoomsIPCEvents {
       const { id, roomJSON } = data;
       store.setRoom("waiting", false, { id });
       store.setRoom("data", roomJSON, { id });
-      if (roomJSON.image_prompt) {
-        const new_image_prompt = `${IMAGE_STYLE} ${roomJSON.image_prompt}`;
-        store.setImagePrompt(new_image_prompt, { id });
-      }
+      this.setImagePrompt(roomJSON.image_prompt, id);
     });
 
     IPC.on('room-generation-addon', (event, data) => {
@@ -120,10 +115,7 @@ class RoomsIPCEvents {
       };
       var merged_data = mergeWith(existing_data, roomJSON, customizer);
       store.setRoom("data", merged_data, { id });
-      if (merged_data.image_prompt) {
-        const new_image_prompt = `${IMAGE_STYLE} ${merged_data.image_prompt}`;
-        store.setImagePrompt(new_image_prompt, { id });
-      }
+      this.setImagePrompt(merged_data.image_prompt, id);
     });
 
     IPC.on('image-created', (event, data) => {
@@ -132,6 +124,20 @@ class RoomsIPCEvents {
       store.setRoom("isGeneratingImages", false, { id });
       store.setRoom("images", images, { id });
     });
+  }
+
+  setImagePrompt (prompt = "", id) {
+    // const IMAGE_STYLE = "Surrealism handrawn high fantasy illustration style.";
+    const IMAGE_STYLE = "In the style of colorful hand-drawn high fantasy illustration.";
+    if (typeof prompt !== "string") return;
+    // Trim the prompt
+    prompt = prompt.trim();
+    if (!prompt) return;
+    // Make sure the prompt ends with a period
+    if (!prompt.endsWith(".")) prompt += ".";
+    // Add the image style
+    const image_prompt = `${prompt} ${IMAGE_STYLE}`;
+    store.setImagePrompt(image_prompt, { id });
   }
 }
 
