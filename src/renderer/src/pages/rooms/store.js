@@ -14,6 +14,7 @@ const SCHEMA = {
   waiting: true, // true until item is ready
   isGeneratingImages: false,
   // Images
+  image_prompt: "",
   images: [],
   // Item input data
   input_data: {},
@@ -133,7 +134,12 @@ export const createItemsStore = () => {
     addMessage: addMessage,
     addMessages: addMessages,
     setCurrentRoomId: setCurrentItemId,
-    isAnyRoomWaiting: isAnyItemWaiting
+    isAnyRoomWaiting: isAnyItemWaiting,
+    setImagePrompt: (image_prompt, opts = {}) => {
+      let { id = null } = opts;
+      id = id || currentItemId();
+      setItems(item => item.id === id, 'image_prompt', image_prompt);
+    }
   };
 }
 

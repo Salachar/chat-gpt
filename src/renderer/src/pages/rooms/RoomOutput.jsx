@@ -9,6 +9,7 @@ import {
   ImageGallery,
   Items,
 } from '@components/generation-outputs';
+import { TextArea } from '@components/inputs';
 
 import { store } from './store';
 
@@ -60,7 +61,7 @@ export const RoomOutput = (props) => {
       actions={{
         "image": {
           title: "Generate Images",
-          disabled: !data().image_prompt,
+          disabled: !room().image_prompt,
           handler: () => {
             props.onGenerateImage(room());
           }
@@ -75,20 +76,40 @@ export const RoomOutput = (props) => {
       }}
     >
       {Object.keys(room()).length && (
-        <StyledRoomDataContainer id="generated_room_output">
-          <Name name={data().name} />
-          <Keywords keywords={data().keywords} />
-          <StyledImageLoaderContainer show={room().isGeneratingImages}>
-            <ImageLoader />
-          </StyledImageLoaderContainer>
-          {!room().isGeneratingImages && (
-            <ImageGallery images={room().images} />
+        <>
+          {room().image_prompt && (
+            <ActionsContainer
+              label="Image Prompt"
+              actions={{}}
+            >
+              <TextArea
+                style={{
+                  width: "100%",
+                  background: "rgba(0, 0, 0, 0.25)",
+                  height: "5rem",
+                }}
+                value={room().image_prompt}
+                onChange={(text) => {
+                  store.setImagePrompt(text);
+                }}
+              />
+            </ActionsContainer>
           )}
-          <FlavorText flavor_text={data().flavor_text} />
-          <Items label="Trinkets" items={data().trinkets} />
-          <Items label="Traps" items={data().traps} />
-          <Items label="Puzzles" items={data().puzzles} />
-        </StyledRoomDataContainer>
+          <StyledRoomDataContainer id="generated_room_output">
+            <Name name={data().name} />
+            <Keywords keywords={data().keywords} />
+            <StyledImageLoaderContainer show={room().isGeneratingImages}>
+              <ImageLoader />
+            </StyledImageLoaderContainer>
+            {!room().isGeneratingImages && (
+              <ImageGallery images={room().images} />
+            )}
+            <FlavorText flavor_text={data().flavor_text} />
+            <Items label="Trinkets" items={data().trinkets} />
+            <Items label="Traps" items={data().traps} />
+            <Items label="Puzzles" items={data().puzzles} />
+          </StyledRoomDataContainer>
+        </>
       )}
     </ActionsContainer>
   );

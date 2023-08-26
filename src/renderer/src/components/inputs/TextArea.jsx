@@ -85,6 +85,7 @@ export const TextArea = (props) => {
         ref={props.ref}
         value={props.value || ""}
         class={props.class}
+        style={props.style}
         wordwrap={props.wordwrap}
         spellcheck={props.spellcheck || true}
         placeholder={props.placeholder}

@@ -41,7 +41,7 @@ const StyledChat = styled(SimpleChat)`
 const StyledRoomOutput = styled(RoomOutput)`
   margin: 1rem;
   overflow-y: scroll;
-  flex-grow: 1;
+  flex: 1 0;
 `;
 
 export const Rooms = () => {
@@ -190,21 +190,19 @@ export const Rooms = () => {
 
         <StyledRoomOutput
           onGenerateImage={(room) => {
-            const image_prompt = room?.data?.image_prompt;
+            const image_prompt = room?.image_prompt
             if (!image_prompt || store.getRoom().waiting) return;
             store.setRoom("isGeneratingImages", true, { id: room.id });
-            const style = "Surrealism handrawn high fantasy illustration style.";
-            const full_prompt = `${style} ${image_prompt}`;
             store.addMessage({
               id: room.id,
               message: {
                 role: "generator",
-                content: `Generating image with prompt: ${full_prompt}`,
+                content: `Generating image with prompt: ${image_prompt}`,
               }
             });
             IPC.send('image-create', {
               id: room.id,
-              prompt: full_prompt
+              prompt: image_prompt
             });
           }}
           onExport={(room) => {
