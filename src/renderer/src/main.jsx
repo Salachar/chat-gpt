@@ -1,6 +1,5 @@
 import { render } from "solid-js/web";
 import { Router, Route, Routes } from "@solidjs/router";
-import { store } from '@store';
 
 import { Home } from "./pages/home/Home";
 import { Chat } from "./pages/chat/Chat";
@@ -9,9 +8,6 @@ import { Maps } from "./pages/maps";
 import { Audio } from "./pages/audio";
 import { Rooms } from "./pages/rooms";
 import { NPCs } from "./pages/npcs";
-
-import ChatIPCEvents from "./ipc/chat";
-import RoomsIPCEvents from "./ipc/rooms";
 
 import 'prismjs/themes/prism-tomorrow.css';
 import './assets/index.css';
@@ -64,22 +60,6 @@ export const PAGES = [
     disabled: true,
   },
 ];
-
-IPC.on('model-list', (event, data) => {
-  store.setDefaultModel(data.default_model);
-  store.setModels(data.models);
-});
-
-IPC.on('onload', (event, events = []) => {
-  if (!Array.isArray(events)) events = [];
-  store.setEvents(events);
-});
-
-IPC.on('no-openai-api-key', (event, data) => {
-  store.setNoAPIKey(true);
-});
-
-IPC.send('onload');
 
 render(
   () => (

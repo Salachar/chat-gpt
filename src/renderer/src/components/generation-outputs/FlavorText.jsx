@@ -19,9 +19,9 @@ const StyledFlavorText = styled.p`
   }
 `;
 
-export const RoomFlavorText = (props) => {
+export const FlavorText = (props) => {
   const getFlavorText = () => {
-    return props?.room?.data?.flavor_text || null;
+    return props?.flavor_text || null;
   };
 
   return (

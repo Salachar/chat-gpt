@@ -4,29 +4,31 @@ import { ActionsContainer } from '@components/Actions';
 import { ChatHistory } from './ChatHistory';
 import { TextArea } from '@inputs';
 
-import { store } from '@store/roomsStore';
-import RoomsIPCEvents from "@ipc/rooms";
-
-export const Chat = (props) => {
+export const SimpleChat = (props) => {
   return (
     <StyledContainer class={props.class}>
-      <StyledChatHistory />
+      <StyledChatHistory
+        style={props.historyActionsStyle}
+        label={props.label}
+        messages={props.messages}
+        actions={props.actions}
+        message_actions={props.message_actions}
+        code_actions={props.code_actions}
+      />
 
       <StyledPromptContainer
         label="Ask me anything about the room you want to make!"
         actions={{}}
       >
         <StyledPrompt
-          value={store.getRoom().prompt}
+          value={props.prompt}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              RoomsIPCEvents.sendPrompt({
-                from: "chat",
-              });
+              props.sendPrompt();
             }
           }}
           onChange={(value) => {
-            store.setRoom("prompt", value);
+            props.setPrompt(value);
           }}
         />
       </StyledPromptContainer>

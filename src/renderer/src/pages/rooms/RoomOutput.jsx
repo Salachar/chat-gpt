@@ -1,17 +1,16 @@
 import { styled } from 'solid-styled-components';
 
-import { ImageLoader } from '@components/loaders/Image';
-import { ImageGallery } from './components/ImageGallery';
-import { RoomName } from './components/Name';
-import { RoomKeywords } from './components/Keywords';
-import { RoomFlavorText } from './components/FlavorText';
-import { RoomTrinkets } from './components/Trinkets';
-import { RoomTraps } from './components/Traps';
-import { RoomPuzzles } from './components/Puzzles';
 import { ActionsContainer } from '@components/Actions';
+import { ImageLoader } from '@components/loaders/Image';
+import {
+  Name,
+  Keywords,
+  FlavorText,
+  ImageGallery,
+  Items,
+} from '@components/generation-outputs';
 
-import { store } from '@store/roomsStore';
-import { copy } from '@utils';
+import { store } from './store';
 
 const StyledImageLoaderContainer = styled.div`
   position: relative;
@@ -38,7 +37,13 @@ const StyledRoomDataContainer = styled.div`
 `;
 
 export const RoomOutput = (props) => {
-  const room = () => store.getRoom();
+  const room = () => {
+    return store.getRoom();
+  }
+
+  const data = () => {
+    return room()?.data || {};
+  }
 
   return (
     <ActionsContainer
@@ -55,34 +60,34 @@ export const RoomOutput = (props) => {
       actions={{
         "image": {
           title: "Generate Images",
-          disabled: !room()?.data?.image_prompt,
+          disabled: !data().image_prompt,
           handler: () => {
             props.onGenerateImage(room());
           }
         },
         "floppy": {
           title: "Save Room",
-          disabled: !room()?.data?.flavor_text,
+          disabled: !data().flavor_text,
           handler: () => {
             props.onExport(room());
           },
         },
       }}
     >
-      {Object.keys(room().data).length && (
+      {Object.keys(room()).length && (
         <StyledRoomDataContainer id="generated_room_output">
-          <RoomName room={room()} />
-          <RoomKeywords room={room()} />
-          <StyledImageLoaderContainer show={room()?.isGeneratingImages}>
+          <Name name={data().name} />
+          <Keywords keywords={data().keywords} />
+          <StyledImageLoaderContainer show={room().isGeneratingImages}>
             <ImageLoader />
           </StyledImageLoaderContainer>
-          {!room()?.isGeneratingImages && (
+          {!room().isGeneratingImages && (
             <ImageGallery images={room().images} />
           )}
-          <RoomFlavorText room={room()} />
-          <RoomTrinkets room={room()} />
-          <RoomTraps room={room()} />
-          <RoomPuzzles room={room()} />
+          <FlavorText flavor_text={data().flavor_text} />
+          <Items label="Trinkets" items={data().trinkets} />
+          <Items label="Traps" items={data().traps} />
+          <Items label="Puzzles" items={data().puzzles} />
         </StyledRoomDataContainer>
       )}
     </ActionsContainer>

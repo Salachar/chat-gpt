@@ -1,7 +1,6 @@
 import { styled } from 'solid-styled-components';
 import { MessagePieces } from './MessagePieces';
 import { ActionsContainer } from './Actions';
-import { store } from '@store';
 
 export const Message = (props) => {
   return (
@@ -12,32 +11,7 @@ export const Message = (props) => {
       isError={props.role === "error"}
       lowProfileHeader={true}
       noHeader={props.role === "generator" || props.role === "error"}
-      actions={{
-        "files": {
-          title: "Copy to Clipboard",
-          handler: () => {
-            navigator.clipboard.readText().then((clipText) => {
-              // If item is already in clipboard, copy it to the prompt
-              if (clipText === props.message.original_content) {
-                store.setChatPrompt({
-                  prompt: props.message.original_content,
-                });
-              }
-            }).catch(err => {
-              console.error("Failed to read clipboard contents: ", err);
-            });
-            navigator.clipboard.writeText(props.message.original_content);
-          }
-        },
-        "quotation-l": {
-          title: "Copy to Notepad",
-          handler: () => {
-            store.setChatSnippet({
-              snippet: props.message.original_content
-            });
-          }
-        }
-      }}
+      actions={props.actions}
     >
       <For each={props.message.lines}>
         {(line) => (

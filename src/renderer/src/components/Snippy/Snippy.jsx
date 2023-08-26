@@ -1,6 +1,5 @@
 import { createSignal, onCleanup, onMount } from 'solid-js';
 import { styled } from 'solid-styled-components';
-import { store } from '@store';
 
 import { Eyes } from './Eyes';
 import { SpeechBubble } from './SpeechBubble';

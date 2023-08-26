@@ -1,31 +1,30 @@
 import { For } from 'solid-js'
 import { styled } from 'solid-styled-components';
-import { store, createNewRoom } from '@store/roomsStore';
 import { Button } from '@inputs';
 
-export const RoomList = (props) => {
+export const SidebarList = (props) => {
   return (
     <StyledContainer class={props.class}>
       <StyledTabs>
-        <For each={store.rooms}>
-          {(room) => {
+        <For each={props.items}>
+          {(item) => {
             return (
               <StyledTab>
                 <StyledClose
-                  isCurrent={store.getRoom().id === room.id}
-                  isWaiting={room.waiting}
+                  isCurrent={props.selectedId === item.id}
+                  isWaiting={item.waiting}
                   onClick={() => {
-                    store.removeRoom(room.id);
+                    props.onClose(item.id);
                   }}
                 >
                   <i class="icss-x" />
                 </StyledClose>
                 <StyledName
-                  label={room?.data?.name}
-                  isCurrent={store.getRoom().id === room.id}
-                  isWaiting={room.waiting}
+                  label={item?.name || item?.data?.name}
+                  isCurrent={props.selectedId === item.id}
+                  isWaiting={item.waiting}
                   onClick={() => {
-                    store.setCurrentRoomId(room.id);
+                    props.onSelect(item.id);
                   }}
                 />
               </StyledTab>
@@ -34,15 +33,7 @@ export const RoomList = (props) => {
         </For>
         <StyledAddButton
           onClick={() => {
-            const new_room = createNewRoom();
-            store.setCurrentRoomId(new_room.id);
-            store.setRooms([
-              ...store.rooms,
-              new_room,
-            ]);
-            IPC.send('room-init', {
-              id: new_room.id,
-            });
+            props.onAdd();
           }}
         />
       </StyledTabs>

@@ -105,7 +105,7 @@ export const ActionsContainer = (props) => {
             <StyledLabel>{props.label}</StyledLabel>
           )}
           <StyledActions>
-            <For each={Object.entries(props.actions)}>
+            <For each={Object.entries(props?.actions || {})}>
               {([icon, action]) => (
                 <StyledIconWrapper
                   title={action.title}

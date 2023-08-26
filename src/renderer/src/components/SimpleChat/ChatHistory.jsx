@@ -5,17 +5,18 @@ import Prism from 'prismjs';
 import { ActionsContainer } from '@components/Actions';
 import { Message } from '@components/Message';
 
-import { store } from '@store/roomsStore';
-import RoomsIPCEvents from "@ipc/rooms";
-
 export const ChatHistory = (props) => {
+  const getChatMessages = () => {
+    return props.messages || [];
+  };
+
   // Create a ref for your scrollable element
   let scrollable;
 
   // Use createEffect to scroll down whenever data changes
   createEffect(() => {
     // On messages change scroll to bottom if the chat is the current chat
-    if (store.getRoom().messages.length && scrollable) {
+    if (getChatMessages().length && scrollable) {
       Prism.highlightAll();
       setTimeout(() => {
         scrollable.scrollTop = scrollable.scrollHeight;
@@ -26,24 +27,12 @@ export const ChatHistory = (props) => {
   return (
     <ActionsContainer
       class={props.class}
-      label="Room Chat"
-      style={{
-        "font-size": "1.25rem",
-      }}
-      actions={{
-        "recycle": {
-          title: "Generate Room",
-          disabled: store.getRoom()?.waiting,
-          handler: () => {
-            RoomsIPCEvents.sendPrompt({
-              from: "generate"
-            });
-          },
-        }
-      }}
+      label={props.label}
+      style={props.style}
+      actions={props.actions}
     >
       <StyledHistory ref={scrollable}>
-        <For each={store.getRoom().messages}>
+        <For each={getChatMessages()}>
           {(message) => (
             <StyledMessageContainer
               isUser={message.role === "user"}
@@ -55,27 +44,16 @@ export const ChatHistory = (props) => {
                 {(sub_message) => (
                   <>
                     {sub_message.type === "text" && (
-                      <Message role={message.role} message={sub_message} />
+                      <Message
+                        role={message.role}
+                        message={sub_message}
+                        actions={props.message_actions}
+                      />
                     )}
                     {sub_message.type === "code" && (
                       <ActionsContainer
                         label={sub_message.language}
-                        actions={{
-                          "files": {
-                            title: "Copy to Clipboard",
-                            handler: () => {
-                              navigator.clipboard.readText().then((clipText) => {
-                                // If item is already in clipboard, copy it to the prompt
-                                if (clipText === sub_message.code_snippet) {
-                                  store.setRoom("prompt", sub_message.code_snippet);
-                                }
-                              }).catch(err => {
-                                console.error("Failed to read clipboard contents: ", err);
-                              });
-                              navigator.clipboard.writeText(sub_message.code_snippet);
-                            },
-                          },
-                        }}
+                        actions={props.code_actions}
                       >
                         <StyledPre>
                           <code class="language-javascript" innerHTML={

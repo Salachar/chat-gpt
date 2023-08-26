@@ -21,9 +21,24 @@ const ABOUT_SNIPPET = `
 class ChatIPCEvents {
   constructor () {
     this.initialize();
+    IPC.send('onload');
   }
 
   initialize () {
+    IPC.on('model-list', (event, data) => {
+      store.setDefaultModel(data.default_model);
+      store.setModels(data.models);
+    });
+
+    IPC.on('onload', (event, events = []) => {
+      if (!Array.isArray(events)) events = [];
+      store.setEvents(events);
+    });
+
+    IPC.on('no-openai-api-key', (event, data) => {
+      store.setNoAPIKey(true);
+    });
+
     IPC.on('chat', (event, data = {}) => {
       const { chatId, chat, message } = data;
       store.setChatWaiting({

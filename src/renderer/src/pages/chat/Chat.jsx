@@ -8,6 +8,7 @@ import { ChatDisplay } from './components/ChatDisplay';
 import { ChatSnippet } from './components/ChatSnippet';
 
 import { store } from '@store';
+import ChatIPCEvents from "./IPC";
 
 const StyledChat = styled.div`
   font-size: 0.85rem;

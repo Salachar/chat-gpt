@@ -45,17 +45,17 @@ const StyledDescription = styled.p`
   margin: 0;
 `;
 
-export const RoomTrinkets = (props) => {
-  const getTrinkets = () => {
-    return props?.room?.data?.trinkets || [];
+export const Items = (props) => {
+  const getItems = () => {
+    return props?.items || [];
   };
 
   return (
     <>
-      {getTrinkets().length && (
+      {getItems().length && (
         <StyledItems>
-          <StyledHeader>Trinkets</StyledHeader>
-          <For each={getTrinkets()}>
+          <StyledHeader>{props.label}</StyledHeader>
+          <For each={getItems()}>
             {(trinket) => {
               const {
                 name = "",

@@ -7,9 +7,9 @@ const StyledName = styled.h1`
   color: var(--color-orange-spice);
 `;
 
-export const RoomName = (props) => {
+export const Name = (props) => {
   const getName = () => {
-    return props?.room?.data?.name || "";
+    return props?.name || "";
   };
 
   return (

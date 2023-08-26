@@ -19,9 +19,9 @@ const StyledKeyword = styled.span`
   }
 `;
 
-export const RoomKeywords = (props) => {
+export const Keywords = (props) => {
   const getKeywords = () => {
-    return props?.room?.data?.keywords || null;
+    return props?.keywords || null;
   };
 
   return (

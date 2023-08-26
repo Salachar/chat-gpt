@@ -1,6 +1,6 @@
 import mergeWith from 'lodash/mergeWith';
 import isArray from 'lodash/isArray';
-import { store } from '@store/roomsStore';
+import { store } from './store';
 import { copy } from '@utils';
 
 class RoomsIPCEvents {
