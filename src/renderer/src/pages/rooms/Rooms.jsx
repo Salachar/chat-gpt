@@ -94,21 +94,21 @@ export const Rooms = () => {
         <StyledInputsContainer>
           <StyledRoomInputs schema={schema} />
           <StyledChat
+            messages={store.getRoom().messages}
             prompt={store.getRoom().prompt}
             setPrompt={(value) => {
               store.setRoom("prompt", value);
             }}
-            sendPrompt={() => {
+            sendPrompt={(e) => {
               RoomsIPCEvents.sendPrompt({
                 from: "chat",
               });
             }}
-            label="Clear the chat to reset tokens"
-            historyActionsStyle={{
+            historyLabel="Clear the chat to reset tokens"
+            historyStyle={{
               "font-size": "1.25rem",
             }}
-            messages={store.getRoom().messages}
-            actions={{
+            historyActions={{
               "recycle": {
                 title: "Generate Room",
                 disabled: store.getRoom()?.waiting,
@@ -119,66 +119,68 @@ export const Rooms = () => {
                 },
               }
             }}
-            message_actions={{
+            promptLabel="Ask me anything about the room you want to make!"
+            promptActions={{}}
+            messageActions={{
               "files": {
                 title: "Copy to Clipboard",
-                handler: () => {
+                handler: (message) => {
                   navigator.clipboard.readText().then((clipText) => {
                     // If item is already in clipboard, copy it to the prompt
-                    if (clipText === props.message.original_content) {
+                    if (clipText === message.original_content) {
                       store.setChatPrompt({
-                        prompt: props.message.original_content,
+                        prompt: message.original_content,
                       });
                     }
                   }).catch(err => {
                     console.error("Failed to read clipboard contents: ", err);
                   });
-                  navigator.clipboard.writeText(props.message.original_content);
+                  navigator.clipboard.writeText(message.original_content);
                 }
               },
               "quotation-l": {
                 title: "Copy to Notepad",
-                handler: () => {
+                handler: (message) => {
                   store.setChatSnippet({
-                    snippet: props.message.original_content
+                    snippet: message.original_content
                   });
                 }
               }
             }}
-            code_actions={{
+            codeActions={{
               "files": {
                 title: "Copy to Clipboard",
-                handler: () => {
+                handler: (message) => {
                   navigator.clipboard.readText().then((clipText) => {
                     // If item is already in clipboard, copy it to the prompt
-                    if (clipText === sub_message.code_snippet) {
+                    if (clipText === message.code_snippet) {
                       store.setChatPrompt({
-                        prompt: sub_message.code_snippet,
+                        prompt: message.code_snippet,
                       });
                     }
                   }).catch(err => {
                     console.error("Failed to read clipboard contents: ", err);
                   });
-                  navigator.clipboard.writeText(sub_message.code_snippet);
+                  navigator.clipboard.writeText(message.code_snippet);
                 },
               },
               "expand": {
                 title: "Open in new chat",
-                handler: () => {
+                handler: (message) => {
                   store.addChat({
-                    snippet: sub_message.code_snippet,
-                    code_language: sub_message.language,
+                    snippet: message.code_snippet,
+                    code_language: message.language,
                   })
                 }
               },
               "quotation-l": {
                 title: "Copy to Notepad",
-                handler: () => {
+                handler: (message) => {
                   store.setChatSnippet({
-                    snippet: sub_message.code_snippet
+                    snippet: message.code_snippet
                   });
                   store.setChatCodeLanguage({
-                    code_language: sub_message.language
+                    code_language: message.language
                   });
                 }
               }

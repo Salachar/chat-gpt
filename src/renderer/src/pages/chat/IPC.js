@@ -21,7 +21,63 @@ const ABOUT_SNIPPET = `
 class ChatIPCEvents {
   constructor () {
     this.initialize();
+
+    // TODO: Make specific to chat
     IPC.send('onload');
+  }
+
+  sendPrompt (opts = {}) {
+    const {
+      event = {},
+      from = "chat",
+    } = opts;
+
+    if (event.shiftKey) return;
+
+    // If waiting, don't send another prompt
+    if (store.getChatWaiting()) {
+      event.preventDefault();
+      store.addChatMessage({
+        message: {
+          role: "assistant",
+          content: "Please wait until I'm finished with your last request.",
+        }
+      });
+      return;
+    }
+
+    store.setChatWaiting({
+      waiting: true
+    });
+
+    const trimmed_prompt = store.getChatPrompt().trim();
+
+    const payload = {
+      prompt: trimmed_prompt,
+    }
+    // Check if the trimmed prompt ends with a >
+    // and if so attach the notepad to the payload
+    if (trimmed_prompt.endsWith(">")) {
+      payload.snippet = store.getChatSnippet();
+    }
+
+    store.addChatMessage({
+      message: {
+        role: "user",
+        content: trimmed_prompt,
+      }
+    });
+
+    IPC.send('chat', {
+      chatId: store.currentChatId(),
+      ...payload,
+    });
+
+    setTimeout(() => {
+      store.setChatPrompt({
+        prompt: ""
+      });
+    }, 0);
   }
 
   initialize () {

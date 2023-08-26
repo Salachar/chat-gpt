@@ -54,6 +54,7 @@ export const ChatHistory = (props) => {
                       <ActionsContainer
                         label={sub_message.language}
                         actions={props.code_actions}
+                        actionContext={sub_message}
                       >
                         <StyledPre>
                           <code class="language-javascript" innerHTML={

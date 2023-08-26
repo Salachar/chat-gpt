@@ -1,5 +1,5 @@
 import { styled } from 'solid-styled-components';
-import { store } from '../store';
+import { store } from './store';
 
 import { ActionsContainer } from '@components/Actions';
 import { TextArea } from '@inputs';

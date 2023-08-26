@@ -2,10 +2,10 @@ import { onMount } from 'solid-js'
 import { styled } from 'solid-styled-components';
 
 import { SidebarContainer } from '@components/SidebarContainer';
-import { ChatList } from './components/ChatList';
-import { ChatActions } from './components/ChatActions';
-import { ChatDisplay } from './components/ChatDisplay';
-import { ChatSnippet } from './components/ChatSnippet';
+import { SidebarList } from '@components/SidebarList';
+import { ChatActions } from './ChatActions';
+import { ChatSnippet } from './ChatSnippet';
+import { SimpleChat } from '@components/SimpleChat';
 
 import { store } from './store';
 import ChatIPCEvents from "./IPC";
@@ -21,10 +21,13 @@ const StyledChat = styled.div`
   grid-template-areas: "chatdisplay chatsnippet chatactions";
 `;
 
-const StyledChatDisplay = styled(ChatDisplay)`
+const StyledChatDisplay = styled(SimpleChat)`
   grid-area: chatdisplay;
   display: flex;
   flex-direction: column;
+  padding: 1rem 0;
+  height: 100%;
+  overflow: hidden;
 `;
 
 const StyledChatSnippet = styled(ChatSnippet)`
@@ -77,11 +80,151 @@ export const Chat = () => {
 
   return (
     <SidebarContainer
-      sidebar={<ChatList />}
+      sidebar={
+        <SidebarList
+          items={store.chats}
+          selectedId={store.currentChatId()}
+          onSelect={(id) => {
+            store.setCurrentChatId(id);
+          }}
+          onClose={(id) => {
+            store.removeChat(id);
+          }}
+          onAdd={() => {
+            store.addChat();
+          }}
+        />
+      }
       animateSnippy={store.getFirstWaiting()}
     >
       <StyledChat>
-        <StyledChatDisplay />
+        <StyledChatDisplay
+          messages={store.getChatMessages()}
+          prompt={store.getChatPrompt()}
+          setPrompt={(value) => {
+            store.setChatPrompt({
+              prompt: value,
+            });
+          }}
+          sendPrompt={(e) => {
+            ChatIPCEvents.sendPrompt({
+              event: e,
+              from: "chat",
+            });
+          }}
+          historyLabel={`${store.getChatName()} - ${store.getChatModel()} - Clear the chat to reset tokens`}
+          historyActions={{
+            "x": {
+              title: "Clear chat messages",
+              handler: () => {
+                store.clearChatMessages();
+                store.addChatMessages({
+                  messages: [{
+                    role: "generator",
+                    content: "Chat history has been cleared.",
+                  }]
+                });
+              },
+            }
+          }}
+          promptLabel="Attach Notepad by ending prompt with a >"
+          promptActions={{
+            "files": {
+              title: "Copy to Clipboard",
+              handler: () => {
+                navigator.clipboard.writeText(store.getChatPrompt());
+              }
+            },
+            "chevron-r": {
+              title: "Send prompt with Notepad",
+              handler: () => {
+                store.setChatWaiting({
+                  waiting: true
+                });
+                store.addChatMessage({
+                  message: {
+                    role: "user",
+                    content: store.getChatPrompt(),
+                  }
+                });
+                IPC.send('chat', {
+                  chatId: store.currentChatId(),
+                  prompt: store.getChatPrompt(),
+                  snippet: store.getChatSnippet(),
+                });
+                setTimeout(() => {
+                  store.setChatPrompt({
+                    prompt: ""
+                  });
+                }, 0);
+              },
+            }
+          }}
+          messageActions={{
+            "files": {
+              title: "Copy to Clipboard",
+              handler: (message) => {
+                navigator.clipboard.readText().then((clipText) => {
+                  // If item is already in clipboard, copy it to the prompt
+                  if (clipText === message.original_content) {
+                    store.setChatPrompt({
+                      prompt: message.original_content,
+                    });
+                  }
+                }).catch(err => {
+                  console.error("Failed to read clipboard contents: ", err);
+                });
+                navigator.clipboard.writeText(message.original_content);
+              }
+            },
+            "quotation-l": {
+              title: "Copy to Notepad",
+              handler: (message) => {
+                store.setChatSnippet({
+                  snippet: message.original_content
+                });
+              }
+            }
+          }}
+          codeActions={{
+            "files": {
+              title: "Copy to Clipboard",
+              handler: (message) => {
+                navigator.clipboard.readText().then((clipText) => {
+                  // If item is already in clipboard, copy it to the prompt
+                  if (clipText === message.code_snippet) {
+                    store.setChatPrompt({
+                      prompt: message.code_snippet,
+                    });
+                  }
+                }).catch(err => {
+                  console.error("Failed to read clipboard contents: ", err);
+                });
+                navigator.clipboard.writeText(message.code_snippet);
+              },
+            },
+            "expand": {
+              title: "Open in new chat",
+              handler: (message) => {
+                store.addChat({
+                  snippet: message.code_snippet,
+                  code_language: message.language,
+                })
+              }
+            },
+            "quotation-l": {
+              title: "Copy to Notepad",
+              handler: (message) => {
+                store.setChatSnippet({
+                  snippet: message.code_snippet
+                });
+                store.setChatCodeLanguage({
+                  code_language: message.language
+                });
+              }
+            }
+          }}
+        />
         <StyledChatSnippet />
         <StyledChatActions />
       </StyledChat>

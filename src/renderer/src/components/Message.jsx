@@ -12,6 +12,7 @@ export const Message = (props) => {
       lowProfileHeader={true}
       noHeader={props.role === "generator" || props.role === "error"}
       actions={props.actions}
+      actionContext={props.message}
     >
       <For each={props.message.lines}>
         {(line) => (

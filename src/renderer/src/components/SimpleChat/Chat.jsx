@@ -8,23 +8,23 @@ export const SimpleChat = (props) => {
   return (
     <StyledContainer class={props.class}>
       <StyledChatHistory
-        style={props.historyActionsStyle}
-        label={props.label}
+        style={props.historyStyle}
+        label={props.historyLabel}
         messages={props.messages}
-        actions={props.actions}
-        message_actions={props.message_actions}
-        code_actions={props.code_actions}
+        actions={props.historyActions}
+        message_actions={props.messageActions}
+        code_actions={props.codeActions}
       />
 
       <StyledPromptContainer
-        label="Ask me anything about the room you want to make!"
-        actions={{}}
+        label={props.promptLabel}
+        actions={props.promptActions}
       >
         <StyledPrompt
           value={props.prompt}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              props.sendPrompt();
+              props.sendPrompt(e);
             }
           }}
           onChange={(value) => {

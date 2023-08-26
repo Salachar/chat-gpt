@@ -7,18 +7,13 @@ class RoomsIPCEvents {
   constructor () {
     this.initialize();
 
+    // Not exposed but useful for debugging
     this.event_history = {
       'room': [],
       'room-error': [],
       'room-generation': [],
       'image-created': [],
     };
-
-    window.room_ipc_events = this;
-  }
-
-  getHistory () {
-    return this.event_history;
   }
 
   sendPrompt (opts = {}) {

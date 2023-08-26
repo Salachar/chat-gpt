@@ -109,10 +109,9 @@ export const ActionsContainer = (props) => {
               {([icon, action]) => (
                 <StyledIconWrapper
                   title={action.title}
-                  // onClick={action.handler}
                   onClick={() => {
                     if (action.disabled) return;
-                    action.handler();
+                    action.handler(props.actionContext);
                   }}
                   lowProfileHeader={props.lowProfileHeader}
                   togglable={typeof action.toggled === "boolean"}
