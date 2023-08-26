@@ -92,6 +92,10 @@ const StyledContent = styled.div`
 `;
 
 export const ActionsContainer = (props) => {
+  const getActions = () => {
+    return props.actions || [];
+  }
+
   return (
     <StyledActionsContainer
       class={props.class}
@@ -105,8 +109,8 @@ export const ActionsContainer = (props) => {
             <StyledLabel>{props.label}</StyledLabel>
           )}
           <StyledActions>
-            <For each={Object.entries(props?.actions || {})}>
-              {([icon, action]) => (
+            <For each={getActions()}>
+              {(action) => (
                 <StyledIconWrapper
                   title={action.title}
                   onClick={() => {
@@ -119,7 +123,7 @@ export const ActionsContainer = (props) => {
                   disabled={action.disabled}
                 >
                   <StyledIcon
-                    class={`icss-${icon}`}
+                    class={`icss-${action.icon}`}
                     lowProfileHeader={props.lowProfileHeader}
                   />
                 </StyledIconWrapper>

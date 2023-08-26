@@ -10,6 +10,8 @@ import { SimpleChat } from '@components/SimpleChat';
 import { store } from './store';
 import ChatIPCEvents from "./IPC";
 
+import { copyAction } from '@utils/actions';
+
 import { copyToClipboard } from '@utils';
 
 const StyledChat = styled.div`
@@ -115,29 +117,29 @@ export const Chat = () => {
             });
           }}
           historyLabel={`${store.getChatName()} - ${store.getChatModel()} - Clear the chat to reset tokens`}
-          historyActions={{
-            "x": {
-              title: "Clear chat messages",
-              handler: () => {
-                store.clearChatMessages();
-                store.addChatMessages({
-                  messages: [{
-                    role: "generator",
-                    content: "Chat history has been cleared.",
-                  }]
-                });
-              },
-            }
-          }}
+          historyActions={[{
+            icon: "x",
+            title: "Clear chat messages",
+            handler: () => {
+              store.clearChatMessages();
+              store.addChatMessages({
+                messages: [{
+                  role: "generator",
+                  content: "Chat history has been cleared.",
+                }]
+              });
+            },
+          }]}
           promptLabel="Attach Notepad by ending prompt with a >"
-          promptActions={{
-            "files": {
+          promptActions={[
+            {
+              icon: "files",
               title: "Copy to Clipboard",
               handler: () => {
                 copyToClipboard(store.getChatPrompt());
               }
-            },
-            "chevron-r": {
+            }, {
+              icon: "chevron-r",
               title: "Send prompt with Notepad",
               handler: () => {
                 store.setChatWaiting({
@@ -161,15 +163,11 @@ export const Chat = () => {
                 }, 0);
               },
             }
-          }}
-          messageActions={{
-            "files": {
-              title: "Copy to Clipboard",
-              handler: (message) => {
-                copyToClipboard(message.original_content);
-              }
-            },
-            "quotation-l": {
+          ]}
+          messageActions={[
+            copyAction('original_content'),
+            {
+              icon: "quotation-l",
               title: "Copy to Notepad",
               handler: (message) => {
                 store.setChatSnippet({
@@ -177,15 +175,11 @@ export const Chat = () => {
                 });
               }
             }
-          }}
-          codeActions={{
-            "files": {
-              title: "Copy to Clipboard",
-              handler: (message) => {
-                copyToClipboard(message.code_snippet);
-              },
-            },
-            "expand": {
+          ]}
+          codeActions={[
+            copyAction('code_snippet'),
+            {
+              icon: "expand",
               title: "Open in new chat",
               handler: (message) => {
                 store.addChat({
@@ -193,8 +187,8 @@ export const Chat = () => {
                   code_language: message.language,
                 })
               }
-            },
-            "quotation-l": {
+            }, {
+              icon: "quotation-l",
               title: "Copy to Notepad",
               handler: (message) => {
                 store.setChatSnippet({
@@ -205,7 +199,7 @@ export const Chat = () => {
                 });
               }
             }
-          }}
+          ]}
         />
         <StyledChatSnippet />
         <StyledChatActions />

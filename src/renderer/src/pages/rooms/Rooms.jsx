@@ -13,7 +13,7 @@ import { store, createNewRoom } from './store';
 import { schema } from './schema';
 import RoomsIPCEvents from "./IPC";
 
-import { copyToClipboard } from '@utils';
+import { copyAction } from '@utils/actions';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -106,35 +106,24 @@ export const Rooms = () => {
             historyStyle={{
               "font-size": "1.25rem",
             }}
-            historyActions={{
-              "recycle": {
-                title: "Generate Room",
-                disabled: store.getRoom()?.waiting,
-                handler: () => {
-                  RoomsIPCEvents.sendPrompt({
-                    from: "generate"
-                  });
-                },
-              }
-            }}
+            historyActions={[{
+              icon: "recycle",
+              title: "Generate Room",
+              disabled: store.getRoom()?.waiting,
+              handler: () => {
+                RoomsIPCEvents.sendPrompt({
+                  from: "generate"
+                });
+              },
+            }]}
             promptLabel="Ask me anything about the room you want to make!"
-            promptActions={{}}
-            messageActions={{
-              "files": {
-                title: "Copy to Clipboard",
-                handler: (message) => {
-                  copyToClipboard(message.original_content);
-                }
-              },
-            }}
-            codeActions={{
-              "files": {
-                title: "Copy to Clipboard",
-                handler: (message) => {
-                  copyToClipboard(message.code_snippet);
-                },
-              },
-            }}
+            promptActions={[]}
+            messageActions={[
+              copyAction('original_content'),
+            ]}
+            codeActions={[
+              copyAction('code_snippet'),
+            ]}
           />
         </StyledInputsContainer>
 

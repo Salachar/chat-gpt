@@ -47,13 +47,13 @@ export const ChatHistory = (props) => {
                       <Message
                         role={message.role}
                         message={sub_message}
-                        actions={props.message_actions}
+                        actions={props.messageActions}
                       />
                     )}
                     {sub_message.type === "code" && (
                       <ActionsContainer
                         label={sub_message.language}
-                        actions={props.code_actions}
+                        actions={props.codeActions}
                         actionContext={sub_message}
                       >
                         <StyledPre>

@@ -12,28 +12,29 @@ export const ChatSnippet = (props) => {
     <ActionsContainer
       class={props.class}
       label="Notepad"
-      actions={{
-        "visual-code": {
+      actions={[
+        {
+          icon: "visual-code",
           title: "Code Format",
           toggled: store.getChatSnippetFormat() === "code",
           handler: () => {
             store.toggleChatCodeFormat();
           }
-        },
-        "text-justify": {
+        }, {
+          icon: "text-justify",
           title: "Word Wrap",
           toggled: store.getChatSnippetWrap(),
           handler: () => {
             store.toggleChatSnippetWrap();
           },
-        },
-        "files": {
+        }, {
+          icon: "files",
           title: "Copy to Clipboard",
           handler: () => {
             navigator.clipboard.writeText(store.getChatSnippet());
           },
-        },
-        "expand": {
+        }, {
+          icon: "expand",
           title: "Open in new chat",
           handler: () => {
             store.addChat({
@@ -41,8 +42,8 @@ export const ChatSnippet = (props) => {
               code_language: store.getChatCodeLanguage(),
             });
           },
-        },
-        "x": {
+        }, {
+          icon: "x",
           title: "Clear the Notepad",
           handler: () => {
             store.setChatSnippet({
@@ -50,7 +51,7 @@ export const ChatSnippet = (props) => {
             });
           }
         }
-      }}
+      ]}
     >
       <StyledCodeTextArea
         spellcheck="false"

@@ -58,29 +58,30 @@ export const RoomOutput = (props) => {
         "border-bottom-left-radius": "0.5rem",
         "border-bottom-right-radius": "0.5rem",
       }}
-      actions={{
-        "image": {
+      actions={[
+        {
+          icon: "image",
           title: "Generate Images",
           disabled: !room().image_prompt,
           handler: () => {
             props.onGenerateImage(room());
           }
-        },
-        "floppy": {
+        }, {
+          icon: "floppy",
           title: "Save Room",
           disabled: !data().flavor_text,
           handler: () => {
             props.onExport(room());
-          },
-        },
-      }}
+          }
+        }
+      ]}
     >
       {Object.keys(room()).length && (
         <>
           {room().image_prompt && (
             <ActionsContainer
               label="Image Prompt"
-              actions={{}}
+              actions={[]}
             >
               <TextArea
                 style={{

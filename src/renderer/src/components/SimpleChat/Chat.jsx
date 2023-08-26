@@ -12,8 +12,8 @@ export const SimpleChat = (props) => {
         label={props.historyLabel}
         messages={props.messages}
         actions={props.historyActions}
-        message_actions={props.messageActions}
-        code_actions={props.codeActions}
+        messageActions={props.messageActions}
+        codeActions={props.codeActions}
       />
 
       <StyledPromptContainer
