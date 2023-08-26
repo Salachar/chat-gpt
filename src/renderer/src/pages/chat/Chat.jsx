@@ -7,7 +7,7 @@ import { ChatActions } from './components/ChatActions';
 import { ChatDisplay } from './components/ChatDisplay';
 import { ChatSnippet } from './components/ChatSnippet';
 
-import { store } from '@store';
+import { store } from './store';
 import ChatIPCEvents from "./IPC";
 
 const StyledChat = styled.div`

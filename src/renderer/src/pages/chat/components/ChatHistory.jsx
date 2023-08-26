@@ -1,7 +1,7 @@
 import { createEffect, For } from 'solid-js'
 import { styled } from 'solid-styled-components';
 import Prism from 'prismjs';
-import { store } from '@store';
+import { store } from '../store';
 
 import { ActionsContainer } from '../../../components/Actions';
 import { Message } from '../../../components/Message';
