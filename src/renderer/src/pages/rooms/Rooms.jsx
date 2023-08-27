@@ -10,7 +10,7 @@ import { RoomOutput } from './RoomOutput';
 import { SimpleChat } from '@components/SimpleChat';
 
 import { store, createNewRoom } from './store';
-import { schema } from './schema';
+import { schema, schemaToAIMessage } from './schema';
 import RoomsIPCEvents from "./IPC";
 
 import { copyAction, copyCodeAction } from '@rendererUtils/actions';
@@ -58,6 +58,7 @@ export const Rooms = () => {
     ]);
     IPC.send('room-init', {
      id: new_room.id,
+     ruleset: schemaToAIMessage(),
     });
   }
 

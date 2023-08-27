@@ -1,5 +1,4 @@
 import { ipcMain } from 'electron'
-import ruleset from './rooms_rules';
 
 import ChatBase from './base';
 
@@ -18,7 +17,10 @@ class RoomsChat extends ChatBase {
 
   setIPCEvents () {
     ipcMain.on('room-init', async (event, data) => {
-      const { id = "" } = data;
+      const {
+        id = "",
+        ruleset = "",
+      } = data;
       if (this.rooms[id]) return;
 
       this.rooms[id] = {
@@ -93,6 +95,19 @@ class RoomsChat extends ChatBase {
             if (message.type === "code" && message.language === "json") {
               try {
                 const json = JSON.parse(message.code_snippet);
+
+                // Some minor corrections that sometimes happen
+                // Sometimes the room name is called room_name
+                if (json.room_name) json.name = json.room_name;
+                // Sometimes some data is stuck under 'room'
+                if (json.room) {
+                  json = {
+                    ...json,
+                    ...json.room,
+                  };
+                  delete json.room;
+                }
+
                 if (json.is_room_json && !json.is_room_json_addon) {
                   room_json = json;
                 } else if (json.is_room_json_addon) {

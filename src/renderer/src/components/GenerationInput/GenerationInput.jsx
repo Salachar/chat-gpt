@@ -21,7 +21,7 @@ const StyledTextArea = styled(TextArea)`
 export const GenerationInput = (props) => {
   return (
     <div class={props.class}>
-      <Index each={props.schema()}>
+      <Index each={props.schema().inputs}>
         {(item) => {
           if (item().type === "text") {
             return (
