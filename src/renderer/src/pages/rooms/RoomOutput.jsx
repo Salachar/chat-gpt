@@ -78,24 +78,23 @@ export const RoomOutput = (props) => {
     >
       {Object.keys(room()).length && (
         <>
-          {room().image_prompt && (
-            <ActionsContainer
-              label="Image Prompt"
-              actions={[]}
-            >
-              <TextArea
-                style={{
-                  width: "100%",
-                  background: "rgba(0, 0, 0, 0.25)",
-                  height: "5rem",
-                }}
-                value={room().image_prompt}
-                onChange={(text) => {
-                  store.setImagePrompt(text);
-                }}
-              />
-            </ActionsContainer>
-          )}
+          <ActionsContainer
+            label={`Image Prompt - ${room().image_prompt.length} characters (limit 400)`}
+            actions={[]}
+          >
+            <TextArea
+              placeholder="Generating a room will put an image suggestion here."
+              value={room().image_prompt}
+              onChange={(text) => {
+                store.setImagePrompt(text);
+              }}
+              style={{
+                width: "100%",
+                background: "rgba(0, 0, 0, 0.25)",
+                height: "5rem",
+              }}
+            />
+          </ActionsContainer>
           <StyledRoomDataContainer id="generated_room_output">
             <Name name={data().name} />
             <Keywords keywords={data().keywords} />

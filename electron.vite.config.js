@@ -12,10 +12,10 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@ipc': resolve('src/renderer/src/ipc'),
         '@renderer': resolve('src/renderer/src'),
-        '@utils': resolve('src/renderer/src/utils'),
-        '@store': resolve('src/renderer/src/store'),
+        '@utils': resolve('src/utils'),
+        '@pages': resolve('src/renderer/src/pages'),
+        '@rendererUtils': resolve('src/renderer/src/utils'),
         '@components': resolve('src/renderer/src/components'),
         '@inputs': resolve('src/renderer/src/components/inputs'),
       }

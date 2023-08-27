@@ -1,8 +1,5 @@
-import { alphaTrim, uuid, copy, copyToClipboard } from "./general";
+import { copyToClipboard } from "./general";
 
 export {
-  alphaTrim,
-  uuid,
-  copy,
   copyToClipboard,
 };

@@ -1,17 +1,21 @@
-import { copyToClipboard } from '@utils';
+import { copyToClipboard } from '@rendererUtils';
 
-export const copyAction = (message_field) => {
+export const copyAction = () => {
   return {
     icon: "files",
     title: "Copy to Clipboard",
     handler: (message) => {
-      let text = "";
-      if (message_field) {
-        text = message[message_field];
-      } else {
-        text = message;
-      }
-      copyToClipboard(text);
+      copyToClipboard(message.original_content);
     },
   };
 };
+
+export const copyCodeAction = () => {
+  return {
+    icon: "files",
+    title: "Copy Code to Clipboard",
+    handler: (message) => {
+      copyToClipboard(message.code_snippet);
+    },
+  };
+}

@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store';
 import { uuid, copy } from '@utils';
 import Prism from 'prismjs';
 
-import MessageParser from '../../../../utils/message-parser';
+import MessageParser from '@utils/message-parser';
 
 const CHAT_SCHEMA = {
   id: null,

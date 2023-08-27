@@ -10,9 +10,9 @@ import { SimpleChat } from '@components/SimpleChat';
 import { store } from './store';
 import ChatIPCEvents from "./IPC";
 
-import { copyAction } from '@utils/actions';
+import { copyAction, copyCodeAction } from '@rendererUtils/actions';
 
-import { copyToClipboard } from '@utils';
+import { copyToClipboard } from '@rendererUtils';
 
 const StyledChat = styled.div`
   font-size: 0.85rem;
@@ -165,7 +165,7 @@ export const Chat = () => {
             }
           ]}
           messageActions={[
-            copyAction('original_content'),
+            copyAction(),
             {
               icon: "quotation-l",
               title: "Copy to Notepad",
@@ -177,7 +177,7 @@ export const Chat = () => {
             }
           ]}
           codeActions={[
-            copyAction('code_snippet'),
+            copyCodeAction(),
             {
               icon: "expand",
               title: "Open in new chat",

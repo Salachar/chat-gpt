@@ -1,6 +1,8 @@
+import { copy } from "./general";
+
 class MessageParser {
   static parse(message) {
-    message = JSON.parse(JSON.stringify(message));
+    message = copy(message);
 
     try {
       if (Array.isArray(message.content)) {

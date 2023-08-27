@@ -13,7 +13,7 @@ import { store, createNewRoom } from './store';
 import { schema } from './schema';
 import RoomsIPCEvents from "./IPC";
 
-import { copyAction } from '@utils/actions';
+import { copyAction, copyCodeAction } from '@rendererUtils/actions';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -118,12 +118,8 @@ export const Rooms = () => {
             }]}
             promptLabel="Ask me anything about the room you want to make!"
             promptActions={[]}
-            messageActions={[
-              copyAction('original_content'),
-            ]}
-            codeActions={[
-              copyAction('code_snippet'),
-            ]}
+            messageActions={[copyAction()]}
+            codeActions={[copyCodeAction()]}
           />
         </StyledInputsContainer>
 
