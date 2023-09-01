@@ -2,11 +2,11 @@ import { render } from "solid-js/web";
 import { Router, Route, Routes } from "@solidjs/router";
 
 import { Home } from "./pages/home/Home";
-import { Chat } from "./pages/chat/Chat";
+import { Chat, store as chatStore } from "./pages/chat";
 import { Images } from "./pages/images";
 import { Maps } from "./pages/maps";
 import { Audio } from "./pages/audio";
-import { Rooms } from "./pages/rooms";
+import { Rooms, store as roomStore } from "./pages/rooms";
 import { NPCs } from "./pages/npcs";
 
 import 'prismjs/themes/prism-tomorrow.css';
@@ -24,6 +24,7 @@ export const PAGES = [
     icon: "chat",
     path: "/chat",
     element: Chat,
+    store: chatStore,
   },
   {
     name: "Images",
@@ -51,6 +52,7 @@ export const PAGES = [
     icon: "shop",
     path: "/rooms",
     element: Rooms,
+    store: roomStore,
   },
   {
     name: "NPCs",

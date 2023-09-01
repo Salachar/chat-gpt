@@ -1,4 +1,5 @@
 import { onMount } from 'solid-js'
+import { useLocation } from '@solidjs/router';
 import { styled } from 'solid-styled-components';
 
 import { SidebarContainer } from '@components/SidebarContainer';
@@ -45,6 +46,8 @@ const StyledChatActions = styled(ChatActions)`
 `;
 
 export const Chat = () => {
+  const location = useLocation();
+
   const onNoAPIKey = (event, data) => {
     store.addChatMessages({
       messages: [{
@@ -84,6 +87,7 @@ export const Chat = () => {
 
   return (
     <SidebarContainer
+      animateSnippy={store.getFirstWaiting()}
       sidebar={
         <SidebarList
           items={store.chats}
@@ -99,7 +103,6 @@ export const Chat = () => {
           }}
         />
       }
-      animateSnippy={store.getFirstWaiting()}
     >
       <StyledChat>
         <StyledChatDisplay

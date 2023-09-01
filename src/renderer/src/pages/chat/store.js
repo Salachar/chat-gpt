@@ -302,6 +302,11 @@ export const createAppStore = () => {
     setChatPrompt,
     getChatTokenData,
     setChatTokenData,
+
+    isActive: () => {
+      // Check if any chat is currently waiting for a response.
+      return getFirstWaiting() !== null;
+    },
   };
 }
 

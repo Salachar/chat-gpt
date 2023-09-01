@@ -61,6 +61,11 @@ function createWindow() {
     ai_manager.onWindowReady();
   })
 
+  // Kill the app if the main window is closed
+  mainWindow.on('closed', () => {
+    app.quit();
+  });
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }

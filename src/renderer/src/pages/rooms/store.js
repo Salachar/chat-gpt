@@ -139,6 +139,10 @@ export const createItemsStore = () => {
       let { id = null } = opts;
       id = id || currentItemId();
       setItems(item => item.id === id, 'image_prompt', image_prompt);
+    },
+    isActive: () => {
+      // Check if any room is currently waiting for a response.
+      return isAnyItemWaiting();
     }
   };
 }

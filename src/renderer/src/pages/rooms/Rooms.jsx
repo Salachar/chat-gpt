@@ -74,6 +74,7 @@ export const Rooms = () => {
 
   return (
     <SidebarContainer
+      animateSnippy={store.isAnyRoomWaiting()}
       sidebar={<SidebarList
         items={store.rooms}
         selectedId={store.getRoom().id}
@@ -87,7 +88,6 @@ export const Rooms = () => {
           store.removeRoom(id);
         }}
       />}
-      animateSnippy={store.isAnyRoomWaiting()}
     >
       <StyledContainer>
         <StyledInputsContainer>
