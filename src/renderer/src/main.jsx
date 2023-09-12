@@ -13,16 +13,17 @@ import 'prismjs/themes/prism-tomorrow.css';
 import './assets/index.css';
 
 export const PAGES = [
-  {
-    name: "Home",
-    icon: "home",
-    path: "/",
-    element: Home,
-  },
+  // {
+  //   name: "Home",
+  //   icon: "home",
+  //   path: "/",
+  //   element: Home,
+  //   disabled: true,
+  // },
   {
     name: "Chat",
     icon: "chat",
-    path: "/chat",
+    path: "/",
     element: Chat,
     store: chatStore,
   },
@@ -53,6 +54,7 @@ export const PAGES = [
     path: "/rooms",
     element: Rooms,
     store: roomStore,
+    disabled: true,
   },
   {
     name: "NPCs",
