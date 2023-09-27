@@ -70,8 +70,6 @@ class RoomsIPCEvents {
   }
 
   initialize () {
-    console.log("Initializing room IPC events");
-
     IPC.on('room', (event, data) => {
       this.event_history['room'].push(data);
       const { id, message } = data;

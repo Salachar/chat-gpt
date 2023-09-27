@@ -63,7 +63,6 @@ class MainChat extends ChatBase {
       event: 'about',
       label: 'About',
       non_action: true,
-      non_refresh: true,
       non_waiting: true,
       handler: (event, data) => {
         event.reply('about');

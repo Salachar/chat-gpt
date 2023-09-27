@@ -1,0 +1,46 @@
+const Button = require('../../lib/inputs/Button');
+
+const Container = require('../base');
+class ConfigContainer extends Container {
+  constructor (opts = {}) {
+    super({
+      ...opts,
+      type: 'config',
+    });
+
+    this.render();
+  }
+
+  render () {
+    Lib.dom.generate([
+      ['.container_header', [
+
+      ]],
+      ['.container_body', [
+        [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.json_directory}`],
+        new Button('.choose_directory_button', {
+          text: 'Choose JSON Directory',
+          ipc_event: 'choose_json_directory',
+        }),
+
+        [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.map_directory}`],
+        new Button('.choose_directory_button', {
+          text: 'Choose Map Directory',
+          ipc_event: 'choose_map_directory',
+        }),
+        new Button('.choose_directory_button', {
+          text: 'REFRESH MAP LIST',
+          ipc_event: 'refresh_map_list',
+        }),
+
+        [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.audio_directory}`],
+        new Button('.choose_directory_button', {
+          text: 'Choose Audio Directory',
+          ipc_event: 'choose_audio_directory',
+        }),
+      ]]
+    ], this, this.node);
+  }
+}
+
+module.exports = ConfigContainer;

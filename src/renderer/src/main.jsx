@@ -9,21 +9,23 @@ import { Audio } from "./pages/audio";
 import { Rooms, store as roomStore } from "./pages/rooms";
 import { NPCs } from "./pages/npcs";
 
+import Store from "./gm-kit-js/store";
+window.Store = Store;
+
 import 'prismjs/themes/prism-tomorrow.css';
 import './assets/index.css';
 
 export const PAGES = [
-  // {
-  //   name: "Home",
-  //   icon: "home",
-  //   path: "/",
-  //   element: Home,
-  //   disabled: true,
-  // },
+  {
+    name: "Home",
+    icon: "home",
+    path: "/",
+    element: Home,
+  },
   {
     name: "Chat",
     icon: "chat",
-    path: "/",
+    path: "/chat",
     element: Chat,
     store: chatStore,
   },
@@ -39,7 +41,7 @@ export const PAGES = [
     icon: "map-location",
     path: "/maps",
     element: Maps,
-    disabled: true,
+    disabled: false,
   },
   {
     name: "Audio",
@@ -54,7 +56,7 @@ export const PAGES = [
     path: "/rooms",
     element: Rooms,
     store: roomStore,
-    disabled: true,
+    disabled: false,
   },
   {
     name: "NPCs",

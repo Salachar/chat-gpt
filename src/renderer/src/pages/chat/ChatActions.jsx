@@ -16,12 +16,12 @@ export const ChatActions = (props) => {
         >
           <For each={store.models()}>
             {(model) => (
-              <StyledModelDropdownOption
+              <option
                 value={model}
                 selected={model === store.getDropdownModel()}
               >
                 {model}
-              </StyledModelDropdownOption>
+              </option>
             )}
           </For>
         </StyledModelDropdown>
@@ -34,13 +34,12 @@ export const ChatActions = (props) => {
         <StyledTokenPiece>Total: {JSON.stringify(store.getChatTokenData().total_tokens)}</StyledTokenPiece>
       </StyledTokenData>
 
-      <For each={store.events()}>
-        {(action) => (
-          <Show when={!action.disabled}>
-            <StyledButtonWrapper>
+      <StyledButtonsWrapper>
+        <For each={store.events()}>
+          {(action) => (
+            <Show when={!action.disabled}>
               <StyledButton
                 disabled={store.getChatWaiting()}
-                nonrefresh={action.non_refresh}
                 label={action.label}
                 toUpperCase={true}
                 onClick={() => {
@@ -69,58 +68,25 @@ export const ChatActions = (props) => {
                   });
                 }}
               />
-              {!action.non_refresh && (
-                <StyledRefreshButton
-                  title="Clear messages and run action"
-                  disabled={store.getChatWaiting()}
-                  onClick={() => {
-                    if (!action.non_waiting) {
-                      if (store.getChatWaiting()) return;
-                    }
-                    if (!action.non_action) {
-                      store.clearChatMessages();
-                      store.addChatMessages({
-                        messages: [{
-                          role: "generator",
-                          content: "Chat history has been cleared.",
-                        }, {
-                          role: "generator",
-                          content: `Running ${action.label}...`,
-                        }]
-                      });
-                      store.checkChatName({
-                        action_name: action.label
-                      });
-                    }
-                    if (!action.non_waiting) {
-                      store.setChatWaiting({
-                        waiting: true
-                      });
-                    }
-                    IPC.send(action.event, {
-                      chatId: store.currentChatId(),
-                      snippet: store.getChatSnippet(),
-                    });
-                  }}
-                >
-                  <StyledRefreshIcon class="icss-synchronize" />
-                </StyledRefreshButton>
-              )}
-            </StyledButtonWrapper>
-          </Show>
-        )}
-      </For>
+            </Show>
+          )}
+        </For>
+      </StyledButtonsWrapper>
     </StyledContainer>
   );
 }
 
+const StyledContainer = styled.div`
+  grid-area: chatactions;
+  padding: 1rem 0;
+`;
+
 const StyledModelDropdownWrapper = styled.div`
   width: 100%;
-  padding-left: 1rem;
+  padding: 0 1rem;
   margin-bottom: 1rem;
 `;
 
-// Model dropdown
 const StyledModelDropdown = styled.select`
   width: 100%;
   text-overflow: ellipsis;
@@ -133,53 +99,18 @@ const StyledModelDropdown = styled.select`
   border: none;
 `;
 
-const StyledModelDropdownOption = styled.option`
-`;
-
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
-const StyledButtonWrapper = styled.div`
-  height: 2rem;
-  display: flex;
-  &:not(:last-child) {
-    margin-bottom: 0.5rem;
-  }
+const StyledButtonsWrapper = styled.div`
+  padding-right: 1rem;
 `;
 
 const StyledButton = styled(Button)`
   height: 2rem;
   font-size: 0.75rem;
-  padding-right: 0.25rem;
-
-  ${({ nonrefresh }) => nonrefresh && `
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  `}
-`;
-
-const StyledRefreshButton = styled.div`
-  height: 2rem;
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  background-color: var(--color-orange-spice);
-  padding-right: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  &:hover { filter: brightness(1.2); }
-  &:active { filter: brightness(0.8); }
-  ${({ disabled }) => disabled && `
-    cursor: not-allowed;
-    opacity: 0.5;
-  `}
-`;
-
-const StyledRefreshIcon = styled.i`
-  font-size: 1.25rem;
-  color: var(--color-red);
-  cursor: pointer;
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const StyledTokenData = styled.div`

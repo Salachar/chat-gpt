@@ -34,4 +34,5 @@ const StyledContent = styled.div`
   grid-area: childcontent;
   height: 100%;
   overflow: hidden;
+  position: relative;
 `;

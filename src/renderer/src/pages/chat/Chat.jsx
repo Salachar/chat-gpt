@@ -35,16 +35,6 @@ const StyledChatDisplay = styled(SimpleChat)`
   overflow: hidden;
 `;
 
-const StyledChatSnippet = styled(ChatSnippet)`
-  grid-area: chatsnippet;
-  padding: 1rem 0 1rem 1rem;
-`;
-
-const StyledChatActions = styled(ChatActions)`
-  grid-area: chatactions;
-  padding: 1rem 1rem 1rem 0;
-`;
-
 export const Chat = () => {
   const location = useLocation();
 
@@ -204,8 +194,8 @@ export const Chat = () => {
             }
           ]}
         />
-        <StyledChatSnippet />
-        <StyledChatActions />
+        <ChatSnippet />
+        <ChatActions />
       </StyledChat>
     </SidebarContainer>
   );

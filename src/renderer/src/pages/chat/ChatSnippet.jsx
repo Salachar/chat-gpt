@@ -9,7 +9,7 @@ export const ChatSnippet = (props) => {
   let preRef;
 
   return (
-    <ActionsContainer
+    <StyledContainer
       class={props.class}
       label="Notepad"
       actions={[
@@ -79,9 +79,14 @@ export const ChatSnippet = (props) => {
           Prism.highlight(store.getChatSnippet(), Prism.languages[store.getChatCodeLanguage()], store.getChatCodeLanguage())
         }></code>
       </StyledPre>
-    </ActionsContainer>
+    </StyledContainer>
   );
 };
+
+const StyledContainer = styled(ActionsContainer)`
+  grid-area: chatsnippet;
+  padding: 1rem 0 1rem 1rem;
+`;
 
 const StyledCodeTextArea = styled(TextArea)`
   white-space: nowrap;

@@ -1,13 +1,21 @@
 require('dotenv').config();
 
-import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { app, ipcMain, shell, BrowserWindow } from 'electron';
+import { join } from 'path';
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+
 import icon from '../../resources/icon.png?asset';
 import dock_icon from '../../resources/snippy_clear.png?asset';
 import contextMenu from 'electron-context-menu';
 
 app.dock.setIcon(dock_icon);
+// This need to be set so that video maps will autoplay on the player screen
+app.commandLine.appendSwitch('--autoplay-policy','no-user-gesture-required');
+
+// Instantiated as singletons
+import GMMapManager from './lib/map_manager';
+import GMAudioManager from './lib/audio_manager';
+import GMConfig from './lib/config';
 
 const OPENAI_API_KEY = process.env.OPENAI;
 
@@ -47,6 +55,8 @@ function createWindow() {
       webSecurity: false,
     }
   })
+  // mainWindow.setMenu(null);
+
   global.shared.mainWindow = mainWindow;
   mainWindow.webContents.openDevTools();
 
@@ -70,11 +80,31 @@ function createWindow() {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+  // mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  //   return {
+  //     action: 'allow',
+  //     overrideBrowserWindowOptions: {
+  //       width: 1280,
+  //       height: 720,
+  //       x: 150,
+  //       y: 150,
+  //       icon: __dirname + '/map.png',
+  //       webPreferences: {
+  //         nodeIntegration: true,
+  //         contextIsolation: false,
+  //         enableRemoteModule: true,
+  //       },
+  //     }
+  //   };
+  // });
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    // mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
+    let window_url = process.env['ELECTRON_RENDERER_URL'];
+    window_url += `?data_dir=${Boolean(GMConfig.json_directory)}`;
+    mainWindow.loadURL(window_url);
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -108,6 +138,12 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
+
+ipcMain.on('app_loaded', (event) => {
+  console.log(GMConfig.data);
+  // WINDOW.webContents.send('config', GMConfig.data);
+  event.sender.send('config', GMConfig.data);
+});

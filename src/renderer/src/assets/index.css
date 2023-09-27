@@ -1,4 +1,66 @@
 :root {
+  --color-main: #353845;
+  --color-el-0: var(--color-main);
+  --color-el-1: #4f5665;
+  --color-el-2: #424854;
+
+  --color-button-bg: #697287;
+
+  --color-main-header: var(--color-el-0);
+  --color-container-header: var(--color-el-1);
+
+  --main-font-color: #ffffff;
+
+  --font-huge: 1.5rem;
+  --font-large: 1.25rem;
+  --font-medium: 1rem;
+  --font-small: 0.85rem;
+
+  --hover-color: rgba(100, 149, 237, 0.5);
+  --active-color: rgba(100, 149, 237, 1);
+
+  --standard-padding: 1.5rem;
+  --section-text-color: rgba(255,255,255,0.8);
+  --side-section-width: 35rem;
+  --section-title-height: 2rem;
+
+  --checkbox-height: 1.5rem;
+
+  --selected-bg-color: rgba(100, 149, 237, 0.3);
+  --hover-bg-color: rgba(100, 149, 237, 0.5);
+  --active-bg-color: rgba(100, 149, 237, 1);
+
+  /* Inputs  */
+  --input-height: 2rem;
+  --button-hover-color: rgba(100, 149, 237, 0.5);
+  --button-active-color: rgba(100, 149, 237, 1);
+  --button-standard-height: 2rem;
+
+  /* Modal */
+  --modal-header-height: 3rem;
+
+  /* Main header */
+  --main-header-height: 3rem;
+  --main-header-font-color: #FFFFFF;
+
+  /* Container header */
+  --container-header-height: 6rem;
+
+  /* Important Z-Index orderings */
+  --toast-z: 60;
+  --main-header-z: 40;
+  --containers-z: 20;
+
+  /* Map header */
+  --text-block-container-z: 15;
+  --map-controls-height: 3rem;
+  --map-tabs-height: 3rem;
+
+
+
+
+
+
   --color-orange-spice: #f7a837;
   --color-orange-spice-light: #f7cd37;
   --color-orange-spice-dark: #be812b;
@@ -81,7 +143,24 @@ html, body, #root {
   padding: 0;
   margin: 0;
   background-color: var(--color-main);
+
+  /* margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: arial;
+  position: relative;
+  width: 100%;
+  height: 100%; */
 }
+
+
+/* #root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+} */
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
@@ -103,3 +182,7 @@ pre[class*="language-"] {
 .token.variable {
   color: #7ec699;
 };
+
+.hidden {
+  display: none !important;
+}
